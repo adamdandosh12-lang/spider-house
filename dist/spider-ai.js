@@ -1,6 +1,6 @@
 // The brain only receives sensory observations. It never receives the live player position.
-export const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
-const copy=p=>p?{x:p.x,z:p.z}:null;
+export const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z,(a.y??0)-(b.y??0));
+const copy=p=>p?{x:p.x,z:p.z,...(p.y===undefined?{}:{y:p.y})}:null;
 export function inView(observer,yaw,target,range=13,fov=110){
  const dx=target.x-observer.x,dz=target.z-observer.z,d=Math.hypot(dx,dz);
  if(d>range)return false;
@@ -8,7 +8,7 @@ export function inView(observer,yaw,target,range=13,fov=110){
  return (-Math.sin(yaw)*dx-Math.cos(yaw)*dz)/d>=Math.cos(fov*Math.PI/360);
 }
 export function lineClear(a,b,obstacles,eyeHeight=1.3,targetHeight=1.55){
- const d=distance(a,b),steps=Math.ceil(d/.12);
+ const d=Math.hypot(a.x-b.x,a.z-b.z,targetHeight-eyeHeight),steps=Math.ceil(d/.12);
  for(let i=1;i<steps;i++){
   const t=i/steps,x=a.x+(b.x-a.x)*t,z=a.z+(b.z-a.z)*t,y=eyeHeight+(targetHeight-eyeHeight)*t;
   if(obstacles.some(c=>Math.abs(x-c.x)<c.w/2+.015&&Math.abs(z-c.z)<c.d/2+.015&&y>=(c.bottom??0)&&y<=(c.top??3.6)))return false;
@@ -41,7 +41,7 @@ export function createBrain(patrolPoints,rng=Math.random){
     if(searchFor>6){lastSeen=null;notice=0;nextPatrol();}
     else if(wait<=0&&distance(position,target)<1){
      const angle=rng()*Math.PI*2,r=1.2+rng()*1.5;
-     target={x:lastSeen.x+Math.cos(angle)*r,z:lastSeen.z+Math.sin(angle)*r};wait=.8;
+     target={x:lastSeen.x+Math.cos(angle)*r,z:lastSeen.z+Math.sin(angle)*r,...(lastSeen.y===undefined?{}:{y:lastSeen.y})};wait=.8;
     }
    }
    if(mode==='patrol'&&distance(position,target)<1)nextPatrol();
