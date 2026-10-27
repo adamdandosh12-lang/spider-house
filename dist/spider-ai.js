@@ -16,7 +16,7 @@ export function lineClear(a,b,obstacles,eyeHeight=1.3,targetHeight=1.55){
  return true;
 }
 export function createBrain(patrolPoints,rng=Math.random){
- let mode='patrol',target=copy(patrolPoints[0]),lastSeen=null,lostFor=0,searchFor=0,notice=0,wait=0,lastNoise=-1,patrolIndex=0;
+ let mode='patrol',target=copy(patrolPoints[0]),lastSeen=null,lostFor=0,searchFor=0,investigateFor=0,notice=0,wait=0,lastNoise=-1,patrolIndex=0;
  const nextPatrol=()=>{patrolIndex=(patrolIndex+1+Math.floor(rng()*Math.max(1,patrolPoints.length-1)))%patrolPoints.length;target=copy(patrolPoints[patrolIndex]);mode='patrol';wait=.6;};
  return{
   update(dt,{position,visiblePosition=null,heardNoise=null,awake=true}){
@@ -32,9 +32,10 @@ export function createBrain(patrolPoints,rng=Math.random){
    // Hear a discrete sound once, and only if supplied by the hearing sensor.
    if(heardNoise&&heardNoise.id>lastNoise){
     lastNoise=heardNoise.id;
-    if(mode!=='chase'&&mode!=='search'){mode='investigate';target=copy(heardNoise);searchFor=0;wait=.3;}
+    if(mode!=='chase'&&mode!=='search'){mode='investigate';target=copy(heardNoise);searchFor=0;investigateFor=0;wait=.3;}
    }
-   if(mode==='investigate'&&distance(position,target)<.9){mode='search';lastSeen=copy(target);searchFor=0;wait=1.1;}
+   if(mode==='investigate')investigateFor+=dt;
+   if(mode==='investigate'&&(distance(position,target)<.9||investigateFor>8)){mode='search';lastSeen=copy(target);searchFor=0;wait=1.1;}
    if(mode==='search'){
     searchFor+=dt;
     if(searchFor>6){lastSeen=null;notice=0;nextPatrol();}

@@ -1,4 +1,4 @@
-﻿// Procedural art: all materials are generated locally; no external assets or requests.
+// Procedural art: all materials are generated locally; no external assets or requests.
 export function decorateHouse({THREE,scene,materials,box,sphere,rod,glow}){
  let seed=3187;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
  function texture(draw,repeatX=1,repeatY=1){let c=document.createElement('canvas');c.width=c.height=512;let ctx=c.getContext('2d');draw(ctx);let t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeatX,repeatY);t.anisotropy=4;return t;}

@@ -1,4 +1,4 @@
-﻿import * as THREE from './vendor/three.module.js';
+import * as THREE from './vendor/three.module.js';
 // Original real-time model inspired by the user's supplied title artwork.
 export function createSpider(scene){
  const g=new THREE.Group(),body=new THREE.Group();g.name='Eight Legs — red-eyed hunter';g.add(body);scene.add(g);
