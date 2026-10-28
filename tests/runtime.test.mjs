@@ -9,7 +9,7 @@ class FakeAudio{constructor(){this.state='running';this.currentTime=0;this.sampl
 globalThis.AudioContext=FakeAudio;
 let src=fs.readFileSync(path.join(root,'game.js'),'utf8');src=src.replace(/from '(\.\/[^']+)'/g,(_,p)=>`from '${pathToFileURL(path.resolve(root,p)).href}'`);
 src=src.replace('new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:\'high-performance\'})',`({setPixelRatio(){},setSize(){},shadowMap:{},info:{render:{calls:0,triangles:0}},render(){}})`);
-src+=`\nglobalThis.qa={scene,houseGeometry,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
+src+=`\nglobalThis.qa={lose,spider,scene,houseGeometry,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
 await import('data:text/javascript;base64,'+Buffer.from(src).toString('base64'));
 let now=performance.now();const step=(seconds)=>{for(let i=0;i<Math.ceil(seconds/.05);i++){now+=50;frame(now);calls++;}};
 assert.equal(gameDiagnostics().state,'menu');step(.2);
@@ -46,4 +46,14 @@ console.log('Spider physically follows a visible player up the stairs');
 console.log('Two-floor integration: walk up/down, reach all six rooms, no vision through floors');
 qa.start();let axe=gameDiagnostics().axe;let found=false;for(let dx=-1.5;dx<=1.5&&!found;dx+=.5)for(let dz=-1.5;dz<=1.5&&!found;dz+=.5){let p={x:axe.x+dx,y:axe.y,z:axe.z+dz};if(qa.blocked(p.x,p.z,.3,p.y))continue;qa.setPlayer(p);if(qa.nearestInteraction()?.type==='axe'){qa.interact();found=true;}}
 assert.ok(found);assert.ok(gameDiagnostics().hasAxe);qa.setPlayer({x:0,z:12});for(let i=0;i<4;i++){qa.interact();if(i<3)step(.6);}assert.equal(gameDiagnostics().state,'won');assert.equal(gameDiagnostics().hits,4);console.log('Full objective flow: pick up axe → break four boards → escape');
+for(const floor of [0,4.2]){
+ qa.start();qa.setScenario({player:{x:0,y:floor,z:-1},spider:{x:0,y:floor,z:0},time:20});qa.getCamera().position.set(0,floor+1.65,-1);qa.lose();step(1.5);
+ assert.equal(gameDiagnostics().state,'caught');assert.ok(qa.getCamera().position.y>floor+2.5,'Player lifted on either floor');
+ assert.ok(qa.spider.legs.filter(l=>l.i===0).every(l=>l.links[6].position.y>2),'Front legs hold the player');
+ step(.4);assert.ok(Math.abs(qa.spider.fangs[0].pivot.rotation.z)>.4,'Fangs open before bite');step(.25);assert.equal(element('prompt').textContent,'אאוץ׳!');
+ step(1);assert.equal(gameDiagnostics().state,'lost');assert.ok(element('modal-body').innerHTML.includes('נשיכה'));
+ qa.start();assert.equal(element('caught-fx').style.opacity,0);assert.equal(qa.spider.fangs[0].pivot.rotation.z,0);assert.equal(qa.spider.body.position.z,0);
+}
+qa.lose();step(.5);qa.start();step(3.2);assert.equal(gameDiagnostics().state,'playing','Restart cancels unfinished capture');
+console.log('Capture: lift, front legs, fangs, bite, loss and restart verified on both floors');
 qa.menu();step(.1);console.log('PASS: runtime and navigation checks;',calls,'simulation frames. Renderer/DOM replaced with local stubs: visual/GPU QA not performed.');

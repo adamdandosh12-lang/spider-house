@@ -33,7 +33,7 @@ export function createSpider(scene){
   orb(r*1.18,joints,x,y,z+.01,1,1,.8);eyes.push(orb(r,eyeMat,x,y,z,1,1,.85));orb(r*.12,glintMat,x-.012,y+.014,z-r*.78);
  }
  // Chelicerae and inward-curved fangs sit under the eye cluster.
- for(const side of [-1,1]){orb(.19,carapaceMat,side*.23,.73,-1.25,1,1.35,.9);const points=[new THREE.Vector3(side*.23,.65,-1.34),new THREE.Vector3(side*.29,.47,-1.48),new THREE.Vector3(side*.19,.30,-1.53),new THREE.Vector3(side*.10,.29,-1.48)];let curve=new THREE.CatmullRomCurve3(points),geometry=new THREE.TubeGeometry(curve,16,.048,8,false);const pos=geometry.attributes.position;for(let i=0;i<pos.count;i++){let ring=Math.floor(i/9),t=ring/16,center=curve.getPointAt(t),k=1-t*.92;pos.setXYZ(i,center.x+(pos.getX(i)-center.x)*k,center.y+(pos.getY(i)-center.y)*k,center.z+(pos.getZ(i)-center.z)*k);}geometry.computeVertexNormals();const fang=new THREE.Mesh(geometry,fangMat);fang.castShadow=true;body.add(fang);}
+ const fangs=[];for(const side of [-1,1]){orb(.19,carapaceMat,side*.23,.73,-1.25,1,1.35,.9);const points=[new THREE.Vector3(side*.23,.65,-1.34),new THREE.Vector3(side*.29,.47,-1.48),new THREE.Vector3(side*.19,.30,-1.53),new THREE.Vector3(side*.10,.29,-1.48)];let curve=new THREE.CatmullRomCurve3(points),geometry=new THREE.TubeGeometry(curve,16,.048,8,false);const pos=geometry.attributes.position;for(let i=0;i<pos.count;i++){let ring=Math.floor(i/9),t=ring/16,center=curve.getPointAt(t),k=1-t*.92;pos.setXYZ(i,center.x+(pos.getX(i)-center.x)*k,center.y+(pos.getY(i)-center.y)*k,center.z+(pos.getZ(i)-center.z)*k);}geometry.computeVertexNormals();const fang=new THREE.Mesh(geometry,fangMat);fang.castShadow=true;const pivot=new THREE.Group();pivot.position.set(side*.23,.65,-1.34);fang.position.copy(pivot.position).multiplyScalar(-1);pivot.add(fang);body.add(pivot);fangs.push({side,pivot});}
  const up=new THREE.Vector3(0,1,0);
  function link(radius,hairCount=36,material=shell){const geo=new THREE.CylinderGeometry(radius*.70,radius,1,12,3);const mesh=new THREE.Mesh(geo,material);mesh.castShadow=mesh.receiveShadow=true;body.add(mesh);
   const positions=[],colors=[];for(let i=0;i<hairCount;i++){const angle=rnd()*Math.PI*2,y=rnd()-.5,r=radius*(.85-.3*y),x=Math.cos(angle)*r,z=Math.sin(angle)*r,length=.025+rnd()*.06;positions.push(x,y,z,x+Math.cos(angle)*length,y+.035,z+Math.sin(angle)*length);let c=.12+rnd()*.14;for(let j=0;j<2;j++)colors.push(c*1.15,c,c*.75);}
@@ -51,9 +51,10 @@ export function createSpider(scene){
  const spinnerets=[];for(const side of [-1,1])for(let i=0;i<2;i++){const part=orb(.065,joints,side*(i?.15:.28),.77,.88+1.04+i*.05,.8,.8,i?2.3:3.4);part.rotation.x=.2;spinnerets.push(part);}
  const eyeLight=new THREE.PointLight(0x9d2512,.08,2.8);eyeLight.position.set(0,1.1,-1.2);body.add(eyeLight);
  let phase=0,previous=g.position.clone(),previousYaw=0;
- function animate(time,dt,moving=false,mode='patrol',blocked=null,floorHeight=null){
+ function animate(time,dt,moving=false,mode='patrol',blocked=null,floorHeight=null,capture=null){
   const traveled=g.position.distanceTo(previous),turn=Math.atan2(Math.sin(g.rotation.y-previousYaw),Math.cos(g.rotation.y-previousYaw)),teleported=traveled>1.5;previous.copy(g.position);previousYaw=g.rotation.y;
   const stepping=moving||Math.abs(turn)>.004;phase+=stepping?Math.min(traveled,.3)*5.0+Math.min(Math.abs(turn),.2)*.75:0;
+  body.position.z=capture?-capture.bite*.34:0;for(const f of fangs){f.pivot.rotation.x=capture?-capture.open*.8+capture.bite*.35:0;f.pivot.rotation.z=capture?f.side*(capture.open*.65-capture.bite*.22):0;}
   const breath=Math.sin(time*1.4)*.006;body.position.y=breath+(stepping?Math.sin(phase*2)*.013:0);abdomen.scale.y=.73+breath;abdomenFur.scale.y=1+breath*.25;
   const cy=Math.cos(g.rotation.y),sy=Math.sin(g.rotation.y),toWorld=(x,y,z)=>new THREE.Vector3(g.position.x+cy*x+sy*z,g.position.y+y,g.position.z-sy*x+cy*z),toLocal=p=>{const dx=p.x-g.position.x,dz=p.z-g.position.z;return new THREE.Vector3(cy*dx-sy*dz,p.y-g.position.y-body.position.y,sy*dx+cy*dz);};
   for(const l of legs){const {side,i}=l;let reach=[1.68,2.08,2.13,1.88][i],z=[-1.87,-.73,.66,1.71][i],target=toWorld(side*reach,.045,z-.28);
@@ -62,11 +63,11 @@ export function createSpider(scene){
    if(!l.footWorld||teleported||l.footWorld.distanceTo(g.position)>3.35){l.footWorld=target.clone();l.swinging=false;}
    const cycle=((phase/(Math.PI*2)+(i%2)*.5+(side>0?.5:0))%1+1)%1,swinging=stepping&&cycle>.62;
    if(swinging){if(!l.swinging){l.from=l.footWorld.clone();l.to=target.clone();}const u=(cycle-.62)/.38,ease=u*u*(3-2*u);l.footWorld.copy(l.from).lerp(l.to,ease);l.footWorld.y+=Math.sin(u*Math.PI)*.20;}else if(l.swinging)l.footWorld.copy(l.to);l.swinging=swinging;
-   const foot=toLocal(l.footWorld),hipZ=-.96+i*.27,p0=new THREE.Vector3(side*.45,.88,hipZ),p1=new THREE.Vector3(side*.62,.88,hipZ),p2=new THREE.Vector3(side*.76,1.03,hipZ+(z-hipZ)*.18),p3=new THREE.Vector3(side*reach*.73,1.40+Math.max(0,foot.y)*.2,z*.83),p4=p3.clone().add(new THREE.Vector3(side*.06,-.14,.015)),p5=p4.clone().lerp(foot,.61).add(new THREE.Vector3(0,.12,0)),p6=p4.clone().lerp(foot,.91).add(new THREE.Vector3(0,.035,0)),points=[p0,p1,p2,p3,p4,p5,p6,foot];
+   const foot=toLocal(l.footWorld);if(capture&&i===0)foot.lerp(new THREE.Vector3(side*.38,1.35+capture.lift*1.05,-1.9),capture.grab);const hipZ=-.96+i*.27,p0=new THREE.Vector3(side*.45,.88,hipZ),p1=new THREE.Vector3(side*.62,.88,hipZ),p2=new THREE.Vector3(side*.76,1.03,hipZ+(z-hipZ)*.18),p3=new THREE.Vector3(side*reach*.73,1.40+Math.max(0,foot.y)*.2,z*.83),p4=p3.clone().add(new THREE.Vector3(side*.06,-.14,.015)),p5=p4.clone().lerp(foot,.61).add(new THREE.Vector3(0,.12,0)),p6=p4.clone().lerp(foot,.91).add(new THREE.Vector3(0,.035,0)),points=[p0,p1,p2,p3,p4,p5,p6,foot];
    for(let j=0;j<7;j++)between(l.links[j],points[j],points[j+1]);l.knee.position.copy(p3);l.ankle.position.copy(p5);
   }
   for(const p of palps){const spread=Math.sin(time*2.2+p.side)*.025,a=new THREE.Vector3(p.side*.43,.78,-1.05),b=new THREE.Vector3(p.side*(.65+spread),.70,-1.35),c=new THREE.Vector3(p.side*.55,.37,-1.65),d=new THREE.Vector3(p.side*.40,.25,-1.80);between(p.links[0],a,b);between(p.links[1],b,c);between(p.links[2],c,d);}
   eyeLight.intensity=mode==='chase'?.20:.045;
  }
- animate(0,0);return{g,body,legs,eyes,palps,spinnerets,animate};
+ animate(0,0);return{g,body,legs,eyes,palps,spinnerets,fangs,animate};
 }
