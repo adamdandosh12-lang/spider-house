@@ -9,7 +9,7 @@ class FakeAudio{constructor(){this.state='running';this.currentTime=0;this.sampl
 globalThis.AudioContext=FakeAudio;
 let src=fs.readFileSync(path.join(root,'game.js'),'utf8');src=src.replace(/from '(\.\/[^']+)'/g,(_,p)=>`from '${pathToFileURL(path.resolve(root,p)).href}'`);
 src=src.replace('new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:\'high-performance\'})',`({setPixelRatio(){},setSize(){},shadowMap:{},info:{render:{calls:0,triangles:0}},render(){}})`);
-src+=`\nglobalThis.qa={setAxeFloor:y=>axeFloor=y,axePickup,axeGlow,hauntedDolls,surfaceClimb,lose,spider,scene,houseGeometry,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
+src+=`\nglobalThis.qa={hauntedTV,setAxeFloor:y=>axeFloor=y,axePickup,axeGlow,hauntedDolls,surfaceClimb,lose,spider,scene,houseGeometry,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
 await import('data:text/javascript;base64,'+Buffer.from(src).toString('base64'));
 let now=performance.now();const step=(seconds)=>{for(let i=0;i<Math.ceil(seconds/.05);i++){now+=50;frame(now);calls++;}};
 assert.equal(gameDiagnostics().state,'menu');step(.2);
@@ -23,6 +23,7 @@ for(const h of qa.getHides()){
 }
 qa.start();
 assert.equal(qa.hauntedDolls.dolls.length,6);assert.ok(qa.axePickup.position.y-gameDiagnostics().axe.y<.7,'Axe rests low instead of floating');qa.setPlayer({x:0,z:10});step(.1);assert.equal(qa.axeGlow.visible,false,'No distant beacon');
+assert.ok(qa.scene.getObjectByName('Living room skull'));qa.hauntedTV.update(0);assert.equal(qa.hauntedTV.update(12),true);qa.hauntedTV.update(15);assert.ok(qa.hauntedTV.glow.intensity>0);qa.hauntedTV.reset();assert.equal(qa.hauntedTV.glow.intensity,0);
 console.log('Wider house: both floors gain walkable space and wall collisions match geometry');
 for(const [x,z,y=0]of qa.getAxeSpawns()){
  let reachable=false;for(let dx=-1.5;dx<=1.5;dx+=.5)for(let dz=-1.5;dz<=1.5;dz+=.5){if(qa.blocked(x+dx,z+dz,.3,y))continue;if(qa.route({x:0,z:10.5},{x:x+dx,y,z:z+dz}).length)reachable=true;}
