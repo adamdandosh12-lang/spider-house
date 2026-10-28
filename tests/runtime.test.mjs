@@ -18,11 +18,16 @@ qa.start();step(.1);assert.equal(gameDiagnostics().state,'playing');
 assert.equal(qa.houseGeometry.scale.x,1.8,'House geometry is widened');
 for(const y of [0,4.2]){const z=y?0:6;assert.ok(!qa.blocked(21,z,.3,y),'New outer floor space is walkable');assert.ok(qa.route({x:0,y:0,z:10.5},{x:21,y,z}).length,'Widened rooms stay connected');}
 assert.ok(qa.colliders.some(c=>Math.abs(c.x-23.4)<.001),'Outer wall collision matches widened geometry');
+for(const h of qa.getHides()){
+ qa.start();qa.setScenario({player:{x:h.x,y:h.y,z:h.z+1.5},spider:{x:0,z:10},time:0});assert.equal(qa.nearestInteraction()?.type,'hide');qa.interact();assert.equal(gameDiagnostics().hidden,true);assert.equal(element('hide-view').hidden,false);qa.interact();assert.equal(gameDiagnostics().hidden,false);assert.equal(element('hide-view').hidden,true);assert.ok(!qa.blocked(gameDiagnostics().player.x,gameDiagnostics().player.z,.3,h.y),'Exit position clear');
+}
+qa.start();
 console.log('Wider house: both floors gain walkable space and wall collisions match geometry');
 for(const [x,z,y=0]of qa.getAxeSpawns()){
  let reachable=false;for(let dx=-1.5;dx<=1.5;dx+=.5)for(let dz=-1.5;dz<=1.5;dz+=.5){if(qa.blocked(x+dx,z+dz,.3,y))continue;if(qa.route({x:0,z:10.5},{x:x+dx,y,z:z+dz}).length)reachable=true;}
  assert.ok(reachable,`Axe ${x},${z} must be reachable`);
 }
+assert.equal(qa.getHides().length,12,'One wardrobe per room');
 for(let h of qa.getHides()){assert.ok(qa.route({x:0,z:10.5},{x:h.x,y:h.y??0,z:h.z+1.5}).length,'Wardrobe entrance reachable');}
 qa.setScenario({player:{x:0,z:5},spider:{x:0,z:0},yaw:0,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Behind-spider test: no chase');
 qa.setScenario({player:{x:-7,z:5},spider:{x:0,z:5},yaw:Math.PI/2,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Actual house wall blocks sight');

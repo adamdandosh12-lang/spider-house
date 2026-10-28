@@ -1,5 +1,5 @@
 ﻿import {FLOOR_HEIGHT as H,upperRooms}from'./house-world.js';
-export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hides}){
+export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hides,wardrobe}){
  const before=new Set(scene.children),start=colliders.length;
  // The second floor has a real opening over the staircase, not a solid ceiling.
  const slabs=[];const slab=(w,d,x,z)=>{box(w,.22,d,0x342e29,x,H-.11,z);slabs.push({x,z,w,d,bottom:H-.22,top:H});};
@@ -31,7 +31,7 @@ export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hide
  }
  function bed(x,z,c){solid(3,.65,4,0x57422e,x,H+.33,z);box(2.9,.27,3.9,0xb8ac94,x,H+.8,z);box(2.95,.18,2.4,c,x,H+.98,z+.6);box(2.3,.16,.7,0xd3c8af,x,H+1,z-1.3);box(3.1,1.5,.15,0x57422e,x,H+.8,z-2);}
  bed(-9,-22,0x334f5f);bed(9,-22,0x775044);bed(-9,-.3,0x536047);
- for(const [x,z]of [[-5,-24.5],[5,-24.5],[-5,1.5],[5,-8]]){solid(1.3,2.8,1.2,0x5d4936,x,H+1.4,z);box(.05,.23,.08,0xc4a566,x+.2,H+1.4,z+.65);hides.push({x,y:H,z});}
+ for(const [x,z,name]of [[-5,-24.5,'בגדים'],[5,-24.5,'בגדי ילדים'],[-5,-13.5,'מגבות'],[5,-8,'מעילים'],[-5,1.5,'מצעים'],[5,1.5,'תחפושות']])wardrobe(x,H,z,name);
  // Bathroom: tub, toilet, basin and a framed mirror.
  solid(2.3,.75,4,0xaeb7ad,-10,H+.4,-11);box(1.8,.07,3.4,0x20383d,-10,H+.79,-11);box(2,.8,.8,0xb9b9aa,-6,H+.5,-14.7);box(1.5,.04,.55,0x2b393b,-6,H+.93,-14.7);box(1.8,1.4,.07,0x6f8995,-6,H+2,-15.8);solid(1,.65,1.4,0xc3c2b4,-11,H+.35,-6.7);box(.9,1.1,.3,0xc3c2b4,-11,H+.55,-7.4);
  // Office: desk, monitor, keyboard, papers and shelves.
