@@ -9,12 +9,16 @@ class FakeAudio{constructor(){this.state='running';this.currentTime=0;this.sampl
 globalThis.AudioContext=FakeAudio;
 let src=fs.readFileSync(path.join(root,'game.js'),'utf8');src=src.replace(/from '(\.\/[^']+)'/g,(_,p)=>`from '${pathToFileURL(path.resolve(root,p)).href}'`);
 src=src.replace('new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:\'high-performance\'})',`({setPixelRatio(){},setSize(){},shadowMap:{},info:{render:{calls:0,triangles:0}},render(){}})`);
-src+=`\nglobalThis.qa={scene,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
+src+=`\nglobalThis.qa={scene,houseGeometry,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
 await import('data:text/javascript;base64,'+Buffer.from(src).toString('base64'));
 let now=performance.now();const step=(seconds)=>{for(let i=0;i<Math.ceil(seconds/.05);i++){now+=50;frame(now);calls++;}};
 assert.equal(gameDiagnostics().state,'menu');step(.2);
 let meshCount=0,triangles=0;qa.scene.traverse(o=>{if(o.isMesh){meshCount++;triangles+=o.geometry.index?o.geometry.index.count/3:o.geometry.attributes.position.count/3;}});console.log('Scene constructed:',meshCount,'meshes;',Math.round(triangles),'triangles');
 qa.start();step(.1);assert.equal(gameDiagnostics().state,'playing');
+assert.equal(qa.houseGeometry.scale.x,1.4,'House geometry is widened');
+for(const y of [0,4.2]){const z=y?0:6;assert.ok(!qa.blocked(16,z,.3,y),'New outer floor space is walkable');assert.ok(qa.route({x:0,y:0,z:10.5},{x:16,y,z}).length,'Widened rooms stay connected');}
+assert.ok(qa.colliders.some(c=>Math.abs(c.x-18.2)<.001),'Outer wall collision matches widened geometry');
+console.log('Wider house: both floors gain walkable space and wall collisions match geometry');
 for(const [x,z,y=0]of qa.getAxeSpawns()){
  let reachable=false;for(let dx=-1.5;dx<=1.5;dx+=.5)for(let dz=-1.5;dz<=1.5;dz+=.5){if(qa.blocked(x+dx,z+dz,.3,y))continue;if(qa.route({x:0,z:10.5},{x:x+dx,y,z:z+dz}).length)reachable=true;}
  assert.ok(reachable,`Axe ${x},${z} must be reachable`);

@@ -1,0 +1,10 @@
+﻿# Spider art references — version 1.5
+
+The model in `dist/spider-model.js` is original procedural geometry and animation. These sources informed the anatomy and surface treatment; no source photograph or third-party 3D model is bundled in the game. The title background remains the image supplied by the user.
+
+- Australian Museum, **What is a spider?** — two main body sections, the narrow waist, eight legs, eyes, pedipalps, and spinnerets. https://australian.museum/learn/species-identification/ask-an-expert/what-is-a-spiders/
+- American Museum of Natural History, **Parts of a Spider: Dorsal View of a Male Spider** — the seven walking-leg segments and placement of appendages. https://www.amnh.org/learn-teach/curriculum-collections/biodiversity-counts/arthropod-identification/arthropod-morphology/parts-of-a-spider-dorsal-view-of-a-male-spider
+- Australian Museum, **Australian tarantulas** — heavy body, dark brown coloration and hair. https://australian.museum/learn/animals/spiders/australian-tarantulas/
+- Australian Museum, **Australian Funnel-web Spiders** — glossy front carapace, grouped eyes, dark coloration and rear spinnerets. https://australian.museum/learn/animals/spiders/funnel-web-spiders-group/
+
+The oversized scale and subtle red eye tint are artistic choices for the horror game. The model is inspired by these spider characteristics and is not an exact reconstruction of a single species.
