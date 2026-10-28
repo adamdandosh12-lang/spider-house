@@ -1,3 +1,4 @@
+import {buildSpiderLab} from './spider-lab.js';
 ﻿import {FLOOR_HEIGHT as H,upperRooms}from'./house-world.js';
 export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hides,wardrobe}){
  const before=new Set(scene.children),start=colliders.length;
@@ -20,7 +21,7 @@ export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hide
  colliders.push({x:-1.57,z:-19,w:.09,d:10,bottom:0,top:H+.9},{x:1.57,z:-19,w:.09,d:10,bottom:0,top:H+.9});
  // Three bedrooms and three distinct utility rooms, all with two-sided signs.
  for(const x of [-3,3])for(const [lo,hi]of [[-27,-22.5],[-20.5,-11.5],[-9.5,-1.5],[.5,4]])solid(.22,3.6,hi-lo,0x46504f,x,H+1.8,(lo+hi)/2);
- for(const x of [-8,8])for(const z of [-16,-5])solid(10,3.6,.22,0x424947,x,H+1.8,z);
+ for(const x of [-8,8])for(const z of [-16,-5])if(!(x>0&&z===-16))solid(10,3.6,.22,0x424947,x,H+1.8,z);
  for(const r of upperRooms){const side=Math.sign(r.x),doorZ=r.z;
   for(const zz of [doorZ-1.05,doorZ+1.05])box(.38,3,.15,0x57422e,side*3,H+1.5,zz);
   box(.4,.25,2.3,0x57422e,side*3,H+3.02,doorZ);
@@ -30,8 +31,8 @@ export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hide
   glow(0x91b9dc,2.6,11,side*11.5,H+2.5,r.z);
  }
  function bed(x,z,c){solid(3,.65,4,0x57422e,x,H+.33,z);box(2.9,.27,3.9,0xb8ac94,x,H+.8,z);box(2.95,.18,2.4,c,x,H+.98,z+.6);box(2.3,.16,.7,0xd3c8af,x,H+1,z-1.3);box(3.1,1.5,.15,0x57422e,x,H+.8,z-2);}
- bed(-9,-22,0x334f5f);bed(9,-22,0x775044);bed(-9,-.3,0x536047);
- for(const [x,z,name]of [[-5,-24.5,'בגדים'],[5,-24.5,'בגדי ילדים'],[-5,-13.5,'מגבות'],[5,-8,'מעילים'],[-5,1.5,'מצעים'],[5,1.5,'תחפושות']])wardrobe(x,H,z,name);
+ bed(-9,-22,0x334f5f);bed(-9,-.3,0x536047);
+ for(const [x,z,name]of [[-5,-24.5,'בגדים'],[5,-24.5,'חלוקי מעבדה'],[-5,-13.5,'מגבות'],[5,-8,'ציוד ניסויים'],[-5,1.5,'מצעים'],[5,1.5,'תחפושות']])wardrobe(x,H,z,name);
  // Bathroom: tub, toilet, basin and a framed mirror.
  solid(2.3,.75,4,0xaeb7ad,-10,H+.4,-11);box(1.8,.07,3.4,0x20383d,-10,H+.79,-11);box(2,.8,.8,0xb9b9aa,-6,H+.5,-14.7);box(1.5,.04,.55,0x2b393b,-6,H+.93,-14.7);box(1.8,1.4,.07,0x6f8995,-6,H+2,-15.8);solid(1,.65,1.4,0xc3c2b4,-11,H+.35,-6.7);box(.9,1.1,.3,0xc3c2b4,-11,H+.55,-7.4);
  // Office: desk, monitor, keyboard, papers and shelves.
@@ -43,5 +44,6 @@ export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hide
  // Landing signage and warm guiding lights.
  label('קומה שנייה',0,H+2.4,-26.7,0,'#ffcf98',2.5);label('מדרגות לקומה השנייה',0,2.9,-14.02,0,'#ffcf98',2.6);label('למטה: יציאה',0,H+2.5,-24.5,Math.PI,'#a9f2c2',2.5);
  glow(0xffba77,4,14,0,3.5,-19);glow(0xffb67c,4,12,0,H+2.7,-25);glow(0xffb67c,3,14,0,H+2.8,-9);glow(0xffb67c,3,12,0,H+2.8,1);
+ buildSpiderLab({THREE,scene,box,solid,label,glow});
  const objects=[...scene.children].filter(o=>!before.has(o));return{slabs,objects,newColliders:colliders.slice(start)};
 }

@@ -3,9 +3,9 @@ export const FLOOR_HEIGHT=4.2;
 export const STAIR={x:0,halfWidth:1.45*HOUSE_WIDTH_SCALE,bottomZ:-14,topZ:-24};
 export const upperRooms=[
  {name:'חדר שינה ראשי',x:-8,z:-21.5,row:0},
- {name:'חדר הילדים',x:8,z:-21.5,row:0},
+ {name:'מעבדת העכביש',x:8,z:-21.5,row:0},
  {name:'חדר רחצה',x:-8,z:-10.5,row:1},
- {name:'חדר עבודה',x:8,z:-10.5,row:1},
+ {name:'מעבדת העכביש',x:8,z:-10.5,row:1},
  {name:'חדר אורחים',x:-8,z:-.5,row:2},
  {name:'חדר משחקים',x:8,z:-.5,row:2}
 ].map(r=>({...r,x:r.x*HOUSE_WIDTH_SCALE}));

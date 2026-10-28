@@ -27,7 +27,7 @@ for(const [x,z,y=0]of qa.getAxeSpawns()){
  let reachable=false;for(let dx=-1.5;dx<=1.5;dx+=.5)for(let dz=-1.5;dz<=1.5;dz+=.5){if(qa.blocked(x+dx,z+dz,.3,y))continue;if(qa.route({x:0,z:10.5},{x:x+dx,y,z:z+dz}).length)reachable=true;}
  assert.ok(reachable,`Axe ${x},${z} must be reachable`);
 }
-assert.equal(qa.getHides().length,12,'One wardrobe per room');
+assert.equal(qa.getHides().length,12,'Twelve hiding wardrobes including two in the lab');
 for(let h of qa.getHides()){assert.ok(qa.route({x:0,z:10.5},{x:h.x,y:h.y??0,z:h.z+1.5}).length,'Wardrobe entrance reachable');}
 qa.setScenario({player:{x:0,z:5},spider:{x:0,z:0},yaw:0,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Behind-spider test: no chase');
 qa.setScenario({player:{x:-7,z:5},spider:{x:0,z:5},yaw:Math.PI/2,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Actual house wall blocks sight');
@@ -48,6 +48,7 @@ qa.setScenario({player:{x:0,y:4.2,z:-25},spider:{x:0,y:0,z:-13.2},yaw:0,time:20}
 step(.4);assert.equal(qa.getBrain().mode,'chase','Spider sees a player at the stair landing');
 step(5);assert.ok(gameDiagnostics().spider.y>3.6,'Spider must physically climb the stairs in a pursuit');
 console.log('Spider physically follows a visible player up the stairs');
+assert.ok(!qa.blocked(14.4,-16,.3,4.2),'Lab divider removed for one large room');assert.ok(qa.blocked(6.55*1.8,-21,.3,4.2),'Intact containment glass blocks movement');assert.ok(qa.route({x:0,y:0,z:10.5},{x:9*1.8,y:4.2,z:-17}).length,'Broken chamber front reachable');qa.setPlayer({x:14.4,y:4.2,z:-17});assert.ok(qa.roomName().includes('מעבדת העכביש'));assert.ok(qa.scene.getObjectByName('Anatomical skull specimen'));let glassVisible=false;qa.scene.traverse(o=>{if(o.isMesh&&o.material.transparent&&o.material.opacity===.2)glassVisible=true;});assert.ok(glassVisible,'Glass survives static batching');
 console.log('Two-floor integration: walk up/down, reach all six rooms, no vision through floors');
 qa.start();let axe=gameDiagnostics().axe;let found=false;for(let dx=-1.5;dx<=1.5&&!found;dx+=.5)for(let dz=-1.5;dz<=1.5&&!found;dz+=.5){let p={x:axe.x+dx,y:axe.y,z:axe.z+dz};if(qa.blocked(p.x,p.z,.3,p.y))continue;qa.setPlayer(p);if(qa.nearestInteraction()?.type==='axe'){qa.interact();found=true;}}
 assert.ok(found);assert.ok(gameDiagnostics().hasAxe);qa.setPlayer({x:0,z:12});for(let i=0;i<4;i++){qa.interact();if(i<3)step(.6);}assert.equal(gameDiagnostics().state,'won');assert.equal(gameDiagnostics().hits,4);console.log('Full objective flow: pick up axe → break four boards → escape');
