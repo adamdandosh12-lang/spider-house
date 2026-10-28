@@ -1,3 +1,4 @@
+import {addBrokenHouse} from './broken-house.js';
 import {addHauntedDolls} from './haunted-dolls.js';
 import {addHouseWebs} from './house-webs.js';
 import {wardrobeBuilder} from './wardrobes.js';
@@ -132,6 +133,7 @@ function roomName(){
  if(Math.abs(player.x)<3*HOUSE_WIDTH_SCALE)return 'קומת כניסה · מסדרון';return 'קומת כניסה · '+(player.x<0?(player.z>4.5?'חדר השינה':player.z< -4.5?'הספרייה':'חדר האוכל'):(player.z>4.5?'המטבח':player.z< -4.5?'הסדנה':'הסלון'));
 }
 const houseWebs=addHouseWebs(scene);
+const brokenHouse=addBrokenHouse(scene);
 const updateHouseArt=decorateHouse({THREE,scene,materials,box,sphere,rod,glow});
 batchStatic(THREE,scene,new Set([exit,...boards,axePickup,heldAxe]));
 const roomLights=scene.children.filter(o=>o.isPointLight);
