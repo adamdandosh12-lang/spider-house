@@ -1,7 +1,7 @@
 ﻿import * as THREE from './vendor/three.module.js';
 // Original anatomy-led model. References and attribution notes are in ART_REFERENCES.md.
 export function createSpider(scene){
- const g=new THREE.Group(),body=new THREE.Group();g.name='Eight Legs — naturalistic hunter';g.add(body);scene.add(g);
+ const g=new THREE.Group(),body=new THREE.Group();g.name='Eight Legs — naturalistic hunter';const surfaceFrame=new THREE.Group();g.add(surfaceFrame);surfaceFrame.add(body);scene.add(g);
  let seed=9281;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
  function skinTextures(){const size=128,color=new Uint8Array(size*size*4),bump=new Uint8Array(size*size*4);
   for(let y=0;y<size;y++)for(let x=0;x<size;x++){const i=(y*size+x)*4,fleck=rnd(),wave=Math.sin(x*.21+Math.sin(y*.13)*2)*Math.sin(y*.17),v=26+wave*6+fleck*12;color.set([v*1.15,v,v*.85,255],i);let grain=100+fleck*65;bump.set([grain,grain,grain,255],i);}
@@ -51,7 +51,8 @@ export function createSpider(scene){
  const spinnerets=[];for(const side of [-1,1])for(let i=0;i<2;i++){const part=orb(.065,joints,side*(i?.15:.28),.77,.88+1.04+i*.05,.8,.8,i?2.3:3.4);part.rotation.x=.2;spinnerets.push(part);}
  const eyeLight=new THREE.PointLight(0x9d2512,.08,2.8);eyeLight.position.set(0,1.1,-1.2);body.add(eyeLight);
  let phase=0,previous=g.position.clone(),previousYaw=0;
- function animate(time,dt,moving=false,mode='patrol',blocked=null,floorHeight=null,capture=null){
+ function animate(time,dt,moving=false,mode='patrol',blocked=null,floorHeight=null,capture=null,surfaceAngle=0){
+  surfaceFrame.rotation.z=surfaceAngle;
   const traveled=g.position.distanceTo(previous),turn=Math.atan2(Math.sin(g.rotation.y-previousYaw),Math.cos(g.rotation.y-previousYaw)),teleported=traveled>1.5;previous.copy(g.position);previousYaw=g.rotation.y;
   const stepping=moving||Math.abs(turn)>.004;phase+=stepping?Math.min(traveled,.3)*5.0+Math.min(Math.abs(turn),.2)*.75:0;
   body.position.z=capture?-capture.bite*.34:0;for(const f of fangs){f.pivot.rotation.x=capture?-capture.open*.8+capture.bite*.35:0;f.pivot.rotation.z=capture?f.side*(capture.open*.65-capture.bite*.22):0;}
@@ -63,11 +64,11 @@ export function createSpider(scene){
    if(!l.footWorld||teleported||l.footWorld.distanceTo(g.position)>3.35){l.footWorld=target.clone();l.swinging=false;}
    const cycle=((phase/(Math.PI*2)+(i%2)*.5+(side>0?.5:0))%1+1)%1,swinging=stepping&&cycle>.62;
    if(swinging){if(!l.swinging){l.from=l.footWorld.clone();l.to=target.clone();}const u=(cycle-.62)/.38,ease=u*u*(3-2*u);l.footWorld.copy(l.from).lerp(l.to,ease);l.footWorld.y+=Math.sin(u*Math.PI)*.20;}else if(l.swinging)l.footWorld.copy(l.to);l.swinging=swinging;
-   const foot=toLocal(l.footWorld);if(capture&&i===0)foot.lerp(new THREE.Vector3(side*.38,1.35+capture.lift*1.05,-1.9),capture.grab);const hipZ=-.96+i*.27,p0=new THREE.Vector3(side*.45,.88,hipZ),p1=new THREE.Vector3(side*.62,.88,hipZ),p2=new THREE.Vector3(side*.76,1.03,hipZ+(z-hipZ)*.18),p3=new THREE.Vector3(side*reach*.73,1.40+Math.max(0,foot.y)*.2,z*.83),p4=p3.clone().add(new THREE.Vector3(side*.06,-.14,.015)),p5=p4.clone().lerp(foot,.61).add(new THREE.Vector3(0,.12,0)),p6=p4.clone().lerp(foot,.91).add(new THREE.Vector3(0,.035,0)),points=[p0,p1,p2,p3,p4,p5,p6,foot];
+   const foot=surfaceAngle?new THREE.Vector3(side*reach,.045+Math.max(0,Math.sin(time*5+i*Math.PI+side))* .14,z-.28):toLocal(l.footWorld);if(capture&&i===0)foot.lerp(new THREE.Vector3(side*.38,1.35+capture.lift*1.05,-1.9),capture.grab);const hipZ=-.96+i*.27,p0=new THREE.Vector3(side*.45,.88,hipZ),p1=new THREE.Vector3(side*.62,.88,hipZ),p2=new THREE.Vector3(side*.76,1.03,hipZ+(z-hipZ)*.18),p3=new THREE.Vector3(side*reach*.73,1.40+Math.max(0,foot.y)*.2,z*.83),p4=p3.clone().add(new THREE.Vector3(side*.06,-.14,.015)),p5=p4.clone().lerp(foot,.61).add(new THREE.Vector3(0,.12,0)),p6=p4.clone().lerp(foot,.91).add(new THREE.Vector3(0,.035,0)),points=[p0,p1,p2,p3,p4,p5,p6,foot];
    for(let j=0;j<7;j++)between(l.links[j],points[j],points[j+1]);l.knee.position.copy(p3);l.ankle.position.copy(p5);
   }
   for(const p of palps){const spread=Math.sin(time*2.2+p.side)*.025,a=new THREE.Vector3(p.side*.43,.78,-1.05),b=new THREE.Vector3(p.side*(.65+spread),.70,-1.35),c=new THREE.Vector3(p.side*.55,.37,-1.65),d=new THREE.Vector3(p.side*.40,.25,-1.80);between(p.links[0],a,b);between(p.links[1],b,c);between(p.links[2],c,d);}
   eyeLight.intensity=mode==='chase'?.20:.045;
  }
- animate(0,0);return{g,body,legs,eyes,palps,spinnerets,fangs,animate};
+ animate(0,0);return{g,body,surfaceFrame,legs,eyes,palps,spinnerets,fangs,animate};
 }

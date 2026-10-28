@@ -9,15 +9,15 @@ class FakeAudio{constructor(){this.state='running';this.currentTime=0;this.sampl
 globalThis.AudioContext=FakeAudio;
 let src=fs.readFileSync(path.join(root,'game.js'),'utf8');src=src.replace(/from '(\.\/[^']+)'/g,(_,p)=>`from '${pathToFileURL(path.resolve(root,p)).href}'`);
 src=src.replace('new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:\'high-performance\'})',`({setPixelRatio(){},setSize(){},shadowMap:{},info:{render:{calls:0,triangles:0}},render(){}})`);
-src+=`\nglobalThis.qa={lose,spider,scene,houseGeometry,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
+src+=`\nglobalThis.qa={surfaceClimb,lose,spider,scene,houseGeometry,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
 await import('data:text/javascript;base64,'+Buffer.from(src).toString('base64'));
 let now=performance.now();const step=(seconds)=>{for(let i=0;i<Math.ceil(seconds/.05);i++){now+=50;frame(now);calls++;}};
 assert.equal(gameDiagnostics().state,'menu');step(.2);
 let meshCount=0,triangles=0;qa.scene.traverse(o=>{if(o.isMesh){meshCount++;triangles+=o.geometry.index?o.geometry.index.count/3:o.geometry.attributes.position.count/3;}});console.log('Scene constructed:',meshCount,'meshes;',Math.round(triangles),'triangles');
 qa.start();step(.1);assert.equal(gameDiagnostics().state,'playing');
-assert.equal(qa.houseGeometry.scale.x,1.4,'House geometry is widened');
-for(const y of [0,4.2]){const z=y?0:6;assert.ok(!qa.blocked(16,z,.3,y),'New outer floor space is walkable');assert.ok(qa.route({x:0,y:0,z:10.5},{x:16,y,z}).length,'Widened rooms stay connected');}
-assert.ok(qa.colliders.some(c=>Math.abs(c.x-18.2)<.001),'Outer wall collision matches widened geometry');
+assert.equal(qa.houseGeometry.scale.x,1.8,'House geometry is widened');
+for(const y of [0,4.2]){const z=y?0:6;assert.ok(!qa.blocked(21,z,.3,y),'New outer floor space is walkable');assert.ok(qa.route({x:0,y:0,z:10.5},{x:21,y,z}).length,'Widened rooms stay connected');}
+assert.ok(qa.colliders.some(c=>Math.abs(c.x-23.4)<.001),'Outer wall collision matches widened geometry');
 console.log('Wider house: both floors gain walkable space and wall collisions match geometry');
 for(const [x,z,y=0]of qa.getAxeSpawns()){
  let reachable=false;for(let dx=-1.5;dx<=1.5;dx+=.5)for(let dz=-1.5;dz<=1.5;dz+=.5){if(qa.blocked(x+dx,z+dz,.3,y))continue;if(qa.route({x:0,z:10.5},{x:x+dx,y,z:z+dz}).length)reachable=true;}
@@ -25,11 +25,11 @@ for(const [x,z,y=0]of qa.getAxeSpawns()){
 }
 for(let h of qa.getHides()){assert.ok(qa.route({x:0,z:10.5},{x:h.x,y:h.y??0,z:h.z+1.5}).length,'Wardrobe entrance reachable');}
 qa.setScenario({player:{x:0,z:5},spider:{x:0,z:0},yaw:0,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Behind-spider test: no chase');
-qa.setScenario({player:{x:-5,z:5},spider:{x:0,z:5},yaw:Math.PI/2,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Actual house wall blocks sight');
+qa.setScenario({player:{x:-7,z:5},spider:{x:0,z:5},yaw:Math.PI/2,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Actual house wall blocks sight');
 qa.setScenario({player:{x:0,z:-5},spider:{x:0,z:0},yaw:0,time:20});step(.4);assert.equal(qa.getBrain().mode,'chase');let lastSeen=qa.getBrain().lastSeen;
-qa.setPlayer({x:6,z:5});step(.4);assert.deepEqual(qa.getBrain().target,lastSeen);console.log('Lost-sight test: follows last seen location');
+qa.setPlayer({x:8,z:5});step(.4);assert.deepEqual(qa.getBrain().target,lastSeen);console.log('Lost-sight test: follows last seen location');
 qa.setHidden(true);step(13);assert.equal(qa.getBrain().mode,'patrol');console.log('Hiding test: search times out and patrol resumes');
-qa.setScenario({player:{x:-5,z:5},spider:{x:0,z:0},yaw:0,time:20});qa.emitSound(0,-5,10);step(.1);assert.equal(qa.getBrain().mode,'investigate');assert.deepEqual(qa.getBrain().target,{x:0,y:0,z:-5});console.log('Sound investigation test passed');
+qa.setScenario({player:{x:-7,z:5},spider:{x:0,z:0},yaw:0,time:20});qa.emitSound(0,-5,10);step(.1);assert.equal(qa.getBrain().mode,'investigate');assert.deepEqual(qa.getBrain().target,{x:0,y:0,z:-5});console.log('Sound investigation test passed');
 // Walk the actual ramp in both directions and verify floor separation.
 qa.setScenario({player:{x:0,z:-13.5},spider:{x:8,z:8},time:0});
 for(let z=-13.6;z>=-25;z-=.1)assert.ok(qa.tryPlayerMove(0,z),'Stairs must allow every upward step');
@@ -56,4 +56,5 @@ for(const floor of [0,4.2]){
 }
 qa.lose();step(.5);qa.start();step(3.2);assert.equal(gameDiagnostics().state,'playing','Restart cancels unfinished capture');
 console.log('Capture: lift, front legs, fangs, bite, loss and restart verified on both floors');
+qa.start();qa.setScenario({player:{x:-18,z:10},spider:{...qa.surfaceClimb.anchor,x:qa.surfaceClimb.anchor.x-.8},time:20});step(9.5);assert.ok(gameDiagnostics().spider.y>3.5,'Spider reaches actual ceiling');assert.ok(qa.spider.surfaceFrame.rotation.z>3,'Spider hangs upside down');step(12);assert.ok(gameDiagnostics().spider.y<.1,'Spider returns to ground');qa.start();assert.equal(qa.spider.surfaceFrame.rotation.z,0);assert.equal(qa.surfaceClimb.active,false);
 qa.menu();step(.1);console.log('PASS: runtime and navigation checks;',calls,'simulation frames. Renderer/DOM replaced with local stubs: visual/GPU QA not performed.');
