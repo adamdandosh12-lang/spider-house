@@ -1,0 +1,10 @@
+import * as THREE from './vendor/three.module.js';
+export function addHauntedDolls(scene,colliders){const dolls=[];const cloth=new THREE.MeshStandardMaterial({color:0x696355,roughness:1}),porcelain=new THREE.MeshStandardMaterial({color:0xb9ad93,roughness:.7}),button=new THREE.MeshStandardMaterial({color:0x161b1a,roughness:.4});
+ for(const [x,y,z]of [[-11.8,0,-9],[11.8,0,6],[-6,0,3],[-11.8,4.2,-19],[11,4.2,-6],[6,4.2,2.5]]){const g=new THREE.Group();g.name='Web-covered doll';g.position.set(x,y,z);scene.add(g);const head=new THREE.Group();head.position.y=.91;head.rotation.z=.14;g.add(head);
+ function ball(parent,material,x,y,z,sx,sy,sz){const m=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),material);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.castShadow=true;parent.add(m);}
+ ball(g,cloth,0,.5,0,.22,.32,.16);ball(head,porcelain,0,0,0,.23,.27,.2);for(const side of [-1,1]){ball(head,button,side*.085,.035,.182,.045,.05,.025);ball(g,cloth,side*.3,.47,0,.08,.25,.08);ball(g,cloth,side*.12,.16,.09,.085,.18,.1);}
+ const lines=[];const line=(a,b)=>lines.push(...a,...b);for(let i=0;i<5;i++)line([-.08+i*.04,-.1,.185],[-.07+i*.04,-.14,.185]);const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(lines,3));head.add(new THREE.LineSegments(geo,new THREE.LineBasicMaterial({color:0x40372c})));
+ const silk=[];for(let i=0;i<10;i++){const h=.18+i*.105;silk.push(-.38,h,.24,.37,1.18-h*.55,.24);silk.push(-.38,h,.24,-.2,h+.2,.2);}silk.push(-.3,1.1,.1,-.5,2.8,0,.3,1.1,0,.5,2.5,-.1);const web=new THREE.BufferGeometry();web.setAttribute('position',new THREE.Float32BufferAttribute(silk,3));g.add(new THREE.LineSegments(web,new THREE.LineBasicMaterial({color:0xbdc4bb,transparent:true,opacity:.45})));
+ colliders.push({x,z,w:.65,d:.5,bottom:y,top:y+1.2});dolls.push({g,head,x,y,z});
+ }
+ return{dolls,update(time){for(let i=0;i<dolls.length;i++){dolls[i].head.rotation.y=Math.sin(time*.19+i*2)*.22;dolls[i].head.rotation.z=.14+Math.sin(time*.13+i)*.025;}}};}

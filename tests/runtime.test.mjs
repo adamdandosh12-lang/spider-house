@@ -9,28 +9,30 @@ class FakeAudio{constructor(){this.state='running';this.currentTime=0;this.sampl
 globalThis.AudioContext=FakeAudio;
 let src=fs.readFileSync(path.join(root,'game.js'),'utf8');src=src.replace(/from '(\.\/[^']+)'/g,(_,p)=>`from '${pathToFileURL(path.resolve(root,p)).href}'`);
 src=src.replace('new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:\'high-performance\'})',`({setPixelRatio(){},setSize(){},shadowMap:{},info:{render:{calls:0,triangles:0}},render(){}})`);
-src+=`\nglobalThis.qa={surfaceClimb,lose,spider,scene,houseGeometry,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
+src+=`\nglobalThis.qa={setAxeFloor:y=>axeFloor=y,axePickup,axeGlow,hauntedDolls,surfaceClimb,lose,spider,scene,houseGeometry,colliders,route,blocked,tryPlayerMove,world,roomName,upperRooms,nearestInteraction,interact,start,menu,sight,getCamera:()=>camera,stepHouse:updateHouseArt,setScenario(opts){if(opts.player)player.set(opts.player.x,(opts.player.y??0)+1.65,opts.player.z);if(opts.spider)spider.g.position.set(opts.spider.x,opts.spider.y??0,opts.spider.z);if(opts.yaw!==undefined)spider.g.rotation.y=opts.yaw;if(opts.time!==undefined)elapsed=opts.time;brain=createBrain(patrolPoints,()=>0);aiStatus={mode:'patrol',notice:0};path=[];pathTick=0;hidden=false;soundEvents=[];keys={};},setPlayer(p){player.set(p.x,(p.y??0)+1.65,p.z);},setHidden(h){hidden=h;hideSpot=hides[0];},emitSound,getBrain:()=>brain.snapshot(),getHides:()=>hides,getAxeSpawns:()=>axeSpawns};`;
 await import('data:text/javascript;base64,'+Buffer.from(src).toString('base64'));
 let now=performance.now();const step=(seconds)=>{for(let i=0;i<Math.ceil(seconds/.05);i++){now+=50;frame(now);calls++;}};
 assert.equal(gameDiagnostics().state,'menu');step(.2);
 let meshCount=0,triangles=0;qa.scene.traverse(o=>{if(o.isMesh){meshCount++;triangles+=o.geometry.index?o.geometry.index.count/3:o.geometry.attributes.position.count/3;}});console.log('Scene constructed:',meshCount,'meshes;',Math.round(triangles),'triangles');
 qa.start();step(.1);assert.equal(gameDiagnostics().state,'playing');
-assert.equal(qa.houseGeometry.scale.x,1.8,'House geometry is widened');
-for(const y of [0,4.2]){const z=y?0:6;assert.ok(!qa.blocked(21,z,.3,y),'New outer floor space is walkable');assert.ok(qa.route({x:0,y:0,z:10.5},{x:21,y,z}).length,'Widened rooms stay connected');}
-assert.ok(qa.colliders.some(c=>Math.abs(c.x-23.4)<.001),'Outer wall collision matches widened geometry');
+assert.equal(qa.houseGeometry.scale.x,2.1,'House geometry is widened');
+for(const y of [0,4.2]){const z=y?0:8;assert.ok(!qa.blocked(24,z,.3,y),'New outer floor space is walkable');assert.ok(qa.route({x:0,y:0,z:10.5},{x:24,y,z}).length,'Widened rooms stay connected');}
+assert.ok(qa.colliders.some(c=>Math.abs(c.x-27.3)<.001),'Outer wall collision matches widened geometry');
 for(const h of qa.getHides()){
  qa.start();qa.setScenario({player:{x:h.x,y:h.y,z:h.z+1.5},spider:{x:0,z:10},time:0});assert.equal(qa.nearestInteraction()?.type,'hide');qa.interact();assert.equal(gameDiagnostics().hidden,true);assert.equal(element('hide-view').hidden,false);qa.interact();assert.equal(gameDiagnostics().hidden,false);assert.equal(element('hide-view').hidden,true);assert.ok(!qa.blocked(gameDiagnostics().player.x,gameDiagnostics().player.z,.3,h.y),'Exit position clear');
 }
 qa.start();
+assert.equal(qa.hauntedDolls.dolls.length,6);assert.ok(qa.axePickup.position.y-gameDiagnostics().axe.y<.7,'Axe rests low instead of floating');qa.setPlayer({x:0,z:10});step(.1);assert.equal(qa.axeGlow.visible,false,'No distant beacon');
 console.log('Wider house: both floors gain walkable space and wall collisions match geometry');
 for(const [x,z,y=0]of qa.getAxeSpawns()){
  let reachable=false;for(let dx=-1.5;dx<=1.5;dx+=.5)for(let dz=-1.5;dz<=1.5;dz+=.5){if(qa.blocked(x+dx,z+dz,.3,y))continue;if(qa.route({x:0,z:10.5},{x:x+dx,y,z:z+dz}).length)reachable=true;}
  assert.ok(reachable,`Axe ${x},${z} must be reachable`);
+ qa.start();qa.setAxeFloor(y);qa.axePickup.position.set(x,y+.57,z);let collected=false;for(let dx=-1;dx<=1&&!collected;dx+=.25)for(let dz=-1;dz<=1&&!collected;dz+=.25){if(qa.blocked(x+dx,z+dz,.3,y))continue;qa.setPlayer({x:x+dx,y,z:z+dz});if(qa.nearestInteraction()?.type==='axe')collected=true;}assert.ok(collected,'Hidden axe has an accessible pickup position');
 }
 assert.equal(qa.getHides().length,12,'Twelve hiding wardrobes including two in the lab');
 for(let h of qa.getHides()){assert.ok(qa.route({x:0,z:10.5},{x:h.x,y:h.y??0,z:h.z+1.5}).length,'Wardrobe entrance reachable');}
 qa.setScenario({player:{x:0,z:5},spider:{x:0,z:0},yaw:0,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Behind-spider test: no chase');
-qa.setScenario({player:{x:-7,z:5},spider:{x:0,z:5},yaw:Math.PI/2,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Actual house wall blocks sight');
+qa.setScenario({player:{x:-8,z:5},spider:{x:0,z:5},yaw:Math.PI/2,time:20});step(.4);assert.equal(qa.getBrain().mode,'patrol');console.log('Actual house wall blocks sight');
 qa.setScenario({player:{x:0,z:-5},spider:{x:0,z:0},yaw:0,time:20});step(.4);assert.equal(qa.getBrain().mode,'chase');let lastSeen=qa.getBrain().lastSeen;
 qa.setPlayer({x:8,z:5});step(.4);assert.deepEqual(qa.getBrain().target,lastSeen);console.log('Lost-sight test: follows last seen location');
 qa.setHidden(true);step(13);assert.equal(qa.getBrain().mode,'patrol');console.log('Hiding test: search times out and patrol resumes');
@@ -48,7 +50,7 @@ qa.setScenario({player:{x:0,y:4.2,z:-25},spider:{x:0,y:0,z:-13.2},yaw:0,time:20}
 step(.4);assert.equal(qa.getBrain().mode,'chase','Spider sees a player at the stair landing');
 step(5);assert.ok(gameDiagnostics().spider.y>3.6,'Spider must physically climb the stairs in a pursuit');
 console.log('Spider physically follows a visible player up the stairs');
-assert.ok(!qa.blocked(14.4,-16,.3,4.2),'Lab divider removed for one large room');assert.ok(qa.blocked(6.55*1.8,-21,.3,4.2),'Intact containment glass blocks movement');assert.ok(qa.route({x:0,y:0,z:10.5},{x:9*1.8,y:4.2,z:-17}).length,'Broken chamber front reachable');qa.setPlayer({x:14.4,y:4.2,z:-17});assert.ok(qa.roomName().includes('מעבדת העכביש'));assert.ok(qa.scene.getObjectByName('Anatomical skull specimen'));let glassVisible=false;qa.scene.traverse(o=>{if(o.isMesh&&o.material.transparent&&o.material.opacity===.2)glassVisible=true;});assert.ok(glassVisible,'Glass survives static batching');
+assert.ok(!qa.blocked(14.4,-16,.3,4.2),'Lab divider removed for one large room');assert.ok(qa.blocked(6.55*2.1,-21,.3,4.2),'Intact containment glass blocks movement');assert.ok(qa.route({x:0,y:0,z:10.5},{x:9*2.1,y:4.2,z:-17}).length,'Broken chamber front reachable');qa.setPlayer({x:14.4,y:4.2,z:-17});assert.ok(qa.roomName().includes('מעבדת העכביש'));assert.ok(qa.scene.getObjectByName('Anatomical skull specimen'));let glassVisible=false;qa.scene.traverse(o=>{if(o.isMesh&&o.material.transparent&&o.material.opacity===.2)glassVisible=true;});assert.ok(glassVisible,'Glass survives static batching');
 console.log('Two-floor integration: walk up/down, reach all six rooms, no vision through floors');
 qa.start();let axe=gameDiagnostics().axe;let found=false;for(let dx=-1.5;dx<=1.5&&!found;dx+=.5)for(let dz=-1.5;dz<=1.5&&!found;dz+=.5){let p={x:axe.x+dx,y:axe.y,z:axe.z+dz};if(qa.blocked(p.x,p.z,.3,p.y))continue;qa.setPlayer(p);if(qa.nearestInteraction()?.type==='axe'){qa.interact();found=true;}}
 assert.ok(found);assert.ok(gameDiagnostics().hasAxe);qa.setPlayer({x:0,z:12});for(let i=0;i<4;i++){qa.interact();if(i<3)step(.6);}assert.equal(gameDiagnostics().state,'won');assert.equal(gameDiagnostics().hits,4);console.log('Full objective flow: pick up axe → break four boards → escape');
