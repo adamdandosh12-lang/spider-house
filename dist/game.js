@@ -74,7 +74,7 @@ let climbState=null;
 let jumpscare=createJumpscare();
 let catchOrigin=new THREE.Vector3(),catchDirection=new THREE.Vector3(),bitePlayed=false;
 let state='menu',difficulty='normal',hasAxe=false,hits=0,stamina=100,elapsed=0,yaw=0,pitch=0,keys={},hidden=false,hideSpot=null,lightOn=true,path=[],pathTick=0,stepTick=0,spiderStep=0,swing=0,caughtTime=0,toastTime=0,touchVec={x:0,y:0},lastPos=new THREE.Vector3(),runCount=0;
-const patrolPoints=[{x:-8,y:-FLOOR_HEIGHT,z:-25},{x:0,y:-FLOOR_HEIGHT,z:-34},{x:((3-.12)*HOUSE_WIDTH_SCALE-1.2)/HOUSE_WIDTH_SCALE,y:0,z:5},{x:-7,y:0,z:-9},{x:7,y:0,z:-9},{x:0,y:0,z:9},{x:-6,y:0,z:0},{x:6,y:0,z:9},{x:0,y:0,z:-11},{x:0,y:FLOOR_HEIGHT,z:-25.5},{x:-6,y:FLOOR_HEIGHT,z:-22},{x:6,y:FLOOR_HEIGHT,z:-10},{x:-6,y:FLOOR_HEIGHT,z:0}];
+const patrolPoints=[{x:0,y:0,z:-9},{x:0,y:0,z:8},{x:6,y:0,z:8},{x:0,y:0,z:0},{x:-6,y:0,z:0},{x:-8,y:0,z:-12.5},{x:-8,y:-FLOOR_HEIGHT,z:-25},{x:0,y:-FLOOR_HEIGHT,z:-34},{x:-8,y:-FLOOR_HEIGHT,z:-25},{x:-8,y:0,z:-12.5},{x:0,y:0,z:-11},{x:0,y:FLOOR_HEIGHT,z:-25.5},{x:-6,y:FLOOR_HEIGHT,z:-22},{x:6,y:FLOOR_HEIGHT,z:-10},{x:-6,y:FLOOR_HEIGHT,z:0},{x:0,y:0,z:0},{x:((3-.12)*HOUSE_WIDTH_SCALE-1.2)/HOUSE_WIDTH_SCALE,y:0,z:5}];
 let brain=createBrain(patrolPoints),aiStatus={mode:'sleep',notice:0},soundEvents=[],soundId=0,runNoiseTick=0;
 function emitSound(x,z,radius,y=player.y-1.65){soundEvents.push({id:++soundId,x,y,z,radius,expires:elapsed+1});if(soundEvents.length>8)soundEvents.shift();}
 function sight(){if(surfaceClimb.active){spider.g.updateMatrixWorld(true);const eye=spider.eyes[0].getWorldPosition(new THREE.Vector3());return !hidden&&inView(eye,spider.g.rotation.y,player,13,130)&&lineClear(eye,player,[...colliders,...upperHouse.slabs],eye.y,player.y);}return !hidden&&inView(spider.g.position,spider.g.rotation.y,player,13,aiStatus.mode==='chase'?130:110)&&visible(spider.g.position,player);}
@@ -175,7 +175,7 @@ let last=performance.now(),total=0;function animate(now){requestAnimationFrame(a
   if(path.length&&aiStatus.speedFactor>0){let p=path[0],dx=p.x-sp.x,dz=p.z-sp.z,dy=(p.y??0)-sp.y,d=Math.hypot(dx,dz,dy),step=Math.min(d,cfg.speed*aiStatus.speedFactor*dt);
    const angle=Math.atan2(-dx,-dz),delta=Math.atan2(Math.sin(angle-spider.g.rotation.y),Math.cos(angle-spider.g.rotation.y));spider.g.rotation.y+=delta*Math.min(1,dt*8);
    let nx=sp.x+dx/d*step,nz=sp.z+dz/d*step;
-   let ny=sp.y+dy/d*step;if(!blocked(nx,nz,.32,ny)){sp.x=nx;sp.y=ny;sp.z=nz;}else{pathTick=0;path=[];}
+   let ny=floorAt(nx,nz,sp.y,.3);if(ny!==null&&!blocked(nx,nz,.32,ny)){sp.x=nx;sp.y=ny;sp.z=nz;}else{pathTick=0;path=[];}
   }else if(aiStatus.mode==='search'){spider.g.rotation.y+=Math.sin(total*1.5)*dt*.75;}
  }
  const scare=jumpscare.update(dt,!hidden&&elapsed>cfg.grace&&dist>1.5&&dist<5.5&&inView(player,yaw,sp,6,85)&&visible(sp,player));
