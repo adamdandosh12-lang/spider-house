@@ -10,3 +10,5 @@
 .modal-card{max-height:88vh;overflow-y:auto;}
 
 .archive-record{margin:18px 0;border:1px solid #55665b;background:#111b1c;padding:10px}.archive-record svg{display:block;width:100%;height:auto}.archive-record figcaption{padding:10px 4px 0}.archive-record strong{color:#c8d4ba}.archive-record p{margin:7px 0;font-size:14px}
+
+.archive-desktop{cursor:auto;background:#101c1d;padding:12px;border:2px solid #52635a;border-radius:5px}.archive-thumbnails{display:flex;gap:8px}.archive-thumbnails button{width:33.33%;padding:5px;background:#273633;border:2px solid transparent;font-size:11px}.archive-thumbnails button[aria-pressed="true"]{border-color:#d8b37a}.archive-thumbnails svg{width:100%;display:block;pointer-events:none}.archive-nav{display:flex;align-items:center;gap:8px;justify-content:space-between}.archive-nav .outline{width:auto;margin:0;padding:9px}
