@@ -11,7 +11,7 @@ export const ARCHIVE_HTML='<p>ארכיון המעבדה · שלוש תמונות
  ['02 · התא נפרץ','הזכוכית נשברה מבפנים. כשהצוות חזר, התא כבר היה ריק.'],
  ['03 · השוטרים הגיעו','השוטרים ניסו לעצור את העכביש בירי. הדיווח האחרון נקטע. לא ידוע לאן הוא ברח.']
 ].map(([title,caption],i)=>'<figure class="archive-record">'+recordImage(i)+'<figcaption><strong>'+title+'</strong><p>'+caption+'</p></figcaption></figure>').join('')+'<p>הערה אחרונה: אל תישארו כאן. חפשו דרך לצאת.</p>';
-export function buildArchiveDesk({THREE,scene,box,solid,glow,label}){const H=-4.2;
+export function buildArchiveDesk({THREE,scene,box,solid,glow,label}){const H=-4.2;label('מחשב הארכיון — E ליד הכיסא',6,H+2.1,-36.8,0,'#bed4b8',2.6);
  solid(2.4,.12,1.2,0x5b4e3c,6,H+.9,-36.5);for(const x of [5,7])for(const z of [-36.95,-36.05])box(.1,.88,.1,0x373d37,x,H+.44,z);
  box(.85,.055,.6,0x273337,6,H+1,-36.45);const screen=box(.88,.58,.045,0x1b2529,6,H+1.29,-36.72);screen.rotation.x=-.12;box(.75,.45,.02,0x365857,6,H+1.29,-36.68);for(let i=0;i<9;i++)box(.055,.012,.18,0x6a7772,5.66+i*.08,H+1.036,-36.43);label('ארכיון 08',6,H+1.3,-36.65,0,'#bed4b8',.65);glow(0x81b6ae,.8,4,6,H+1.5,-36);
  solid(.85,.6,.8,0x4b493d,6,H+.3,-35.2);box(.85,.9,.12,0x4b493d,6,H+.9,-34.85);return{x:6,y:H,z:-34.7};}
