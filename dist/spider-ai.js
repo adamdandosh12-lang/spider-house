@@ -19,6 +19,7 @@ export function createBrain(patrolPoints,rng=Math.random){
  let mode='patrol',target=copy(patrolPoints[0]),lastSeen=null,lostFor=0,searchFor=0,investigateFor=0,notice=0,wait=0,lastNoise=-1,patrolIndex=0;
  const nextPatrol=()=>{patrolIndex=(patrolIndex+1)%patrolPoints.length;target=copy(patrolPoints[patrolIndex]);mode='patrol';wait=.6;};
  return{
+  skipPatrol(){if(mode==='patrol')nextPatrol();},
   update(dt,{position,visiblePosition=null,heardNoise=null,awake=true}){
    if(!awake)return{mode:'sleep',target:null,speedFactor:0,notice:0};
    wait=Math.max(0,wait-dt);
