@@ -1,5 +1,6 @@
 import {FLOOR_HEIGHT as H} from './house-world.js';
 export function buildSpiderLab({THREE,scene,box,solid,label,glow}){
+ solid(2.5,2.3,.6,0x443b2d,5, H+1.15,-15.4);for(const y of [.45,1.1,1.75])box(2.55,.07,.72,0x7a684b,5,H+y,-15.35);label('הכלים שתצטרך',5,H+2.75,-15.02,0,'#d8c48f',2.6);label('פנס וגרזן כדי לברוח',5,H+2.4,-15.01,0,'#c3d2b3',2.6);
  const metal=new THREE.MeshStandardMaterial({color:0x344448,metalness:.65,roughness:.42});
  const glass=new THREE.MeshPhysicalMaterial({color:0x8cc5c9,transparent:true,opacity:.2,roughness:.15,metalness:.05,side:THREE.DoubleSide,depthWrite:false});
  const cyan=new THREE.MeshBasicMaterial({color:0x63b9bb}),dark=new THREE.MeshStandardMaterial({color:0x101b21,roughness:.65});
