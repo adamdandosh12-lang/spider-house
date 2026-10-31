@@ -7,10 +7,10 @@ export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hide
  slab(11.4,31,-7.3,-11.5);slab(11.4,31,7.3,-11.5);slab(3.2,3,0,-25.5);slab(3.2,18,0,-5);
  box(26,.18,31,0x252b30,0,H+3.65,-11.5);
  for(const x of [-13,13])solid(.35,3.6,31,0x46504f,x,H+1.8,-11.5);
- for(const z of [-27,4])solid(26,3.6,.3,0x344046,0,H+1.8,z);
+ solid(26,3.6,.3,0x344046,0,H+1.8,4);for(const x of [-7.4,7.4])solid(11.2,3.6,.3,0x344046,x,H+1.8,-27);
  // Ground floor's north wall has an opening into this enclosed stairwell.
  for(const x of [-1.75,1.75])solid(.25,H,13.3,0x3c4647,x,H/2,-20.5);
- solid(3.5,7.8,.25,0x3c4647,0,3.9,-27);
+ solid(3.5,4.2,.25,0x3c4647,0,2.1,-27);
  // Rails face the staircase; outside the rails the upstairs hall reaches every room.
  for(const x of [-1.57,1.57]){
   for(let i=0;i<=20;i++){let z=-14-i*.5,h=H*i/20;box(.07,.95,.07,0x6a5036,x,h+.48,z);}
@@ -42,7 +42,7 @@ export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hide
  solid(2.5,.5,1.4,0x72513b,9,H+.3,0);solid(2,.8,1.2,0x496267,11,H+.4,2.8);
  for(let i=0;i<9;i++){let x=7+(i%3)*.5,z=.2+Math.floor(i/3)*.5;box(.28,.28,.28,[0x9e5939,0x4f7278,0x988245][i%3],x,H+.76,z);}
  // Landing signage and warm guiding lights.
- label('קומה שנייה',0,H+2.4,-26.7,0,'#ffcf98',2.5);label('מדרגות לקומה השנייה',0,2.9,-14.02,0,'#ffcf98',2.6);label('למטה: יציאה',0,H+2.5,-24.5,Math.PI,'#a9f2c2',2.5);
+ label('קומה שנייה',-2,H+2.4,-26.7,0,'#ffcf98',1.4);label('מדרגות לקומה השנייה',0,2.9,-14.02,0,'#ffcf98',2.6);label('למטה: יציאה',0,H+2.5,-24.5,Math.PI,'#a9f2c2',2.5);
  glow(0xffba77,4,14,0,3.5,-19);glow(0xffb67c,4,12,0,H+2.7,-25);glow(0xffb67c,3,14,0,H+2.8,-9);glow(0xffb67c,3,12,0,H+2.8,1);
  buildSpiderLab({THREE,scene,box,solid,label,glow});
  const objects=[...scene.children].filter(o=>!before.has(o));return{slabs,objects,newColliders:colliders.slice(start)};
