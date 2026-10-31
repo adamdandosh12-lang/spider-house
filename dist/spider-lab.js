@@ -1,6 +1,9 @@
 import {FLOOR_HEIGHT as H} from './house-world.js';
 export function buildSpiderLab({THREE,scene,box,solid,label,glow}){
- solid(2.5,2.3,.6,0x443b2d,5, H+1.15,-15.4);for(const y of [.45,1.1,1.75])box(2.55,.07,.72,0x7a684b,5,H+y,-15.35);label('הכלים שתצטרך',5,H+2.75,-15.02,0,'#d8c48f',2.6);label('פנס וגרזן כדי לברוח',5,H+2.4,-15.01,0,'#c3d2b3',2.6);
+ // A physical paper note lies on the worktable beside the containment area.
+ solid(2.5,.14,1.2,0x68523b,5,H+.95,-15.4);for(const x of [4,6])for(const z of [-15.85,-14.95])box(.1,.9,.1,0x40372b,x,H+.45,z);
+ const paperCanvas=document.createElement('canvas');paperCanvas.width=1024;paperCanvas.height=640;const ctx=paperCanvas.getContext('2d');ctx.fillStyle='#d9ccaa';ctx.fillRect(0,0,1024,640);ctx.strokeStyle='#948269';ctx.lineWidth=5;ctx.strokeRect(25,25,974,590);ctx.direction='rtl';ctx.textAlign='center';ctx.fillStyle='#302d27';ctx.font='bold 70px Arial';ctx.fillText('הכלים שתצטרך',512,150);ctx.font='52px Arial';ctx.fillText('פנס — כדי שיהיה אור',512,300);ctx.fillText('גרזן — כדי לברוח מהבית',512,420);const paperTexture=new THREE.CanvasTexture(paperCanvas);paperTexture.colorSpace=THREE.SRGBColorSpace;const paper=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.92),new THREE.MeshStandardMaterial({map:paperTexture,roughness:1}));paper.name='Laboratory tools note';paper.position.set(5,H+1.025,-15.4);paper.rotation.x=-Math.PI/2;scene.add(paper);
+
  const metal=new THREE.MeshStandardMaterial({color:0x344448,metalness:.65,roughness:.42});
  const glass=new THREE.MeshPhysicalMaterial({color:0x8cc5c9,transparent:true,opacity:.2,roughness:.15,metalness:.05,side:THREE.DoubleSide,depthWrite:false});
  const cyan=new THREE.MeshBasicMaterial({color:0x63b9bb}),dark=new THREE.MeshStandardMaterial({color:0x101b21,roughness:.65});
