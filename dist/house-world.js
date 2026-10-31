@@ -22,6 +22,7 @@ export function surfacesAt(x,z){
  }
  if(onBasementStairs(x,z))out.push(-stairHeight(z));
  if(Math.abs(x)<=12.5*HOUSE_WIDTH_SCALE&&z>=-40&&z<=-24)out.push(-FLOOR_HEIGHT);
+ if((x>=-7.4*HOUSE_WIDTH_SCALE&&x<=-5.6*HOUSE_WIDTH_SCALE&&z>=0&&z<=10)||(x>=-10.9*HOUSE_WIDTH_SCALE&&x<=-3.1*HOUSE_WIDTH_SCALE&&z>=-7.9&&z<=0))out.push(-FLOOR_HEIGHT);
  return [...new Set(out)];
 }
 export function floorAt(x,z,current=0,maxStep=.29){let best=null,d=Infinity;for(const h of surfacesAt(x,z)){const gap=Math.abs(h-current);if(gap<=maxStep&&gap<d){best=h;d=gap;}}return best;}
