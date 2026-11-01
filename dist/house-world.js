@@ -6,7 +6,7 @@ export const upperRooms=[
  {name:'מעבדת העכביש',x:8,z:-21.5,row:0},
  {name:'חדר רחצה',x:-8,z:-10.5,row:1},
  {name:'מעבדת העכביש',x:8,z:-10.5,row:1},
- {name:'חדר אורחים',x:-8,z:-.5,row:2},
+ {name:'החדר מספר אחד',x:-8,z:-.5,row:2},
  {name:'חדר משחקים',x:8,z:-.5,row:2}
 ].map(r=>({...r,x:r.x*HOUSE_WIDTH_SCALE}));
 export function onStairs(x,z){return Math.abs(x)<=STAIR.halfWidth&&z>=-24&&z<=-13.5;}
