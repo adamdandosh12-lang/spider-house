@@ -12,7 +12,7 @@ export const upperRooms=[
 export function onStairs(x,z){return Math.abs(x)<=STAIR.halfWidth&&z>=-24&&z<=-13.5;}
 export function stairHeight(z){return Math.max(0,Math.min(FLOOR_HEIGHT,(-14-z)/10*FLOOR_HEIGHT));}
 export function onBasementStairs(x,z){return Math.abs(x+8*HOUSE_WIDTH_SCALE)<=1.45*HOUSE_WIDTH_SCALE&&z>=-24&&z<=-13.5;}
-function upperSurface(x,z){if((Math.abs(x)<=1.6*HOUSE_WIDTH_SCALE&&z>=-34&&z<=-26.5)||(Math.abs(x)<=8.8*HOUSE_WIDTH_SCALE&&z>=-48.8&&z<=-34))return true;return Math.abs(x)<=12.5*HOUSE_WIDTH_SCALE&&z>=-26.5&&z<=3.5&&!(Math.abs(x)<1.6*HOUSE_WIDTH_SCALE&&z> -24&&z< -14);}
+function upperSurface(x,z){if(x>=8.8*HOUSE_WIDTH_SCALE&&x<=12.5*HOUSE_WIDTH_SCALE&&z>=-44.6&&z<=-38.4)return true;if((Math.abs(x)<=1.6*HOUSE_WIDTH_SCALE&&z>=-34&&z<=-26.5)||(Math.abs(x)<=8.8*HOUSE_WIDTH_SCALE&&z>=-48.8&&z<=-34))return true;return Math.abs(x)<=12.5*HOUSE_WIDTH_SCALE&&z>=-26.5&&z<=3.5&&!(Math.abs(x)<1.6*HOUSE_WIDTH_SCALE&&z> -24&&z< -14);}
 export function surfacesAt(x,z){
  const out=[];
  if(onStairs(x,z))out.push(stairHeight(z));

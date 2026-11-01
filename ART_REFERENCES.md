@@ -8,3 +8,5 @@ The model in `dist/spider-model.js` is original procedural geometry and animatio
 - Australian Museum, **Australian Funnel-web Spiders** — glossy front carapace, grouped eyes, dark coloration and rear spinnerets. https://australian.museum/learn/animals/spiders/funnel-web-spiders-group/
 
 The oversized scale and subtle red eye tint are artistic choices for the horror game. The model is inspired by these spider characteristics and is not an exact reconstruction of a single species.
+
+Spider refinement reference: https://australian.museum/learn/species-identification/ask-an-expert/what-is-a-spiders/ and https://australian.museum/learn/animals/spiders/the-hairy-spider/ . Original procedural mesh, no copied assets.

@@ -1,7 +1,7 @@
 export function buildHatchingRoom({THREE,scene,box,solid,label,glow}){const H=4.2,slabs=[];
  function floor(w,d,x,z){box(w,.22,d,0x383331,x,H-.11,z);slabs.push({x,z,w,d,bottom:H-.22,top:H});box(w,.16,d,0x252729,x,H+3.65,z);}
  floor(3.4,7,0,-30.5);floor(18,15,0,-41.5);
- for(const x of [-1.8,1.8])solid(.2,3.6,7,0x453738,x,H+1.8,-30.5);for(const x of [-9,9])solid(.25,3.6,15,0x443d3b,x,H+1.8,-41.5);solid(18,3.6,.25,0x443d3b,0,H+1.8,-49);for(const x of [-5.4,5.4])solid(7.2,3.6,.25,0x443d3b,x,H+1.8,-34);
+ for(const x of [-1.8,1.8])solid(.2,3.6,7,0x453738,x,H+1.8,-30.5);solid(.25,3.6,15,0x443d3b,-9,H+1.8,-41.5);solid(.25,3.6,6,0x443d3b,9,H+1.8,-46);solid(.25,3.6,6,0x443d3b,9,H+1.8,-37);solid(18,3.6,.25,0x443d3b,0,H+1.8,-49);for(const x of [-5.4,5.4])solid(7.2,3.6,.25,0x443d3b,x,H+1.8,-34);
  label('אגף הבקיעה',0,H+2.8,-27.1,0,'#da9687',2.8);label('הוא כבר לא בפנים',0,H+2.9,-48.8,0,'#c08a7b',4.5);
  const red=new THREE.MeshStandardMaterial({color:0x631c18,emissive:0xff3020,emissiveIntensity:1}),lamps=[];
  for(const z of [-28.5,-31,-33.3]){box(.65,.12,.35,0x302d2b,0,H+3.35,z);box(.44,.08,.22,red,0,H+3.25,z);lamps.push(glow(0xff392b,2,7,0,H+3.1,z));}glow(0xac8c7f,4,15,0,H+3,-42);

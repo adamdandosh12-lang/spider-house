@@ -13,20 +13,22 @@ export function createSpider(scene){
  const carapaceMat=new THREE.MeshPhysicalMaterial({color:0xb9b5ac,map,bumpMap:relief,bumpScale:.007,roughness:.32,clearcoat:.34,clearcoatRoughness:.3});
  const joints=new THREE.MeshStandardMaterial({color:0x24201b,roughness:.61});
  const fangMat=new THREE.MeshPhysicalMaterial({color:0x191711,roughness:.23,clearcoat:.65});
- const eyeMat=new THREE.MeshPhysicalMaterial({color:0x180d09,emissive:0x550c04,emissiveIntensity:.25,roughness:.07,clearcoat:1,clearcoatRoughness:.03});
+ const eyeMat=new THREE.MeshPhysicalMaterial({color:0x180d09,emissive:0x550c04,emissiveIntensity:.035,roughness:.07,clearcoat:1,clearcoatRoughness:.03});
  const glintMat=new THREE.MeshBasicMaterial({color:0xafb9b5});
  const hairMat=new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.72});
  function orb(radius,material,x,y,z,sx=1,sy=1,sz=1,parent=body){const geometry=new THREE.SphereGeometry(radius,28,20),mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);mesh.scale.set(sx,sy,sz);mesh.castShadow=mesh.receiveShadow=true;parent.add(mesh);return mesh;}
  const abdomen=orb(1,shell,0,1.08,.88,.83,.73,1.08);abdomen.name='Soft oval abdomen';
  const prosoma=orb(1,carapaceMat,0,.92,-.64,.74,.43,.72);prosoma.name='Cephalothorax';
  orb(.20,joints,0,.88,.08,.75,.70,1.5);
+ // Subtle radial ridges on the hard carapace and paired mouth plates.
+ const ridgeMat=new THREE.LineBasicMaterial({color:0x4c4436,transparent:true,opacity:.42});const ridges=[];for(const side of [-1,1])for(let i=0;i<4;i++){ridges.push(side*.08,1.33,-.48,side*(.38+i*.07),1.25,-.95+i*.20);if(i===0)orb(.11,joints,side*.14,.67,-1.12,.75,.7,1.5);}const ridgeGeo=new THREE.BufferGeometry();ridgeGeo.setAttribute('position',new THREE.Float32BufferAttribute(ridges,3));body.add(new THREE.LineSegments(ridgeGeo,ridgeMat));
  // Two curved segments per bristle, with varied color and length, give a soft silhouette.
  function furOnEllipsoid(center,radii,count,minLength,maxLength){const positions=[],colors=[];
   for(let i=0;i<count;i++){const u=rnd()*Math.PI*2,v=Math.acos(2*rnd()-1),n=new THREE.Vector3(Math.sin(v)*Math.cos(u),Math.cos(v),Math.sin(v)*Math.sin(u)),p=n.clone().multiply(radii).add(center),length=minLength+rnd()*(maxLength-minLength),tip=p.clone().addScaledVector(n,length);tip.z+=length*.28;const mid=p.clone().lerp(tip,.55).add(new THREE.Vector3(0,length*.15,0));positions.push(...p.toArray(),...mid.toArray(),...mid.toArray(),...tip.toArray());const tone=.10+rnd()*.13;for(let j=0;j<4;j++)colors.push(tone*1.20,tone,tone*.73);}
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));const fur=new THREE.LineSegments(geo,hairMat);body.add(fur);return fur;
  }
- const abdomenFur=furOnEllipsoid(new THREE.Vector3(0,1.08,.88),new THREE.Vector3(.835,.735,1.085),2600,.045,.16);
- furOnEllipsoid(new THREE.Vector3(0,.92,-.64),new THREE.Vector3(.745,.435,.725),700,.018,.055);
+ const abdomenFur=furOnEllipsoid(new THREE.Vector3(0,1.08,.88),new THREE.Vector3(.835,.735,1.085),3600,.035,.14);
+ furOnEllipsoid(new THREE.Vector3(0,.92,-.64),new THREE.Vector3(.745,.435,.725),950,.015,.05);
  // A small eye cluster on top of the front body, rather than a separate face.
  const eyes=[];
  for(const [x,y,z,r]of [[-.085,1.23,-1.13,.067],[.085,1.23,-1.13,.067],[-.21,1.20,-1.12,.046],[.21,1.20,-1.12,.046],[-.07,1.29,-1.035,.044],[.07,1.29,-1.035,.044],[-.18,1.27,-1.04,.039],[.18,1.27,-1.04,.039]]){
@@ -68,7 +70,7 @@ export function createSpider(scene){
    for(let j=0;j<7;j++)between(l.links[j],points[j],points[j+1]);l.knee.position.copy(p3);l.ankle.position.copy(p5);
   }
   for(const p of palps){const spread=Math.sin(time*2.2+p.side)*.025,a=new THREE.Vector3(p.side*.43,.78,-1.05),b=new THREE.Vector3(p.side*(.65+spread),.70,-1.35),c=new THREE.Vector3(p.side*.55,.37,-1.65),d=new THREE.Vector3(p.side*.40,.25,-1.80);between(p.links[0],a,b);between(p.links[1],b,c);between(p.links[2],c,d);}
-  eyeLight.intensity=mode==='chase'?.20:.045;
+  eyeLight.intensity=mode==='chase'?.055:.012;
  }
  animate(0,0);return{g,body,surfaceFrame,legs,eyes,palps,spinnerets,fangs,animate};
 }
