@@ -25,7 +25,7 @@ export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hide
  for(const r of upperRooms){const side=Math.sign(r.x),doorZ=r.z;
   for(const zz of [doorZ-1.05,doorZ+1.05])box(.38,3,.15,0x57422e,side*3,H+1.5,zz);
   box(.4,.25,2.3,0x57422e,side*3,H+3.02,doorZ);
-  label(r.name,side*2.84,H+2.55,doorZ,side<0?Math.PI/2:-Math.PI/2,'#f1d7a3',2.5);
+  if(r.name!=='החדר מספר אחד')label(r.name,side*2.84,H+2.55,doorZ,side<0?Math.PI/2:-Math.PI/2,'#f1d7a3',2.5);
   label(r.name,side*3.17,H+2.55,doorZ,side<0?-Math.PI/2:Math.PI/2,'#f1d7a3',2.5);
   box(.05,1.8,2.5,0x19384e,side*12.77,H+2.1,r.z);box(.14,.09,2.55,0x5d4936,side*12.65,H+2.1,r.z);box(.14,1.9,.08,0x5d4936,side*12.65,H+2.1,r.z);
   glow(0x91b9dc,2.6,11,side*11.5,H+2.5,r.z);
