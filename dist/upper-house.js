@@ -7,7 +7,7 @@ export function buildUpperHouse({THREE,scene,box,solid,label,glow,colliders,hide
  slab(11.4,31,-7.3,-11.5);slab(11.4,31,7.3,-11.5);slab(3.2,3,0,-25.5);slab(3.2,18,0,-5);
  box(26,.18,31,0x252b30,0,H+3.65,-11.5);
  for(const x of [-13,13])solid(.35,3.6,31,0x46504f,x,H+1.8,-11.5);
- solid(26,3.6,.3,0x344046,0,H+1.8,4);for(const x of [-7.4,7.4])solid(11.2,3.6,.3,0x344046,x,H+1.8,-27);
+ for(const x of [-7.75,7.75])solid(10.5,3.6,.3,0x344046,x,H+1.8,4);for(const x of [-7.4,7.4])solid(11.2,3.6,.3,0x344046,x,H+1.8,-27);
  // Ground floor's north wall has an opening into this enclosed stairwell.
  for(const x of [-1.75,1.75])solid(.25,H,13.3,0x3c4647,x,H/2,-20.5);
  solid(3.5,4.2,.25,0x3c4647,0,2.1,-27);
