@@ -1,4 +1,4 @@
-export const HOUSE_WIDTH_SCALE=2.25;
+export const HOUSE_WIDTH_SCALE=2.4;
 export const FLOOR_HEIGHT=4.2;
 export const STAIR={x:0,halfWidth:1.45*HOUSE_WIDTH_SCALE,bottomZ:-14,topZ:-24};
 export const upperRooms=[
