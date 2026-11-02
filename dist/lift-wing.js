@@ -1,12 +1,12 @@
 import {HOUSE_WIDTH_SCALE as W,FLOOR_HEIGHT as H} from './house-world.js';
 export const NOTES=[{x:-6,z:6,y:0,digit:'7',text:'שורה ראשונה: 7. שמרו את ההמשך בחדר האוכל.'},{x:-6,z:2,y:0,digit:'3',text:'שורה שנייה: 3. הפתק האחרון נמצא למעלה, בחדר המשחקים.'},{x:10,z:2.7,y:H,digit:'1',text:'שורה שלישית: 1. חברו את השורות לפי הסדר, מלמעלה למטה.'}];
-export const STOPS={'1':{x:0,y:0,z:8},'2':{x:0,y:H,z:8},'?':{x:0,y:-8.4,z:-53.6}};
+export const STOPS={'1':{x:-.35*W,y:0,z:11},'2':{x:0,y:H,z:8},'?':{x:0,y:-8.4,z:-53.6}};
 export function createLiftPuzzle(){const notes=new Set();let card=false,unlocked=false;return{notes,get card(){return card;},get unlocked(){return unlocked;},get code(){return notes.size===3?NOTES.map(n=>n.digit).join(''):null;},collect(i){if(Number.isInteger(i)&&i>=0&&i<3)notes.add(i);},collectCard(){card=true;},unlock(value){if(this.code&&value===this.code)unlocked=true;return unlocked;},canTravel(stop){return Object.hasOwn(STOPS,stop)&&unlocked&&(stop!=='?'||card);},reset(){notes.clear();card=false;unlocked=false;}};}
 export function buildLiftWing({THREE,scene,box,sphere,solid,label,glow}){
  const bronze=new THREE.MeshStandardMaterial({color:0x796044,metalness:.65,roughness:.72});const dark=0x242725;
- const cabins=[];for(const [floor,z] of [[0,6],[H,6],[-8.4,-56]]){const g=new THREE.Group();g.position.set(0,floor,z);scene.add(g);cabins.push(g);box(2.3,.12,2.6,0x4a3525,0,.06,0,g);box(2.3,.15,2.6,dark,0,2.85,0,g);box(2.3,2.8,.14,dark,0,1.4,-1.3,g);for(const x of [-1.1,1.1]){box(.12,2.8,2.6,dark,x,1.4,0,g);box(.04,.1,2.2,bronze,x*.93,1.05,0,g);}for(let i=-5;i<=5;i++){box(.035,2.6,.04,bronze,i*.19,1.4,1.3,g);}
- const collision=solid(2.3,2.8,2.6,dark,0,floor+1.4,z);collision.visible=false;collision.userData.dynamic=true;collision.name='Invisible elevator collision';
- label('מעלית • 1 / 2 / ?',0,floor+3.05,z+1.36,0,'#d1b77e',2.3);label('E • לוח הבקרה',.85,floor+1.6,z+1.42,0,'#e4c98a',.7);glow(0xe6ae62,2,7,0,floor+2.6,z+1.8);
+ const cabins=[];for(const [floor,z] of [[0,6],[H,6],[-8.4,-56]]){const entry=floor===0,cx=entry?1.65:0,cz=entry?11:z;const g=new THREE.Group();g.position.set(cx,floor,cz);if(entry){g.rotation.y=-Math.PI/2;g.scale.z=.9;}scene.add(g);cabins.push(g);box(2.3,.12,2.6,0x4a3525,0,.06,0,g);box(2.3,.15,2.6,dark,0,2.85,0,g);box(2.3,2.8,.14,dark,0,1.4,-1.3,g);for(const x of [-1.1,1.1]){box(.12,2.8,2.6,dark,x,1.4,0,g);box(.04,.1,2.2,bronze,x*.93,1.05,0,g);}for(let i=-5;i<=5;i++){box(.035,2.6,.04,bronze,i*.19,1.4,1.3,g);}
+ const collision=solid(entry?2.34:2.3,2.8,entry?2.3:2.6,dark,cx,floor+1.4,cz);collision.visible=false;collision.userData.dynamic=true;collision.name='Invisible elevator collision';
+ label('מעלית • 1 / 2 / ?',entry?.40:0,floor+3.05,entry?11:z+1.36,entry?-Math.PI/2:0,'#d1b77e',2.3);label('E • לוח הבקרה',entry?.36:.85,floor+1.6,entry?11.85:z+1.42,entry?-Math.PI/2:0,'#e4c98a',.7);glow(0xe6ae62,2,7,entry?.15:0,floor+2.6,entry?11:z+1.8);
  }
  // Wide upper landing, with lanes around the cabin back into the upstairs hall.
  box(5,.22,5.2,0x4e4035,0,H-.11,6);box(5,.15,5.2,0x252b30,0,H+3.65,6);for(const x of [-2.5,2.5])solid(.18,3.6,5.2,0x424747,x,H+1.8,6);solid(5,3.6,.18,0x424747,0,H+1.8,8.65);
