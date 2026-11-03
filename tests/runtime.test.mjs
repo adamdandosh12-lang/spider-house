@@ -72,6 +72,7 @@ for(const floor of [0,4.2]){
  qa.start();assert.equal(element('caught-fx').style.opacity,0);assert.equal(element('hud').hidden,false);
 }
 for(const aspect of [390/844,844/390,16/9]){const pose=qa.captureScare.update(.3,aspect);assert.equal(qa.captureScare.camera.aspect,aspect);assert.equal(pose.done,false);assert.ok(Number.isFinite(qa.captureScare.spider.fangs[0].pivot.rotation.z),'Scare fangs have valid transforms');}
+qa.captureScare.update(.3,1);const faceZ=qa.captureScare.camera.position.z;qa.captureScare.update(.95,1);assert.ok(qa.captureScare.camera.position.z>faceZ+.4,'Second lunge moves into the fangs');assert.ok(qa.captureScare.camera.position.y<.7,'View moves into the mouth');
 qa.lose();step(.5);qa.start();step(3.2);assert.equal(gameDiagnostics().state,'playing','Restart cancels unfinished scare');
 console.log('Full-screen capture: face rush, no lift, portrait/landscape, fade, loss and restart verified');
 qa.start();qa.setScenario({player:{x:-18,z:10},spider:{...qa.surfaceClimb.anchor,x:qa.surfaceClimb.anchor.x-.8},time:20});step(9.5);assert.ok(gameDiagnostics().spider.y>3.5,'Spider reaches actual ceiling');assert.ok(qa.spider.surfaceFrame.rotation.z>3,'Spider hangs upside down');assert.ok(element('danger').textContent.includes('התקרה'),'Ceiling warning displayed');step(12);assert.ok(gameDiagnostics().spider.y<.1,'Spider returns to ground');qa.start();assert.equal(qa.spider.surfaceFrame.rotation.z,0);assert.equal(qa.surfaceClimb.active,false);
