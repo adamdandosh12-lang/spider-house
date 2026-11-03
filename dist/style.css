@@ -44,3 +44,6 @@ body.in-prologue #touch-light,body.in-prologue #touch-bag,body.in-prologue #touc
 /* Desktop joystick remains optional, above the game and below dialogs. */
 #touch{z-index:18}#modal{z-index:40}
 @media(min-width:761px) and (pointer:fine){body.touch-controls .touch-actions{display:grid;grid-template-columns:repeat(2,58px)}body.touch-controls .bottom-hud{bottom:185px}body.touch-controls #prompt{top:auto;bottom:180px}body.touch-controls #intro-line{bottom:210px}body.touch-controls #intro-prompt{bottom:180px}body.touch-controls #intro-skip{top:80px;bottom:auto}}
+
+/* Full-screen capture fade sits above the gameplay HUD. */
+#caught-fx{z-index:25}
