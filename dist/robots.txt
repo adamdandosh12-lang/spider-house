@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://spider-house-adam-night.dandoshtom.chatgpt.site/sitemap.xml
