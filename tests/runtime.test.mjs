@@ -51,7 +51,7 @@ qa.setScenario({player:{x:0,y:4.2,z:0},spider:{x:0,y:0,z:0},yaw:0,time:20});asse
 qa.setScenario({player:{x:0,y:4.2,z:-25},spider:{x:8,z:8},time:0});
 for(let z=-24.9;z<=-13.5;z+=.1)assert.ok(qa.tryPlayerMove(0,z),'Stairs must allow every downward step');assert.ok(Math.abs(gameDiagnostics().player.y)<.01);
 qa.setScenario({player:{x:0,y:4.2,z:-25},spider:{x:0,y:0,z:-13.2},yaw:0,time:20});
-step(.4);assert.equal(qa.getBrain().mode,'chase','Spider sees a player at the stair landing');
+step(.4);assert.equal(qa.getBrain().mode,'chase','Spider sees a player at the stair landing');assert.equal(element('chase-warning').hidden,false,'RUN appears when spotted');
 step(5);assert.ok(gameDiagnostics().spider.y>3.6,'Spider must physically climb the stairs in a pursuit');
 console.log('Spider physically follows a visible player up the stairs');
 assert.ok(!qa.blocked((14.4/2.1*W),-16,.3,4.2),'Lab divider removed for one large room');assert.ok(qa.blocked(6.55*W,-21,.3,4.2),'Intact containment glass blocks movement');assert.ok(qa.route({x:0,y:0,z:10.5},{x:9*W,y:4.2,z:-17}).length,'Broken chamber front reachable');qa.setPlayer({x:(14.4/2.1*W),y:4.2,z:-17});assert.ok(qa.roomName().includes('מעבדת העכביש'));assert.ok(qa.scene.getObjectByName('Anatomical skull specimen'));let glassVisible=false;qa.scene.traverse(o=>{if(o.isMesh&&o.material.transparent&&o.material.opacity===.2)glassVisible=true;});assert.ok(glassVisible,'Glass survives static batching');
@@ -64,7 +64,7 @@ qa.start();let axe=gameDiagnostics().axe;let found=false;for(let dx=-1.5;dx<=1.5
 assert.ok(found);assert.ok(gameDiagnostics().hasAxe);qa.setPlayer({x:0,z:12});for(let i=0;i<4;i++){qa.interact();if(i<3)step(.6);}assert.equal(gameDiagnostics().state,'escape-ending');step(3);assert.ok(qa.robotRoom.robot.position.y<1,'Robot joins player on ground floor');assert.equal(element('wake-line').textContent,'רובוט: ברח! אני אעכב אותו!');step(6.2);assert.equal(gameDiagnostics().state,'won');assert.ok(gameDiagnostics().player.z>14,'Player gets outside');assert.equal(gameDiagnostics().hits,4);console.log('Full objective flow: pick up axe → break four boards → escape');
 for(const floor of [0,4.2]){
  qa.start();qa.setScenario({player:{x:0,y:floor,z:-1},spider:{x:0,y:floor,z:0},time:20});qa.getCamera().position.set(0,floor+1.65,-1);qa.lose();step(.3);
- assert.equal(gameDiagnostics().state,'caught');assert.equal(qa.getCamera().position.y,floor+1.65,'Capture does not lift player');
+ assert.equal(gameDiagnostics().state,'caught');assert.equal(element('chase-warning').hidden,true,'RUN hides during capture');assert.equal(qa.getCamera().position.y,floor+1.65,'Capture does not lift player');
  assert.equal(element('hud').hidden,true);assert.equal(element('touch').hidden,true);
  assert.ok(qa.captureScare.camera.position.z>-2.1,'Spider face rushes into view');
  step(1);assert.ok(element('caught-fx').style.opacity>0,'Single fade follows scare');step(.6);assert.equal(gameDiagnostics().state,'lost');
