@@ -7,7 +7,7 @@ export function addCarSeats(parent){
  const rear=mesh(parent,new T.BoxGeometry(1.4,.22,.5),upholstery,0,.65,1.35);rear.name='Rear car bench';mesh(parent,new T.BoxGeometry(1.4,.58,.15),upholstery,0,1.03,1.6);
 }
 export function createSteeringWheel(parent,x=-.43,y=1.25,z=-.35){
- const wheel=new T.Group();wheel.name='Leather three spoke steering wheel';wheel.position.set(x,y,z);wheel.rotation.x=-.3;wheel.scale.setScalar(.72);parent.add(wheel);const leather=new T.MeshStandardMaterial({color:0x1c282e,roughness:.75}),metal=new T.MeshStandardMaterial({color:0x9bafb5,metalness:.7,roughness:.3});mesh(wheel,new T.TorusGeometry(.205,.026,12,40),leather);
+ const wheel=new T.Group();wheel.name='Leather three spoke steering wheel';wheel.position.set(x,y,z);wheel.rotation.x=-.3;wheel.scale.setScalar(.5);parent.add(wheel);const leather=new T.MeshStandardMaterial({color:0x1c282e,roughness:.75}),metal=new T.MeshStandardMaterial({color:0x9bafb5,metalness:.7,roughness:.3});mesh(wheel,new T.TorusGeometry(.205,.026,12,40),leather);
  for(const angle of [0,Math.PI*2/3,Math.PI*4/3]){const spoke=mesh(wheel,new T.BoxGeometry(.065,.19,.024),metal,Math.sin(angle)*.09,Math.cos(angle)*.09,.01);spoke.rotation.z=-angle;}const hub=mesh(wheel,new T.CylinderGeometry(.075,.075,.045,24),leather,0,0,.025);hub.rotation.x=Math.PI/2;mesh(wheel,new T.CircleGeometry(.024,18),metal,0,0,.05);return wheel;
 }
 export function createStreetCar(parent,color=0x2e626a,variant='sedan'){
