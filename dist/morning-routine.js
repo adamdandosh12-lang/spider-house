@@ -1,3 +1,4 @@
+import {createStreetCar,addStreetHouse} from './street-models.js';
 import * as T from './vendor/three.module.js';
 function builder(parent){return(w,h,d,color,x,y,z)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshStandardMaterial({color,roughness:.55,metalness:color===0x9da9aa?.7:0}));m.position.set(x,y,z);parent.add(m);return m;};}
 export function buildMorningWardrobe(group){
@@ -9,13 +10,9 @@ export function buildMorningWardrobe(group){
  return{doors,clothes,open};
 }
 export function buildMorningYard(group){
- const box=builder(group);box(40,.2,32,0x657b54,0,-.12,0);box(7,.03,15,0xa7a397,-1,0,0);box(10,5,.3,0xb7ad98,0,2.5,7.7);box(11,.2,1.4,0x635d51,0,5.1,7.5);box(1.7,2.9,.12,0x57442c,0,1.45,7.5);for(const x of [-3.5,3.5]){box(1.8,1.6,.1,0x8bafbf,x,2.4,7.5);box(.07,1.6,.12,0xe4ddc9,x,2.4,7.42);box(1.8,.07,.12,0xe4ddc9,x,2.4,7.42);}
+ const box=builder(group);box(80,.2,90,0x657b54,0,-.12,-15);box(70,.04,5,0x4b5156,0,-.01,-11);for(const z of [-8,-14])box(70,.12,1.1,0xc3bdaf,0,.01,z);for(let x=-30;x<31;x+=5)box(2,.015,.09,0xe1dcc4,x,.02,-11);
+ const houses=[];for(const side of [-1,1])for(const z of [4,-7,-23])houses.push(addStreetHouse(group,side*12,z,side<0?0xc0b09b:0xa9b6ac,side<0?Math.PI/2:-Math.PI/2));for(const x of [-8,1,10])houses.push(addStreetHouse(group,x,-24,0xb4a496));box(7,.03,15,0xa7a397,-1,0,0);box(10,5,.3,0xb7ad98,0,2.5,7.7);box(11,.2,1.4,0x635d51,0,5.1,7.5);box(1.7,2.9,.12,0x57442c,0,1.45,7.5);for(const x of [-3.5,3.5]){box(1.8,1.6,.1,0x8bafbf,x,2.4,7.5);box(.07,1.6,.12,0xe4ddc9,x,2.4,7.42);box(1.8,.07,.12,0xe4ddc9,x,2.4,7.42);}
  for(const x of [-7,7])for(let z=-6;z<=6;z+=3){box(.18,1.1,.18,0x6b5b44,x,.55,z);const crown=new T.Mesh(new T.SphereGeometry(.75,12,10),new T.MeshStandardMaterial({color:0x3f6649}));crown.position.set(x,1.4,z);group.add(crown);}
- const car=new T.Group();car.name='Player car parked outside home';car.position.set(-.4,0,-3.1);group.add(car);const cb=builder(car);
- cb(2,.45,4,0x365657,0,.65,0);cb(1.9,.3,1.1,0x496f70,0,.98,-1.35);cb(1.75,.09,1.9,0x365657,0,1.7,.1);cb(1.6,.55,.06,0x799aa6,0,1.36,-.87);cb(1.6,.5,.06,0x64858b,0,1.35,1.1);cb(.08,.57,1.9,0x365657,.9,1.35,.1);cb(.04,.45,1.6,0x7696a0,.92,1.4,.1);cb(.12,.2,1.8,0x3b5556,-.9,1,.1);
- for(const side of [-1,1])for(const z of [-1.25,1.25]){const wheel=new T.Mesh(new T.CylinderGeometry(.36,.36,.18,20),new T.MeshStandardMaterial({color:0x172124,roughness:.9}));wheel.rotation.z=Math.PI/2;wheel.position.set(side*1.02,.37,z);car.add(wheel);const hub=new T.Mesh(new T.CylinderGeometry(.17,.17,.19,16),new T.MeshStandardMaterial({color:0x9da9aa,metalness:.7}));hub.rotation.copy(wheel.rotation);hub.position.copy(wheel.position);car.add(hub);}
- cb(1.85,.1,.08,0x9da9aa,0,.55,-2.04);for(const x of [-.65,.65])cb(.4,.18,.06,0xe1e2b8,x,.86,-2.03);
- const door=new T.Group();door.position.set(-1,0,-.8);car.add(door);const db=builder(door);db(.07,.55,1.65,0x365657,0,.95,.825);db(.045,.45,1.6,0x7899a4,0,1.45,.825);db(.09,.04,.2,0x9da9aa,-.06,1.15,1.3);
- cb(.6,.25,.7,0x253436,-.42,.64,.3);cb(.6,.7,.16,0x253436,-.42,1.05,.65);
- return{door,target:{x:-2.1,z:-2.7,title:'פתח את דלת הנהג והיכנס למכונית'},blocked(x,z){return Math.abs(x+.4)<1.35&&Math.abs(z+3.1)<2.3;}};
+ const vehicle=createStreetCar(group);vehicle.g.name='Player car parked outside home';vehicle.g.position.set(-.4,0,-3.1);const door=vehicle.door;
+ return{door,vehicle,houses,target:{x:-2.1,z:-2.7,title:'פתח את דלת הנהג והיכנס למכונית'},blocked(x,z){return Math.abs(x+.4)<1.35&&Math.abs(z+3.1)<2.3;}};
 }

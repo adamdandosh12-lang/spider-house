@@ -20,6 +20,7 @@ export function createBedPhone({camera,group,say,stopSpeech,ring,onStand}){
  rest();camera.position.set(-5,1.18,3.25);camera.lookAt(-3.25,.83,3.15);camera.rotation.z=-.16;
  function interact(){if(['pickup','rising','done'].includes(state)||time<next)return;next=time+.45;stopSpeech();if(state==='ringing'){state='pickup';pickTime=0;camera.updateMatrixWorld(true);camera.attach(phone);pickFrom.copy(phone.position);pickRotation.copy(phone.quaternion);}else if(line<LINES.length-1){line++;say(LINES[line]);}else{state='rising';riseTime=0;riseRotation.copy(camera.quaternion);}}
  function update(dt){time+=dt;if(state==='done')return false;
+  const heldX=Math.min(.12,Math.max(.015,camera.aspect*.075));const held=new T.Vector3(heldX,-.06,-.54);
   const action=matchMedia('(pointer:coarse)').matches?'פעולה':'E';
   const task=document.getElementById('intro-task'),prompt=document.getElementById('intro-prompt');
   if(state==='ringing'){
@@ -27,14 +28,14 @@ export function createBedPhone({camera,group,say,stopSpeech,ring,onStand}){
    phone.position.x=-3.25+Math.sin(time*37)*.006;
    task.textContent='בוקר בבית • שיחה נכנסת מד״ר נועה';prompt.textContent=action+' • לענות לטלפון';
   }else if(state==='pickup'){
-   pickTime+=dt;const u=Math.min(1,pickTime/1.1),e=u*u*(3-2*u);phone.position.copy(pickFrom).lerp(new T.Vector3(.24,-.19,-.58),e);phone.quaternion.copy(pickRotation).slerp(new T.Quaternion().setFromEuler(new T.Euler(-.1,-.18,-.12)),e);hand.pose(.8);hand.g.position.copy(phone.position).add(new T.Vector3(.03,-.25,-.05));
+   pickTime+=dt;const u=Math.min(1,pickTime/1.1),e=u*u*(3-2*u);phone.position.copy(pickFrom).lerp(held,e);phone.quaternion.copy(pickRotation).slerp(new T.Quaternion().setFromEuler(new T.Euler(-.1,-.18,-.12)),e);hand.pose(.8);hand.g.position.copy(phone.position).add(new T.Vector3(.03,-.25,-.05));
    task.textContent='מרים את הטלפון מהמדף…';prompt.textContent='';
    if(u===1){state='call';line=0;say(LINES[line]);next=time+.45;}
   }else if(state==='call'){
-   phone.position.set(.24,-.19,-.58);hand.pose(.8);hand.g.position.set(.27,-.44,-.63);
+   phone.position.copy(held);hand.pose(.8);hand.g.position.copy(held).add(new T.Vector3(.03,-.25,-.05));
    task.textContent='שיחה עם המעבדה • '+(line+1)+' / '+LINES.length;prompt.textContent=action+(line===LINES.length-1?' • לסיים שיחה ולקום מהמיטה':' • להמשיך בשיחה');
   }else{
-   riseTime+=dt;const put=Math.min(1,riseTime/.7);if(put<1){camera.updateMatrixWorld(true);const dest=camera.worldToLocal(new T.Vector3(-3.25,.83,3.15));phone.position.set(.24,-.19,-.58).lerp(dest,put);hand.g.position.copy(phone.position).add(new T.Vector3(.03,-.25,-.05));}else{hand.reset();rest();}
+   riseTime+=dt;const put=Math.min(1,riseTime/.7);if(put<1){camera.updateMatrixWorld(true);const dest=camera.worldToLocal(new T.Vector3(-3.25,.83,3.15));phone.position.copy(held).lerp(dest,put);hand.g.position.copy(phone.position).add(new T.Vector3(.03,-.25,-.05));}else{hand.reset();rest();}
    const u=Math.max(0,Math.min(1,(riseTime-.7)/2.7)),e=u*u*(3-2*u);
    camera.position.set(-5+1.8*e,1.18+.47*e,3.25+2*e);camera.quaternion.copy(riseRotation).slerp(new T.Quaternion(),e);
    task.textContent='בוקר בבית • קם מהמיטה';prompt.textContent='';
