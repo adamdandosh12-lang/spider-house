@@ -10,3 +10,5 @@ The model in `dist/spider-model.js` is original procedural geometry and animatio
 The oversized scale and subtle red eye tint are artistic choices for the horror game. The model is inspired by these spider characteristics and is not an exact reconstruction of a single species.
 
 Spider refinement reference: https://australian.museum/learn/species-identification/ask-an-expert/what-is-a-spiders/ and https://australian.museum/learn/animals/spiders/the-hairy-spider/ . Original procedural mesh, no copied assets.
+
+Phone design reference (2026-11-07): Apple iPhone 18 Pro / Pro Max official newsroom front/back image, https://www.apple.com/newsroom/2026/09/apple-debuts-iphone-18-pro-and-iphone-18-pro-max/ . Original procedural model; reference photo is not shipped in the game.
