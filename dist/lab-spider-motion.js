@@ -13,7 +13,7 @@ export function createLabSpiderMotion(spider){
    spider.g.position.set(x,y,z);spider.g.rotation.y=0;spider.g.scale.setScalar(.23+Math.max(0,disaster)*.065);spider.g.userData.surface=angle>.01?'wall':'platform';
   }else{
    if(!releaseOrigin){releaseOrigin=spider.g.position.clone();releaseAngle=spider.surfaceFrame.rotation.x;}const released=disaster-2,drop=Math.min(1,released/.9),walk=Math.min(1,released/3),approach=Math.max(0,Math.min(1,(disaster-8)/4));
-   spider.g.scale.setScalar(.36+Math.min(released/3,1)*.74);spider.g.position.set(releaseOrigin.x+(1.8-releaseOrigin.x)*walk,releaseOrigin.y*(1-drop*drop),releaseOrigin.z+(-.8-releaseOrigin.z)*walk+approach*2.2);angle=releaseAngle*(1-drop);spider.g.rotation.y=Math.atan2(spider.g.position.x-camera.position.x,spider.g.position.z-camera.position.z);spider.g.userData.surface=drop===1?'floor':'landing';
+   spider.g.scale.setScalar(.36+Math.min(released/3,1)*.74);spider.g.position.set(releaseOrigin.x+(1.8-releaseOrigin.x)*walk,releaseOrigin.y*(1-drop*drop),releaseOrigin.z+(-.8-releaseOrigin.z)*walk+approach*2.2);angle=releaseAngle*(1-drop);spider.g.rotation.y=Math.atan2(spider.g.position.x-camera.position.x,spider.g.position.z-camera.position.z);spider.g.userData.surface=drop===1?'floor':'landing';if(disaster>=9.8){const rush=Math.min(1,(disaster-9.8)/1.8),dx=camera.position.x-1.8,dz=camera.position.z-1.4,length=Math.max(.01,Math.hypot(dx,dz));spider.g.position.x=1.8+(dx-dx/length*.9)*rush;spider.g.position.z=1.4+(dz-dz/length*.9)*rush;spider.g.userData.surface='charging';}
   }
   spider.animate(time,dt,true,'patrol');spider.surfaceFrame.rotation.x=angle;
  }
