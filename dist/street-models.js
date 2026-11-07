@@ -15,7 +15,7 @@ export function createStreetCar(parent,color=0x2e626a,variant='sedan'){
  const paint=new T.MeshPhysicalMaterial({color,roughness:.28,metalness:.5,clearcoat:.8,clearcoatRoughness:.22}),rubber=new T.MeshStandardMaterial({color:0x171c20,roughness:.9}),chrome=new T.MeshStandardMaterial({color:0xaeb8bf,roughness:.22,metalness:.8}),glass=new T.MeshPhysicalMaterial({color:0x83aebb,transparent:true,opacity:.38,roughness:.1,depthWrite:false,side:T.DoubleSide}),trim=new T.MeshStandardMaterial({color:0x253139,roughness:.6});
  const box=(p,w,h,d,mat,x,y,z)=>mesh(p,new T.BoxGeometry(w,h,d),mat,x,y,z);
  // Sculpted body cross sections soften the hood, boot and bumpers.
- const rings=[[-2.16,.76,.56,.88],[-1.78,.96,.56,1.04],[-.95,1,.57,1.09],[.95,1,.57,1.1],[1.8,.94,.58,1.02],[2.05,.78,.61,.91]],positions=[],indices=[];
+ const rings=variant==='supercar'?[[-2.22,.86,.45,.67],[-1.78,1.02,.45,.82],[-.95,1.04,.48,.93],[.95,1.04,.48,.95],[1.8,1,.5,.9],[2.05,.94,.53,.85]]:[[-2.16,.76,.56,.88],[-1.78,.96,.56,1.04],[-.95,1,.57,1.09],[.95,1,.57,1.1],[1.8,.94,.58,1.02],[2.05,.78,.61,.91]],positions=[],indices=[];
  for(const [z,w,b,t]of rings)for(const [x,y]of [[-w*.84,b],[-w,b+.1],[-w,t-.07],[-w*.86,t],[w*.86,t],[w,t-.07],[w,b+.1],[w*.84,b]])positions.push(x,y,z);
  for(let r=0;r<rings.length-1;r++)for(let i=0;i<8;i++){if(r===2&&i===3)continue;const a=r*8+i,b=r*8+(i+1)%8,c=b+8,d=a+8;indices.push(a,b,c,a,c,d);}for(let i=1;i<7;i++)indices.push(0,i+1,i,40,40+i,40+i+1);
  const bodyGeo=new T.BufferGeometry();bodyGeo.setAttribute('position',new T.Float32BufferAttribute(positions,3));bodyGeo.setIndex(indices);bodyGeo.computeVertexNormals();const shell=mesh(g,bodyGeo,paint);shell.material.side=T.DoubleSide;
@@ -27,8 +27,14 @@ export function createStreetCar(parent,color=0x2e626a,variant='sedan'){
  addCarSeats(g);box(g,1.6,.08,.28,trim,0,1.02,-.69);box(g,1.7,.05,1.8,trim,0,.48,.1);
  const steering=createSteeringWheel(g);
  const door=new T.Group();door.position.set(-1,0,-.8);g.add(door);box(door,.06,.48,1.13,paint,0,.9,.565);box(door,.025,.4,1.05,glass,0,1.4,.565);box(door,.07,.035,.18,chrome,-.05,1.07,.95);
- g.userData.variant=variant;if(variant==='compact'){g.scale.set(.93,.95,.84);}else if(variant==='coupe'){g.scale.set(1,.87,1.04);}else if(variant==='suv'){g.scale.set(1.08,1.12,1.03);for(const x of [-.58,.58])box(g,.05,.08,1.5,chrome,x,1.86,.15);}else if(variant==='van'){g.scale.set(1.03,1.08,1.08);box(g,1.65,.62,1.3,paint,0,1.42,.72);for(const x of [-.84,.84])box(g,.02,.33,1.02,glass,x,1.48,.75);}
- const indicators=addTurnDisplay(g);return{g,door,wheels,steering,indicators};
+ g.userData.variant=variant;if(variant==='supercar'){
+  g.name='Lamborghini inspired V12 supercar';paint.color.setHex(0xe6b42c);paint.roughness=.2;roof.material=trim;roof.scale.x=.94;
+  box(g,2.03,.07,.28,trim,0,.48,-2.1);box(g,1.92,.07,.27,trim,0,.55,2.07);
+  for(const side of [-1,1]){pane([[side*1.045,.53,-.2],[side*1.045,.9,.15],[side*1.045,.95,.83],[side*1.045,.56,.7]],trim);for(const [dx,dy,angle]of [[0,0,0],[-.07,.025,.65],[.07,.025,-.65]]){const led=box(g,.018,.1,.025,light,side*.7+dx,.77+dy,-2.14);led.rotation.z=angle;}box(g,.36,.11,.03,trim,side*.5,.83,2.08);}
+  const spoiler=box(g,1.85,.06,.3,trim,0,1.12,1.88);for(const x of [-.6,.6])box(g,.05,.19,.06,chrome,x,1.0,1.88);
+  door.position.y=1;for(const part of door.children)part.position.y-=1;door.userData.scissor=true;
+ }else if(variant==='compact'){g.scale.set(.93,.95,.84);}else if(variant==='coupe'){g.scale.set(1,.87,1.04);}else if(variant==='suv'){g.scale.set(1.08,1.12,1.03);for(const x of [-.58,.58])box(g,.05,.08,1.5,chrome,x,1.86,.15);}else if(variant==='van'){g.scale.set(1.03,1.08,1.08);box(g,1.65,.62,1.3,paint,0,1.42,.72);for(const x of [-.84,.84])box(g,.02,.33,1.02,glass,x,1.48,.75);}
+ const indicators=addTurnDisplay(g);return{g,door,wheels,steering,indicators,openDoor(u){if(door.userData.scissor)door.rotation.x=-u*1.15;else door.rotation.y=-u*1.25;}};
 }
 export function addStreetHouse(parent,x,z,color=0xbaa58b,turn=0){
  const g=new T.Group();g.name='Neighbourhood home';g.position.set(x,0,z);g.rotation.y=turn;parent.add(g);
