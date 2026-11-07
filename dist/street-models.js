@@ -5,7 +5,11 @@ export function addCarSeats(parent){
  for(const x of [-.43,.43]){const seat=new T.Group();seat.name='Upholstered front car seat';seat.position.set(x,0,.3);parent.add(seat);mesh(seat,new T.BoxGeometry(.64,.18,.7),upholstery,0,.66,0);mesh(seat,new T.BoxGeometry(.62,.68,.16),upholstery,0,1.03,.33);mesh(seat,new T.BoxGeometry(.36,.22,.13),upholstery,0,1.52,.34);for(const side of [-1,1]){mesh(seat,new T.BoxGeometry(.08,.23,.66),edge,side*.29,.72,0);mesh(seat,new T.BoxGeometry(.07,.55,.17),edge,side*.28,1.05,.29);mesh(seat,new T.BoxGeometry(.008,.54,.014),stitch,side*.19,1.02,.239);}for(let i=0;i<4;i++)mesh(seat,new T.BoxGeometry(.45,.008,.015),stitch,0,.76,-.2+i*.12);}
  const rear=mesh(parent,new T.BoxGeometry(1.4,.22,.5),upholstery,0,.65,1.35);rear.name='Rear car bench';mesh(parent,new T.BoxGeometry(1.4,.58,.15),upholstery,0,1.03,1.6);
 }
-export function createStreetCar(parent,color=0x2e626a){
+export function createSteeringWheel(parent,x=-.43,y=1.25,z=-.35){
+ const wheel=new T.Group();wheel.name='Leather three spoke steering wheel';wheel.position.set(x,y,z);wheel.rotation.x=-.3;parent.add(wheel);const leather=new T.MeshStandardMaterial({color:0x1c282e,roughness:.75}),metal=new T.MeshStandardMaterial({color:0x9bafb5,metalness:.7,roughness:.3});mesh(wheel,new T.TorusGeometry(.205,.026,12,40),leather);
+ for(const angle of [0,Math.PI*2/3,Math.PI*4/3]){const spoke=mesh(wheel,new T.BoxGeometry(.065,.19,.024),metal,Math.sin(angle)*.09,Math.cos(angle)*.09,.01);spoke.rotation.z=-angle;}const hub=mesh(wheel,new T.CylinderGeometry(.075,.075,.045,24),leather,0,0,.025);hub.rotation.x=Math.PI/2;mesh(wheel,new T.CircleGeometry(.024,18),metal,0,0,.05);return wheel;
+}
+export function createStreetCar(parent,color=0x2e626a,variant='sedan'){
  const g=new T.Group();g.name='Detailed street sedan';parent.add(g);
  const paint=new T.MeshPhysicalMaterial({color,roughness:.28,metalness:.5,clearcoat:.8,clearcoatRoughness:.22}),rubber=new T.MeshStandardMaterial({color:0x171c20,roughness:.9}),chrome=new T.MeshStandardMaterial({color:0xaeb8bf,roughness:.22,metalness:.8}),glass=new T.MeshPhysicalMaterial({color:0x83aebb,transparent:true,opacity:.38,roughness:.1,depthWrite:false,side:T.DoubleSide}),trim=new T.MeshStandardMaterial({color:0x253139,roughness:.6});
  const box=(p,w,h,d,mat,x,y,z)=>mesh(p,new T.BoxGeometry(w,h,d),mat,x,y,z);
@@ -20,9 +24,10 @@ export function createStreetCar(parent,color=0x2e626a){
  const wheels=[];for(const side of [-1,1])for(const z of [-1.35,1.35]){const wheel=new T.Group();wheel.position.set(side*.98,.4,z);g.add(wheel);const tire=mesh(wheel,new T.CylinderGeometry(.38,.38,.22,28),rubber);tire.rotation.z=Math.PI/2;const hub=mesh(wheel,new T.CylinderGeometry(.25,.25,.23,24),chrome);hub.rotation.z=Math.PI/2;const inset=mesh(wheel,new T.CylinderGeometry(.2,.2,.24,20),trim);inset.rotation.z=Math.PI/2;for(let i=0;i<5;i++){const spoke=box(wheel,.25,.035,.35,chrome,0,0,0);spoke.rotation.x=i*Math.PI/5;}wheels.push(wheel);}
  const light=new T.MeshStandardMaterial({color:0xebf4e7,emissive:0xb9d3c6,emissiveIntensity:.3,roughness:.15});for(const x of [-.63,.63]){box(g,.45,.14,.06,light,x,.87,-2.08);box(g,.4,.1,.05,new T.MeshStandardMaterial({color:0xc0312d}),x,.9,2.02);}box(g,.72,.2,.06,trim,0,.68,-2.15);for(let i=0;i<5;i++)box(g,.66,.012,.02,chrome,0,.61+i*.035,-2.19);box(g,1.6,.04,.05,chrome,0,.54,-2.09);box(g,.4,.12,.02,chrome,0,.68,2.07);
  addCarSeats(g);box(g,1.6,.18,.37,trim,0,1.05,-.64);
- const steering=mesh(g,new T.TorusGeometry(.19,.025,8,24),trim,-.43,1.25,-.35);steering.rotation.x=-.3;
+ const steering=createSteeringWheel(g);
  const door=new T.Group();door.position.set(-1,0,-.8);g.add(door);box(door,.06,.48,1.13,paint,0,.9,.565);box(door,.025,.4,1.05,glass,0,1.4,.565);box(door,.07,.035,.18,chrome,-.05,1.07,.95);
- return{g,door,wheels};
+ g.userData.variant=variant;if(variant==='compact'){g.scale.set(.93,.95,.84);}else if(variant==='coupe'){g.scale.set(1,.87,1.04);}else if(variant==='suv'){g.scale.set(1.08,1.12,1.03);for(const x of [-.58,.58])box(g,.05,.08,1.5,chrome,x,1.86,.15);}else if(variant==='van'){g.scale.set(1.03,1.08,1.08);box(g,1.65,.62,1.3,paint,0,1.42,.72);for(const x of [-.84,.84])box(g,.02,.33,1.02,glass,x,1.48,.75);}
+ return{g,door,wheels,steering};
 }
 export function addStreetHouse(parent,x,z,color=0xbaa58b,turn=0){
  const g=new T.Group();g.name='Neighbourhood home';g.position.set(x,0,z);g.rotation.y=turn;parent.add(g);

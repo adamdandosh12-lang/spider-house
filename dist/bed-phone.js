@@ -8,11 +8,12 @@ const LINES=[
 export function createBedPhone({camera,group,say,stopSpeech,ring,onStand}){
  let state='ringing',line=-1,time=0,ringAt=0,next=0,riseTime=0,pickTime=0,pickFrom=new T.Vector3(),pickRotation=new T.Quaternion(),riseRotation=new T.Quaternion();
  const hand=createPlayerHand(T,camera),phone=new T.Group();phone.name='Incoming laboratory phone call';group.add(phone);
- const material=new T.MeshStandardMaterial({color:0x20262b,metalness:.4,roughness:.3});
+ const material=new T.MeshStandardMaterial({color:0x687a86,metalness:.4,roughness:.22});
  const outline=new T.Shape(),w=.196,h=.366,r=.024;outline.moveTo(-w/2+r,-h/2);outline.lineTo(w/2-r,-h/2);outline.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);outline.lineTo(w/2,h/2-r);outline.quadraticCurveTo(w/2,h/2,w/2-r,h/2);outline.lineTo(-w/2+r,h/2);outline.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);outline.lineTo(-w/2,-h/2+r);outline.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
  const body=new T.Mesh(new T.ExtrudeGeometry(outline,{depth:.017,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.004,bevelThickness:.003}),material);phone.add(body);
  function detail(w,h,d,x,y,z,color){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshStandardMaterial({color,metalness:.65,roughness:.25}));m.position.set(x,y,z);phone.add(m);}
  const dock=new T.Group();dock.name='Phone charging stand on shelf';group.add(dock);dock.position.set(-3.25,.825,3.15);const base=new T.Mesh(new T.BoxGeometry(.26,.025,.2),new T.MeshStandardMaterial({color:0x59616a,roughness:.4,metalness:.5}));dock.add(base);const support=new T.Mesh(new T.BoxGeometry(.035,.17,.045),base.material);support.position.set(0,.085,-.05);dock.add(support);
+ detail(.074,.018,.004,0,.126,.024,0x060a0d);
  detail(.035,.004,.002,0,.158,.023,0x080d12);detail(.004,.045,.008,-.1,.06,.008,0x72818d);detail(.004,.027,.008,.1,.04,.008,0x72818d);detail(.06,.004,.002,0,-.149,.023,0xd7e3e6);
  const lens=new T.Mesh(new T.SphereGeometry(.004,10,8),new T.MeshPhysicalMaterial({color:0x06131d,roughness:.1,metalness:.4}));lens.position.set(.032,.158,.024);phone.add(lens);
  const c=document.createElement('canvas');c.width=256;c.height=448;const ctx=c.getContext('2d');ctx.fillStyle='#113d43';ctx.fillRect(0,0,256,448);ctx.textAlign='center';ctx.direction='rtl';ctx.fillStyle='#e5f8ef';ctx.font='bold 30px Arial';ctx.fillText('ד״ר נועה',128,120);ctx.font='22px Arial';ctx.fillText('המעבדה',128,165);ctx.font='18px Arial';ctx.fillText('שיחה נכנסת',128,65);ctx.fillStyle='#58d59e';ctx.beginPath();ctx.arc(128,320,32,0,Math.PI*2);ctx.fill();
