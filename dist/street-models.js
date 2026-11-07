@@ -1,5 +1,10 @@
 import * as T from './vendor/three.module.js';
 function mesh(parent,geo,mat,x=0,y=0,z=0){const m=new T.Mesh(geo,mat);m.position.set(x,y,z);parent.add(m);return m;}
+export function addCarSeats(parent){
+ const upholstery=new T.MeshStandardMaterial({color:0x293a40,roughness:.85}),edge=new T.MeshStandardMaterial({color:0x17272d,roughness:.7}),stitch=new T.MeshStandardMaterial({color:0x7e9296,roughness:1});
+ for(const x of [-.43,.43]){const seat=new T.Group();seat.name='Upholstered front car seat';seat.position.set(x,0,.3);parent.add(seat);mesh(seat,new T.BoxGeometry(.64,.18,.7),upholstery,0,.66,0);mesh(seat,new T.BoxGeometry(.62,.68,.16),upholstery,0,1.03,.33);mesh(seat,new T.BoxGeometry(.36,.22,.13),upholstery,0,1.52,.34);for(const side of [-1,1]){mesh(seat,new T.BoxGeometry(.08,.23,.66),edge,side*.29,.72,0);mesh(seat,new T.BoxGeometry(.07,.55,.17),edge,side*.28,1.05,.29);mesh(seat,new T.BoxGeometry(.008,.54,.014),stitch,side*.19,1.02,.239);}for(let i=0;i<4;i++)mesh(seat,new T.BoxGeometry(.45,.008,.015),stitch,0,.76,-.2+i*.12);}
+ const rear=mesh(parent,new T.BoxGeometry(1.4,.22,.5),upholstery,0,.65,1.35);rear.name='Rear car bench';mesh(parent,new T.BoxGeometry(1.4,.58,.15),upholstery,0,1.03,1.6);
+}
 export function createStreetCar(parent,color=0x2e626a){
  const g=new T.Group();g.name='Detailed street sedan';parent.add(g);
  const paint=new T.MeshPhysicalMaterial({color,roughness:.28,metalness:.5,clearcoat:.8,clearcoatRoughness:.22}),rubber=new T.MeshStandardMaterial({color:0x171c20,roughness:.9}),chrome=new T.MeshStandardMaterial({color:0xaeb8bf,roughness:.22,metalness:.8}),glass=new T.MeshPhysicalMaterial({color:0x83aebb,transparent:true,opacity:.38,roughness:.1,depthWrite:false,side:T.DoubleSide}),trim=new T.MeshStandardMaterial({color:0x253139,roughness:.6});
@@ -14,7 +19,7 @@ export function createStreetCar(parent,color=0x2e626a){
  const roof=box(g,1.49,.09,1.3,paint,0,1.75,.15);for(const side of [-1,1]){pane([[side*.84,1.1,-.91],[side*.71,1.7,-.47],[side*.71,1.7,.8],[side*.84,1.1,1.2]]);box(g,.07,.61,.06,paint,side*.77,1.4,.35);box(g,.09,.06,1.7,chrome,side*.97,1.12,.1);const mirror=box(g,.28,.14,.28,paint,side*1.1,1.27,-.65);box(g,.02,.1,.2,chrome,side*1.25,1.27,-.61);}
  const wheels=[];for(const side of [-1,1])for(const z of [-1.35,1.35]){const wheel=new T.Group();wheel.position.set(side*.98,.4,z);g.add(wheel);const tire=mesh(wheel,new T.CylinderGeometry(.38,.38,.22,28),rubber);tire.rotation.z=Math.PI/2;const hub=mesh(wheel,new T.CylinderGeometry(.25,.25,.23,24),chrome);hub.rotation.z=Math.PI/2;const inset=mesh(wheel,new T.CylinderGeometry(.2,.2,.24,20),trim);inset.rotation.z=Math.PI/2;for(let i=0;i<5;i++){const spoke=box(wheel,.25,.035,.35,chrome,0,0,0);spoke.rotation.x=i*Math.PI/5;}wheels.push(wheel);}
  const light=new T.MeshStandardMaterial({color:0xebf4e7,emissive:0xb9d3c6,emissiveIntensity:.3,roughness:.15});for(const x of [-.63,.63]){box(g,.45,.14,.06,light,x,.87,-2.08);box(g,.4,.1,.05,new T.MeshStandardMaterial({color:0xc0312d}),x,.9,2.02);}box(g,.72,.2,.06,trim,0,.68,-2.15);for(let i=0;i<5;i++)box(g,.66,.012,.02,chrome,0,.61+i*.035,-2.19);box(g,1.6,.04,.05,chrome,0,.54,-2.09);box(g,.4,.12,.02,chrome,0,.68,2.07);
- for(const x of [-.43,.43]){box(g,.6,.19,.65,trim,x,.7,.3);box(g,.6,.65,.15,trim,x,1.06,.62);}box(g,1.6,.18,.37,trim,0,1.05,-.64);
+ addCarSeats(g);box(g,1.6,.18,.37,trim,0,1.05,-.64);
  const steering=mesh(g,new T.TorusGeometry(.19,.025,8,24),trim,-.43,1.25,-.35);steering.rotation.x=-.3;
  const door=new T.Group();door.position.set(-1,0,-.8);g.add(door);box(door,.06,.48,1.13,paint,0,.9,.565);box(door,.025,.4,1.05,glass,0,1.4,.565);box(door,.07,.035,.18,chrome,-.05,1.07,.95);
  return{g,door,wheels};
@@ -25,5 +30,13 @@ export function addStreetHouse(parent,x,z,color=0xbaa58b,turn=0){
  const box=(w,h,d,m,x,y,z)=>mesh(g,new T.BoxGeometry(w,h,d),m,x,y,z);
  box(6,3.5,5,wall,0,1.75,0);const roof=new T.BufferGeometry();roof.setAttribute('position',new T.Float32BufferAttribute([-3.5,3.5,-3,3.5,3.5,-3,0,5,-3,-3.5,3.5,3,0,5,3,3.5,3.5,3],3));roof.setIndex([0,2,1,3,5,4,0,3,4,0,4,2,1,2,4,1,4,5]);roof.computeVertexNormals();mesh(g,roof,roofMat);
  box(1,2.4,.1,new T.MeshStandardMaterial({color:0x526561}),0,1.2,2.56);for(const sx of [-1.9,1.9]){box(1.1,1.25,.06,glass,sx,2,2.54);box(1.3,.07,.12,white,sx,1.36,2.6);box(.05,1.25,.1,white,sx,2,2.59);box(1.1,.05,.1,white,sx,2,2.59);}box(1.8,.1,1,white,0,.05,2.9);box(.45,1,.5,roofMat,1.8,4.1,-.5);
+ // Porch, drainage, side windows and planted gardens give the houses depth.
+ box(2.4,.12,1.25,white,0,2.8,2.95);for(const sx of [-1.05,1.05])box(.09,2.7,.09,white,sx,1.35,3.35);for(let i=0;i<3;i++)box(2.2-i*.15,.12,1.2-i*.2,white,0,.06+i*.12,3.2-i*.12);
+ for(const side of [-1,1]){box(.08,.08,5.6,white,side*3.2,3.48,0);box(.05,3,.05,white,side*2.92,1.5,2.65);for(const sz of [-1.3,1.1]){box(.05,1.1,1.1,glass,side*3.03,2,sz);box(.08,.05,1.25,white,side*3.07,1.43,sz);box(.08,1.1,.04,white,side*3.07,2,sz);}}
+ for(const sx of [-1.9,1.9])for(const side of [-1,1])box(.2,1.4,.09,roofMat,sx+side*.7,2,2.64);
+ const garden=new T.MeshStandardMaterial({color:0x4b704e,roughness:1});for(const sx of [-2.3,2.3]){box(1.3,.17,.8,roofMat,sx,.12,3);for(let i=0;i<3;i++)mesh(g,new T.SphereGeometry(.28,10,8),garden,sx-.4+i*.4,.45,3);}
+ for(let x=-3;x<=3;x+=.5)if(Math.abs(x)>1.15)box(.07,.7,.07,white,x,.35,4.4);for(const x of [-2.2,2.2])box(2,.06,.05,white,x,.55,4.4);box(.12,.9,.12,roofMat,2.6,.45,4.6);box(.4,.24,.27,white,2.6,1,4.6);
+ for(let z=-2.6;z<2.7;z+=.35)box(6.4,.015,.025,roofMat,0,3.52,z);
+
  return g;
 }
