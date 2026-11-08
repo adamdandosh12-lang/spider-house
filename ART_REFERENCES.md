@@ -14,3 +14,5 @@ Spider refinement reference: https://australian.museum/learn/species-identificat
 Phone design reference (2026-11-07): Apple iPhone 18 Pro / Pro Max official newsroom front/back image, https://www.apple.com/newsroom/2026/09/apple-debuts-iphone-18-pro-and-iphone-18-pro-max/ . Original procedural model; reference photo is not shipped in the game.
 
 2026-11-07: Supercar original procedural model inspired by https://www.lamborghini.com/en-en/models/revuelto-models/revuelto . Phone home-screen UI reference: https://www.apple.com/os/ios/ . WhatsApp conversation is fictional and local to the game. Engine recording credit and CC BY 3.0 license: dist/assets/LAMBORGHINI_AUDIO_CREDIT.txt . First approximately 24 seconds trimmed from original Ogg Opus stream, not re-encoded.
+
+2026-11-08: Original morning-news sofa scene. New cabin/ignition audio by JaimeLopes: https://freesound.org/people/JaimeLopes/sounds/564375/ (CC BY 4.0). See dist/assets/LAMBORGHINI_AUDIO_CREDIT.txt for edits and attribution. Explicit male/female voice casting and separate robot processing.

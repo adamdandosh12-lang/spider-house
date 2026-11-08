@@ -1,3 +1,4 @@
+import {createPhoneThumb} from './phone-thumb.js';
 import {createPhoneMessages} from './phone-messages.js';
 import * as T from './vendor/three.module.js';
 import {createPlayerHand} from './player-hand.js';
@@ -8,7 +9,7 @@ const LINES=[
 ];
 export function createBedPhone({camera,group,say,stopSpeech,ring,onStand}){
  let state='ringing',line=-1,time=0,ringAt=0,next=0,riseTime=0,pickTime=0,pickFrom=new T.Vector3(),pickRotation=new T.Quaternion(),riseRotation=new T.Quaternion(),stowTime=0,tapTime=0,tapOpened=false;
- const tapHand=createPlayerHand(T,camera);tapHand.g.scale.set(-.65,.65,.65);const hand=createPlayerHand(T,camera),phone=new T.Group();phone.name='iPhone 18 Pro Max — burgundy reference model';group.add(phone);
+ const hand=createPlayerHand(T,camera),phone=new T.Group();phone.name='iPhone 18 Pro Max — burgundy reference model';group.add(phone);const thumb=createPhoneThumb(phone);
  const material=new T.MeshStandardMaterial({color:0x713e4c,metalness:.4,roughness:.22});
  const outline=new T.Shape(),w=.196,h=.366,r=.024;outline.moveTo(-w/2+r,-h/2);outline.lineTo(w/2-r,-h/2);outline.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);outline.lineTo(w/2,h/2-r);outline.quadraticCurveTo(w/2,h/2,w/2-r,h/2);outline.lineTo(-w/2+r,h/2);outline.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);outline.lineTo(-w/2,-h/2+r);outline.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
  const body=new T.Mesh(new T.ExtrudeGeometry(outline,{depth:.017,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.004,bevelThickness:.003}),material);phone.add(body);
@@ -38,7 +39,7 @@ export function createBedPhone({camera,group,say,stopSpeech,ring,onStand}){
    if(u===1){if(state==='message-pickup'){state='home-screen';messages.home();document.getElementById('intro-line').hidden=false;document.getElementById('intro-line').textContent='יש לך הודעה חדשה מאמא ב־WhatsApp.';}else{state='call';line=0;say(LINES[line]);}next=time+(state==='home-screen'?0:.45);}
   }else if(state==='call'||state==='home-screen'||state==='messages'||state==='tapping'){
    phone.position.copy(held);hand.grip(1);hand.g.position.copy(held).add(new T.Vector3(.04,-.18,-.1));
-   if(state==='tapping'){tapTime+=dt;camera.updateMatrixWorld(true);phone.updateMatrixWorld(true);const target=camera.worldToLocal(phone.localToWorld(new T.Vector3(-.058,.031,.025)));const depth=Math.abs(1-Math.min(1,tapTime/.35))*.17;tapHand.point();tapHand.g.position.copy(target).add(new T.Vector3(-.014,-.13,.091+depth));if(tapTime>=.35&&!tapOpened){tapOpened=true;messages.chat();document.getElementById('intro-line').hidden=false;document.getElementById('intro-line').textContent='אמא: בהצלחה בניסוי 8! אני בדיוק רואה את החדשות.';}if(tapTime>=.7){tapHand.reset();state='messages';next=time+.15;}}
+   if(state==='tapping'){tapTime+=dt;const press=tapTime<.35?tapTime/.35:1-(tapTime-.35)/.35;thumb.pose(press*press*(3-2*press));if(tapTime>=.35&&!tapOpened){tapOpened=true;messages.chat();document.getElementById('intro-line').hidden=false;document.getElementById('intro-line').textContent='אמא: בהצלחה בניסוי 8! אני בדיוק רואה את החדשות.';}if(tapTime>=.7){thumb.pose(0);state='messages';next=time+.15;}}
    if(state==='call'){task.textContent='שיחה עם המעבדה • '+(line+1)+' / '+LINES.length;prompt.textContent=action+(line===LINES.length-1?' • לסיים שיחה ולקום מהמיטה':' • להמשיך בשיחה');}else{task.textContent=state==='tapping'?'פותח WhatsApp…':state==='home-screen'?'הטלפון שלך • הודעה חדשה מאמא':'WhatsApp • אמא';prompt.textContent=state==='tapping'?'':action+(state==='home-screen'?' • לפתוח WhatsApp':' • לסגור את הטלפון ולהתארגן');}
   }else if(state==='stowing'){stowTime+=dt;phone.position.copy(held).add(new T.Vector3(.2*stowTime,-stowTime,0));hand.g.position.copy(phone.position).add(new T.Vector3(.04,-.18,-.1));task.textContent='שם את הטלפון בכיס…';prompt.textContent='';if(stowTime>.7){phone.visible=false;hand.reset();state='done';onStand();}
   }else{
@@ -50,6 +51,6 @@ export function createBedPhone({camera,group,say,stopSpeech,ring,onStand}){
   }
   return true;
  }
- function dispose(){tapHand.reset();hand.reset();phone.removeFromParent();texture.dispose();dock.removeFromParent();dock.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});phone.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});}
- return{update,interact,dispose,get holdingHand(){return hand.g;},get tappingHand(){return tapHand.g;},get state(){return state;},get phone(){return phone;}};
+ function dispose(){hand.reset();phone.removeFromParent();texture.dispose();dock.removeFromParent();dock.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});phone.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});}
+ return{update,interact,dispose,get holdingHand(){return hand.g;},get tappingHand(){return thumb.g;},get thumbTip(){return thumb.tip;},get state(){return state;},get phone(){return phone;}};
 }

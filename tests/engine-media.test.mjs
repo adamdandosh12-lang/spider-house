@@ -1,6 +1,7 @@
 import fs from 'node:fs';import assert from 'node:assert/strict';import test from 'node:test';
-test('Licensed engine excerpt has valid Ogg pages and a bounded mobile size',()=>{
+test('Retained original engine excerpt has valid Ogg pages and a bounded mobile size',()=>{
  const data=fs.readFileSync(new URL('../dist/assets/lamborghini-engine.opus',import.meta.url));assert.ok(data.length<500000);assert.ok(data.includes(Buffer.from('OpusHead')));let offset=0,lastGranule=0n,lastFlags=0;
  while(offset<data.length){assert.equal(data.toString('ascii',offset,offset+4),'OggS');const n=data[offset+26];let length=27+n;for(let i=0;i<n;i++)length+=data[offset+27+i];assert.ok(offset+length<=data.length);let crc=0;for(let i=offset;i<offset+length;i++){crc^=(i>=offset+22&&i<offset+26?0:data[i])<<24;for(let j=0;j<8;j++)crc=crc&0x80000000?(crc<<1)^0x04c11db7:crc<<1;}assert.equal(crc>>>0,data.readUInt32LE(offset+22),'Audio page checksum');lastGranule=data.readBigUInt64LE(offset+6);lastFlags=data[offset+5];offset+=length;}
- assert.ok(lastFlags&4);assert.ok(Number(lastGranule)/48000<=26);const credit=fs.readFileSync(new URL('../dist/assets/LAMBORGHINI_AUDIO_CREDIT.txt',import.meta.url),'utf8');assert.ok(credit.includes('Super Cars for you'));assert.ok(credit.includes('https://creativecommons.org/licenses/by/3.0/'));
+ assert.ok(lastFlags&4);assert.ok(Number(lastGranule)/48000<=26);
 });
+test('Replacement cabin and ignition files are present with author credit',()=>{for(const name of ['lamborghini-start.mp3','lamborghini-cabin.mp3']){const data=fs.readFileSync(new URL('../dist/assets/'+name,import.meta.url));assert.ok(data.length>50000&&data.length<300000);assert.equal(data.subarray(0,3).toString(),'ID3');}const credit=fs.readFileSync(new URL('../dist/assets/LAMBORGHINI_AUDIO_CREDIT.txt',import.meta.url),'utf8');assert.ok(credit.includes('JaimeLopes'));assert.ok(credit.includes('https://creativecommons.org/licenses/by/4.0/'));});

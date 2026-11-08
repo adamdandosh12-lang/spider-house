@@ -50,3 +50,7 @@ body.in-prologue #touch-light,body.in-prologue #touch-bag,body.in-prologue #touc
 
 #chase-warning{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);font:900 clamp(34px,7vw,68px)/1 Arial,sans-serif;letter-spacing:.08em;color:#ff302e;text-shadow:0 2px 3px #000,0 0 20px #790000;pointer-events:none;z-index:8}
 @media(prefers-reduced-motion:reduce){#chase-warning{transition:none}}
+/* Story objectives stay beside the scene; spoken dialogue belongs to characters. */
+#intro-task{position:absolute;right:18px;top:140px;left:auto;margin:0;width:min(240px,30vw);max-height:30dvh;padding:13px;border-right:3px solid #ddbc84;border-radius:6px;font-size:14px;text-align:right;line-height:1.6}
+@media(max-width:760px),(pointer:coarse){#intro-task{right:12px;top:calc(122px + env(safe-area-inset-top));width:min(190px,48vw);max-height:22dvh;padding:9px;font-size:12px}}
+@media(max-height:500px) and (orientation:landscape){#intro-task{right:12px;top:118px;width:150px;max-height:22dvh;font-size:10px;padding:7px}}

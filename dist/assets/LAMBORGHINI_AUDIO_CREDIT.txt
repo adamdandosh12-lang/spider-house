@@ -1,6 +1,14 @@
-Lamborghini Aventador engine and exhaust sound
-Creator: Super Cars for you
-Source video: https://www.youtube.com/watch?v=oMKxhIcSmZs
-Source audio: https://commons.wikimedia.org/wiki/File:Lamborghini_Aventador_-_engine_and_exhaust_sound_(YouTube_oMKxhIcSmZs).opus
-License: Creative Commons Attribution 3.0 Unported https://creativecommons.org/licenses/by/3.0/
-Changes: excerpted first approximately 24 seconds, volume adjusted and looped in game. No endorsement by creator or Lamborghini.
+Lamborghini Huracán EVO Spyder interior engine recording
+Original title: Lamborghini Sounds
+Author: JaimeLopes
+Source: https://freesound.org/people/JaimeLopes/sounds/564375/
+License: Creative Commons Attribution 4.0 International
+https://creativecommons.org/licenses/by/4.0/
+Source publicly available high quality MP3 preview: https://cdn.freesound.org/previews/564/564375_628040-hq.mp3
+Changes: two excerpts (6.6–10.1 seconds and 10.5–25.5 seconds), mono conversion, filtering, loudness adjustment and short fades. Local copies are included with the game. This credit does not imply endorsement by the author or Lamborghini.
+
+Retained unused asset lamborghini-engine.opus:
+Author: Super Cars for you
+Source: https://commons.wikimedia.org/wiki/File:Lamborghini_Aventador_-_engine_and_exhaust_sound_(YouTube_oMKxhIcSmZs).opus
+License: https://creativecommons.org/licenses/by/3.0/
+Changes: first approximately 24 seconds of the original recording, trimmed without re-encoding.
