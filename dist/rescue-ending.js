@@ -2,7 +2,7 @@ import * as T from './vendor/three.module.js';
 import {createStreetCar,addStreetHouse} from './street-models.js';
 import {decorateMorningHome} from './morning-home.js';
 import {buildNewsSofa} from './morning-news.js';
-import {createPlayerHand} from './player-hand.js';
+import {createPlayerPhone} from './player-phone.js';
 
 export const ENDING_DURATION=52;
 const clamp=x=>Math.max(0,Math.min(1,x)), ease=x=>{x=clamp(x);return x*x*(3-2*x);};
@@ -15,11 +15,9 @@ export function createSequel({scene,camera,spider,robotRoom,line}){
  function bone(p,a,b,r,mat){const m=new T.Mesh(new T.CylinderGeometry(r,r,1,10),mat);p.add(m);return m;}
  for(const side of [-1,1]){const a=bone(armRig,null,null,.073,metal),b=bone(armRig,null,null,.06,metal),palm=box(armRig,.18,.13,.16,dark);for(let i=0;i<3;i++)box(palm,.035,.13,.035,metal,(i-1)*.055,-.07,.06);arms.push({side,a,b,palm});}
  function segment(m,a,b){m.position.copy(a).add(b).multiplyScalar(.5);m.scale.y=a.distanceTo(b);m.quaternion.setFromUnitVectors(V(0,1,0),b.clone().sub(a).normalize());}
- const hand=createPlayerHand(T,camera);hand.g.scale.setScalar(.72);
- const phone=new T.Group();camera.add(phone);phone.position.set(.24,-.20,-.6);
- box(phone,.32,.18,.022,dark);const screenTarget=new T.WebGLRenderTarget(384,216);
- const phoneScreen=new T.Mesh(new T.PlaneGeometry(.295,.157),new T.MeshBasicMaterial({map:screenTarget.texture}));phoneScreen.position.z=.012;phone.add(phoneScreen);
- const rec=new T.Mesh(new T.SphereGeometry(.009,8,6),new T.MeshBasicMaterial({color:0xef332b}));rec.position.set(-.13,.06,.014);phone.add(rec);
+ const screenTarget=new T.WebGLRenderTarget(384,216);
+ const phoneModel=createPlayerPhone({texture:screenTarget.texture,landscape:true}),{phone,grip}=phoneModel,phoneScreen=phoneModel.screen;camera.add(phone);phone.position.set(.24,-.20,-.6);
+ const rec=new T.Mesh(new T.SphereGeometry(.007,8,6),new T.MeshBasicMaterial({color:0xef332b}));rec.position.set(-.065,.12,.025);phone.add(rec);
  const filmCamera=new T.PerspectiveCamera(54,16/9,.1,120);
  let film=false,activeScene=scene,activeCamera=camera,phase='rescue',lastLine='',tNow=0,recorded=[],nextCapture=0;
  const outside=new T.Scene();outside.background=new T.Color(0x172334);outside.fog=new T.Fog(0x172334,35,110);
@@ -44,7 +42,7 @@ export function createSequel({scene,camera,spider,robotRoom,line}){
  function news(t){newsCtx.clearRect(0,0,768,432);newsCtx.fillStyle='#153b58';newsCtx.fillRect(0,0,290,340);newsCtx.fillStyle='#c99b80';newsCtx.beginPath();newsCtx.ellipse(145,131,40,52,0,0,Math.PI*2);newsCtx.fill();newsCtx.fillStyle='#293847';newsCtx.fillRect(85,184,120,140);newsCtx.fillStyle='#e8e4de';newsCtx.beginPath();newsCtx.moveTo(125,184);newsCtx.lineTo(165,184);newsCtx.lineTo(145,252);newsCtx.closePath();newsCtx.fill();newsCtx.fillStyle='#614237';newsCtx.fillRect(133,156,24,3+Math.abs(Math.sin(t*7))*6);newsCtx.fillStyle='#a0252b';newsCtx.fillRect(0,340,768,92);newsCtx.fillStyle='#fff';newsCtx.font='28px Arial';newsCtx.textAlign='right';newsCtx.direction='rtl';newsCtx.fillText('תיעוד דרמטי: הרובוט הציל את החוקר',745,380);newsCtx.font='18px Arial';newsCtx.fillText('חדשות מתוך עולם המשחק • גורלו של הרובוט אינו ידוע',745,415);newsTexture.needsUpdate=true;}
  function caption(s){if(s!==lastLine){lastLine=s;line(s);}}
  function look(cam,p,target){cam.position.copy(p);cam.lookAt(target);}
- function update(t,dt){tNow=t;film=false;phone.visible=false;hand.reset();eyelids.visible=t>=33&&t<37;eyelids.material.opacity=t<36?ease((t-33)/1.2):1-ease((t-36)/1);activeScene=scene;activeCamera=camera;phase='rescue';
+ function update(t,dt){tNow=t;film=false;phone.visible=false;grip.hide();eyelids.visible=t>=33&&t<37;eyelids.material.opacity=t<36?ease((t-33)/1.2):1-ease((t-36)/1);activeScene=scene;activeCamera=camera;phase='rescue';
   if(t<10){
    const run=ease(t/2.2),hold=clamp((t-2.2)/.8),throwU=ease((t-4.7)/1.4);
    robot.position.set((-4+4*run)/2.4,t<2.2?Math.abs(Math.sin(t*10))*.045:0,9.55);robot.rotation.set(0,Math.PI,0);robotRoom.fight(t);
@@ -61,7 +59,7 @@ export function createSequel({scene,camera,spider,robotRoom,line}){
    const turn=ease((t-7)/1.2),walk=ease((t-8)/2);
    camera.position.set(0,1.65+Math.sin(t*13)*.015*walk,12+walk*6);camera.rotation.set(0,Math.PI*turn,0);
    film=t>.7&&t<7;phone.visible=film;rec.visible=Math.floor(t*3)%2===0;
-   if(film){hand.grip(1);hand.g.position.set(.27,-.39,-.6);hand.g.rotation.z=-.13;filmCamera.position.copy(camera.position);filmCamera.lookAt(-.4,1.35,8);}
+   if(film){grip.hold(1);filmCamera.position.copy(camera.position);filmCamera.lookAt(-.4,1.35,8);}
    caption(t<.7?'הרובוט רץ לעזור!':t<1.8?'אני: אני מצלם…':t<4.6?'אני: הוא תפס את הרגליים שלו!':t<7?'רובוט: רוץ למכונית! אני אעצור אותו!':'אני חייב לצאת מכאן!');
   }else if(t<27){
    activeScene=outside;activeCamera=roadCamera;phase=t<16?'car':'drive';
@@ -78,7 +76,7 @@ export function createSequel({scene,camera,spider,robotRoom,line}){
    else{lamp.intensity=45;home.background.set(0xa2b8c2);look(homeCamera,V(-5,1.18,-3.65),V(-5,1.62,-6.9));homeDecor.update(t,true);if(recorded.length)newsFrame.material.map=recorded[Math.floor((t-37)*2)%recorded.length].texture;news(t);caption(t<41?'חדשות: התקבל תיעוד יוצא דופן מאחוזת המחקר.':t<46?'חדשות: הרובוט עיכב את העכביש ואפשר לחוקר להימלט.':'חדשות: גורלו של הרובוט עדיין לא ידוע…');}
   }
  }
- function render(renderer,w,h){activeCamera.aspect=w/h;activeCamera.updateProjectionMatrix();const narrow=w/h<1;phone.scale.setScalar(narrow?.67:1);phone.position.x=narrow?.075:.24;if(film){hand.g.scale.setScalar(narrow?.48:.72);hand.g.position.x=narrow?.11:.27;}if(film){const hp=phone.visible,hh=hand.g.visible;phone.visible=false;hand.g.visible=false;let target=screenTarget;if(tNow>=nextCapture){nextCapture=tNow+.5;target=new T.WebGLRenderTarget(256,144);recorded.push(target);}renderer.setRenderTarget(target);renderer.render(scene,filmCamera);renderer.setRenderTarget(null);phoneScreen.material.map=target.texture;phone.visible=hp;hand.g.visible=hh;}renderer.render(activeScene,activeCamera);}
- function stop(){phone.visible=false;hand.reset();armRig.visible=false;robotRoom.arms.forEach(a=>a.visible=true);recorded.forEach(r=>r.dispose());recorded=[];film=false;}
- return{update,render,stop,reset(){lastLine='';recorded.forEach(r=>r.dispose());recorded=[];nextCapture=0;robotRoom.arms.forEach(a=>a.visible=true);armRig.visible=false;lamp.intensity=45;home.background.set(0x151a24);update(0,0);},debug(){return{phase,t:tNow,film,phone,armRig,arms,spider,robot,activeScene,recorded:recorded.length};}};
+ function render(renderer,w,h){activeCamera.aspect=w/h;activeCamera.updateProjectionMatrix();const narrow=w/h<1;phone.scale.setScalar(narrow?.62:1);phone.position.x=narrow?.055:.24;if(film){const hp=phone.visible,hh=grip.g.visible;phone.visible=false;grip.g.visible=false;let target=screenTarget;if(tNow>=nextCapture){nextCapture=tNow+.5;target=new T.WebGLRenderTarget(256,144);recorded.push(target);}renderer.setRenderTarget(target);renderer.render(scene,filmCamera);renderer.setRenderTarget(null);phoneScreen.material.map=target.texture;phone.visible=hp;grip.g.visible=hh;}renderer.render(activeScene,activeCamera);}
+ function stop(){phone.visible=false;grip.hide();armRig.visible=false;robotRoom.arms.forEach(a=>a.visible=true);recorded.forEach(r=>r.dispose());recorded=[];film=false;}
+ return{update,render,stop,reset(){lastLine='';recorded.forEach(r=>r.dispose());recorded=[];nextCapture=0;robotRoom.arms.forEach(a=>a.visible=true);armRig.visible=false;lamp.intensity=45;home.background.set(0x151a24);update(0,0);},debug(){return{phase,t:tNow,film,phone,grip,phoneScreen,armRig,arms,spider,robot,activeScene,recorded:recorded.length};}};
 }
