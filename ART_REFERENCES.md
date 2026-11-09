@@ -20,3 +20,5 @@ Phone design reference (2026-11-07): Apple iPhone 18 Pro / Pro Max official news
 2026-11-09: All people now use the same he-IL-AvriNeural voice at original speed; robot has separate light filtering/tremolo. Walking closes the optional post-call phone screen. Standing position moved into a clear lane. Original articulated robot handshake added at lab arrival.
 
 2026-11-09 follow-up: Moved post-news standing point clear of sofa collision padding. Keyboard and joystick walking after standing are both exercised in the full runtime regression.
+
+2026-11-09 user adjustment: Robot stays at its station. Player walks to it and presses E to start the handshake; lab scientist interactions follow afterward.
