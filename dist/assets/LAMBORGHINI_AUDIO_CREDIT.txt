@@ -12,3 +12,6 @@ Author: Super Cars for you
 Source: https://commons.wikimedia.org/wiki/File:Lamborghini_Aventador_-_engine_and_exhaust_sound_(YouTube_oMKxhIcSmZs).opus
 License: https://creativecommons.org/licenses/by/3.0/
 Changes: first approximately 24 seconds of the original recording, trimmed without re-encoding.
+
+
+Version 1.75: reprocessed the same original excerpts with wider engine/exhaust bandwidth (32–8500 Hz), gentle bass emphasis, loudness normalization and final peak headroom; louder speed-dependent in-game mix.
