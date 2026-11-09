@@ -12,7 +12,7 @@ export function buildNewsSofa(group){
  for(const x of [-.95,0,.95]){const cushion=new T.Mesh(new T.SphereGeometry(1,24,16),fabric);cushion.scale.set(.47,.14,.52);cushion.position.set(x,.55,-.06);g.add(cushion);const pillow=new T.Mesh(new T.SphereGeometry(1,20,14),fabric);pillow.scale.set(.46,.29,.13);pillow.position.set(x,.88,.36);pillow.rotation.x=-.1;g.add(pillow);}return g;
 }
 export function createMorningNews({camera,say,stopSpeech,onDone}){
- let state='idle',time=0,page=-1,from,rotation;const seated=new T.Vector3(-5,1.18,-3.65),look=new T.Vector3(-5,1.62,-6.9),standing=new T.Vector3(-3.25,1.65,-3.6);
+ let state='idle',time=0,page=-1,from,rotation;const seated=new T.Vector3(-5,1.18,-3.65),look=new T.Vector3(-5,1.62,-6.9),standing=new T.Vector3(-2.7,1.65,-3.6);
  function begin(){if(state!=='idle')return;state='approach';time=0;from=camera.position.clone();rotation=camera.quaternion.clone();stopSpeech();}
  function finish(){if(state!=='watching')return;stopSpeech();state='rising';time=0;from=camera.position.clone();rotation=camera.quaternion.clone();}
  function update(dt){if(state==='idle'||state==='done')return false;time+=dt;const task=document.getElementById('intro-task'),prompt=document.getElementById('intro-prompt');
