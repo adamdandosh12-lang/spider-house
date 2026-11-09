@@ -45,12 +45,13 @@ export function createBedPhone({camera,group,say,stopSpeech,ring,onStand}){
   }else{
    riseTime+=dt;const put=Math.min(1,riseTime/.7);if(put<1){camera.updateMatrixWorld(true);const dest=camera.worldToLocal(new T.Vector3(-3.25,1.03,3.15));phone.position.copy(held).lerp(dest,put);hand.g.position.copy(phone.position).add(new T.Vector3(.04,-.18,-.1));}else{hand.reset();rest();}
    const u=Math.max(0,Math.min(1,(riseTime-.7)/2.7)),e=u*u*(3-2*u);
-   camera.position.set(-4.4+1.2*e,1.18+.47*e,3.25+2*e);camera.quaternion.copy(riseRotation).slerp(new T.Quaternion(),e);
+   camera.position.set(-4.4+2.6*e,1.18+.47*e,3.25+2*e);camera.quaternion.copy(riseRotation).slerp(new T.Quaternion(),e);
    task.textContent='בוקר בבית • קם מהמיטה';prompt.textContent='';
    if(u===1){state='message-pickup';camera.updateMatrixWorld(true);camera.attach(phone);pickFrom.copy(phone.position);pickRotation.copy(phone.quaternion);pickTime=0;}
   }
   return true;
  }
+ function releaseForMovement(){if(!['message-pickup','home-screen','tapping','messages','stowing'].includes(state))return false;stopSpeech();state='done';phone.visible=false;hand.reset();thumb.pose(0);document.getElementById('intro-line').hidden=true;onStand();return true;}
  function dispose(){hand.reset();phone.removeFromParent();texture.dispose();dock.removeFromParent();dock.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});phone.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});}
- return{update,interact,dispose,get holdingHand(){return hand.g;},get tappingHand(){return thumb.g;},get thumbTip(){return thumb.tip;},get state(){return state;},get phone(){return phone;}};
+ return{update,interact,dispose,releaseForMovement,get holdingHand(){return hand.g;},get tappingHand(){return thumb.g;},get thumbTip(){return thumb.tip;},get state(){return state;},get phone(){return phone;}};
 }
