@@ -67,7 +67,7 @@ export function createSpider(scene){
    const cycle=((phase/(Math.PI*2)+(i%2)*.5+(side>0?.5:0))%1+1)%1,swinging=stepping&&cycle>.62;
    if(swinging){if(!l.swinging){l.from=l.footWorld.clone();l.to=target.clone();}const u=(cycle-.62)/.38,ease=u*u*(3-2*u);l.footWorld.copy(l.from).lerp(l.to,ease);l.footWorld.y+=Math.sin(u*Math.PI)*.20;}else if(l.swinging)l.footWorld.copy(l.to);l.swinging=swinging;
    const foot=surfaceAngle?new THREE.Vector3(side*reach,.045+Math.max(0,Math.sin(time*5+i*Math.PI+side))* .14,z-.28):toLocal(l.footWorld);if(capture&&i===0)foot.lerp(new THREE.Vector3(side*.38,1.35+capture.lift*1.05,-1.9),capture.grab);const hipZ=-.96+i*.27,p0=new THREE.Vector3(side*.45,.88,hipZ),p1=new THREE.Vector3(side*.62,.88,hipZ),p2=new THREE.Vector3(side*.76,1.03,hipZ+(z-hipZ)*.18),p3=new THREE.Vector3(side*reach*.73,1.40+Math.max(0,foot.y)*.2,z*.83),p4=p3.clone().add(new THREE.Vector3(side*.06,-.14,.015)),p5=p4.clone().lerp(foot,.61).add(new THREE.Vector3(0,.12,0)),p6=p4.clone().lerp(foot,.91).add(new THREE.Vector3(0,.035,0)),points=[p0,p1,p2,p3,p4,p5,p6,foot];
-   for(let j=0;j<7;j++)between(l.links[j],points[j],points[j+1]);l.knee.position.copy(p3);l.ankle.position.copy(p5);
+   if(capture&&i===0)l.poseFoot=foot.clone();for(let j=0;j<7;j++)between(l.links[j],points[j],points[j+1]);l.knee.position.copy(p3);l.ankle.position.copy(p5);
   }
   for(const p of palps){const spread=Math.sin(time*2.2+p.side)*.025,a=new THREE.Vector3(p.side*.43,.78,-1.05),b=new THREE.Vector3(p.side*(.65+spread),.70,-1.35),c=new THREE.Vector3(p.side*.55,.37,-1.65),d=new THREE.Vector3(p.side*.40,.25,-1.80);between(p.links[0],a,b);between(p.links[1],b,c);between(p.links[2],c,d);}
   eyeLight.intensity=mode==='chase'?.055:.012;

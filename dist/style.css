@@ -63,3 +63,6 @@ body.in-prologue #touch-light,body.in-prologue #touch-bag,body.in-prologue #touc
 #eye-lids i:last-child{bottom:-3%;border-radius:50% 50% 0 0 / 18% 18% 0 0;transform:translateY(calc((1 - var(--eye-close)) * 110%))}
 @media(max-width:760px),(pointer:coarse){#intro-line{bottom:calc(170px + env(safe-area-inset-bottom));font-size:14px;padding:10px 12px;width:calc(100% - 28px);max-height:23dvh}}
 @media(max-height:500px) and (orientation:landscape){#intro-line{bottom:110px;font-size:12px;max-width:70%;max-height:20dvh}}
+
+/* Ending subtitles stay clear of the filmed phone and fit portrait screens. */
+.in-ending #wake-line{bottom:max(20px,env(safe-area-inset-bottom));left:4%;right:4%;width:auto;max-width:900px;margin:0 auto;font-size:clamp(16px,2.3vw,24px);line-height:1.5;padding:12px 16px}
