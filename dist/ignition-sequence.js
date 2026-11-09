@@ -1,7 +1,7 @@
 import * as T from './vendor/three.module.js';
 import {createPlayerHand} from './player-hand.js';
 export function createIgnitionSequence({camera,group,starter,click,onMotor,onDone,position}){
- const rig=new T.Group();rig.name='Ignition barrel and inserted key';rig.position.copy(position||new T.Vector3(.03,1.14,-.25));group.add(rig);rig.lookAt(camera.position);
+ const rig=new T.Group();rig.name='Ignition barrel and inserted key';rig.position.copy(position||new T.Vector3(.03,1.14,-.25));group.add(rig);rig.rotation.set(0,0,0);
  const steel=new T.MeshStandardMaterial({color:0xb8bfc1,metalness:.8,roughness:.22}),black=new T.MeshStandardMaterial({color:0x242c30,roughness:.6});
  const bezel=new T.Mesh(new T.TorusGeometry(.064,.012,12,32),steel);rig.add(bezel);const barrel=new T.Mesh(new T.CylinderGeometry(.052,.052,.035,32),black);barrel.rotation.x=Math.PI/2;rig.add(barrel);
  const slit=new T.Mesh(new T.BoxGeometry(.012,.043,.002),new T.MeshBasicMaterial({color:0x020304}));slit.position.z=.019;rig.add(slit);
