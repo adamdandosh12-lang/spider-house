@@ -7,53 +7,53 @@
       "gender": "male",
       "actor": "he-IL-AvriNeural",
       "pitch": "+8Hz",
-      "rate": "+1%",
+      "rate": "+10%",
       "bass": 0,
-      "treble": 1
+      "treble": 2
     },
     "noa": {
       "id": "noa",
       "gender": "male",
       "actor": "he-IL-AvriNeural",
-      "pitch": "-12Hz",
-      "rate": "-8%",
-      "bass": 2,
-      "treble": -1
+      "pitch": "-7Hz",
+      "rate": "+5%",
+      "bass": 1,
+      "treble": 2
     },
     "amir": {
       "id": "amir",
       "gender": "male",
       "actor": "he-IL-AvriNeural",
       "pitch": "+1Hz",
-      "rate": "+7%",
+      "rate": "+13%",
       "bass": 0,
-      "treble": 2
+      "treble": 3
     },
     "maya": {
       "id": "maya",
       "gender": "male",
       "actor": "he-IL-AvriNeural",
-      "pitch": "-22Hz",
-      "rate": "-3%",
-      "bass": 2.5,
-      "treble": 0
+      "pitch": "-17Hz",
+      "rate": "+8%",
+      "bass": 1.5,
+      "treble": 2.5
     },
     "yoav": {
       "id": "yoav",
       "gender": "male",
       "actor": "he-IL-AvriNeural",
-      "pitch": "-8Hz",
-      "rate": "+11%",
-      "bass": 1,
-      "treble": 2
+      "pitch": "-2Hz",
+      "rate": "+16%",
+      "bass": 0.5,
+      "treble": 3
     },
     "news": {
       "id": "news",
       "gender": "male",
       "actor": "he-IL-AvriNeural",
-      "pitch": "-28Hz",
-      "rate": "+6%",
-      "bass": 3,
+      "pitch": "-20Hz",
+      "rate": "+11%",
+      "bass": 2,
       "treble": 3
     },
     "pa": {
@@ -69,19 +69,19 @@
       "id": "robot",
       "gender": "male",
       "actor": "he-IL-AvriNeural",
-      "pitch": "-35Hz",
-      "rate": "-9%",
-      "bass": 3,
-      "treble": -2
+      "pitch": "-28Hz",
+      "rate": "-2%",
+      "bass": 2,
+      "treble": 1
     },
     "narrator": {
       "id": "narrator",
       "gender": "male",
       "actor": "he-IL-AvriNeural",
-      "pitch": "-16Hz",
-      "rate": "-5%",
-      "bass": 1.5,
-      "treble": 0
+      "pitch": "-9Hz",
+      "rate": "+7%",
+      "bass": 1,
+      "treble": 2
     }
   },
   "lineSpeakers": {
