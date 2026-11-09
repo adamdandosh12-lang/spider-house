@@ -54,3 +54,12 @@ body.in-prologue #touch-light,body.in-prologue #touch-bag,body.in-prologue #touc
 #intro-task{position:absolute;right:18px;top:140px;left:auto;margin:0;width:min(240px,30vw);max-height:30dvh;padding:13px;border-right:3px solid #ddbc84;border-radius:6px;font-size:14px;text-align:right;line-height:1.6}
 @media(max-width:760px),(pointer:coarse){#intro-task{right:12px;top:calc(122px + env(safe-area-inset-top));width:min(190px,48vw);max-height:22dvh;padding:9px;font-size:12px}}
 @media(max-height:500px) and (orientation:landscape){#intro-task{right:12px;top:118px;width:150px;max-height:22dvh;font-size:10px;padding:7px}}
+/* Dialogue always stays centred below the action, including the player's words. */
+#intro-line{position:absolute;grid-row:auto;left:50%;right:auto;bottom:96px;transform:translateX(-50%);margin:0;width:min(740px,calc(100% - 40px));max-height:22dvh;text-align:center;font-size:clamp(14px,1.7vw,19px);line-height:1.6;padding:12px 18px;pointer-events:none;border-radius:6px;text-shadow:0 1px 2px #000}
+#eye-lids{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;--eye-close:0}
+#eye-lids[hidden]{display:none}
+#eye-lids i{position:absolute;left:-10%;width:120%;height:56%;background:#030609;will-change:transform}
+#eye-lids i:first-child{top:-3%;border-radius:0 0 50% 50% / 0 0 18% 18%;transform:translateY(calc((var(--eye-close) - 1) * 110%))}
+#eye-lids i:last-child{bottom:-3%;border-radius:50% 50% 0 0 / 18% 18% 0 0;transform:translateY(calc((1 - var(--eye-close)) * 110%))}
+@media(max-width:760px),(pointer:coarse){#intro-line{bottom:calc(170px + env(safe-area-inset-bottom));font-size:14px;padding:10px 12px;width:calc(100% - 28px);max-height:23dvh}}
+@media(max-height:500px) and (orientation:landscape){#intro-line{bottom:110px;font-size:12px;max-width:70%;max-height:20dvh}}

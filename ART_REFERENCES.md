@@ -22,3 +22,5 @@ Phone design reference (2026-11-07): Apple iPhone 18 Pro / Pro Max official news
 2026-11-09 follow-up: Moved post-news standing point clear of sofa collision padding. Keyboard and joystick walking after standing are both exercised in the full runtime regression.
 
 2026-11-09 user adjustment: Robot stays at its station. Player walks to it and presses E to start the handshake; lab scientist interactions follow afterward.
+
+2026-11-09 v1.71: Original low-angle silk-drag sequence leads from the lab to a webbed house facade, followed by closing eyelids and the existing house awakening. Original rounded car panels, continuous body shell, curved dashboard, rounded tires and joined windshield pillars. Speech re-rendered as continuous he-IL-AvriNeural utterances at -2% rate/-6Hz pitch, then gently equalized and loudness-normalized; no robotic runtime effects. Dialogue captions remain visible at bottom centre. Engine loop uses an in-memory crossfade at the loop seam.
