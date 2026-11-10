@@ -69,9 +69,9 @@ export const VOICE_CAST={
     "id": "robot",
     "gender": "male",
     "actor": "he-IL-AvriNeural",
-    "pitch": "-28Hz",
-    "rate": "-2%",
-    "bass": 2,
+    "pitch": "+16Hz",
+    "rate": "+0%",
+    "bass": -2.5,
     "treble": 1
   },
   "narrator": {
