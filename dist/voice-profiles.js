@@ -51,10 +51,10 @@ export const VOICE_CAST={
     "id": "news",
     "gender": "male",
     "actor": "he-IL-AvriNeural",
-    "pitch": "-20Hz",
-    "rate": "+11%",
-    "bass": 2,
-    "treble": 3
+    "pitch": "-10Hz",
+    "rate": "+4%",
+    "bass": 0,
+    "treble": 2
   },
   "pa": {
     "id": "pa",

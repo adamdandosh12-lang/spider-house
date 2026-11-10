@@ -51,10 +51,10 @@
       "id": "news",
       "gender": "male",
       "actor": "he-IL-AvriNeural",
-      "pitch": "-20Hz",
-      "rate": "+11%",
-      "bass": 2,
-      "treble": 3
+      "pitch": "-10Hz",
+      "rate": "+4%",
+      "bass": 0,
+      "treble": 2
     },
     "pa": {
       "id": "pa",
@@ -132,7 +132,7 @@
   },
   "postProcessing": {
     "robot": "62Hz ring modulation with dry speech and short metallic reflection",
-    "news": "broadcast presence EQ and gentle compression",
+    "news": "User-approved sample 3: relaxed delivery, presence EQ and gentle compression",
     "narrator": "broadcast presence EQ and gentle compression"
   },
   "assetFiles": {
@@ -230,13 +230,13 @@
       "./assets/voices/voice176-0c35c37c8bcdba.mp3"
     ],
     "מגיש החדשות: הבוקר באחוזת המחקר: מדענים יערכו היום את ניסוי 08 בקורי עכביש.": [
-      "./assets/voices/voice177-addeda2fb14a72.mp3"
+      "./assets/voices/voice178-f1406115913e1b.mp3"
     ],
     "מגיש החדשות: הצוות מפתח חבלי חילוץ חזקים וקלים, שיעזרו להציל אנשים ממקומות מסוכנים.": [
-      "./assets/voices/voice177-42de81ecc5c29d.mp3"
+      "./assets/voices/voice178-7ab8d1cc490fbd.mp3"
     ],
     "מגיש החדשות: החוקרים מסרו שכל הבדיקות יבוצעו בתוך תא זכוכית סגור. נעדכן בהמשך היום.": [
-      "./assets/voices/voice177-c71cde7baad8b7.mp3"
+      "./assets/voices/voice178-beea8edb5e4f38.mp3"
     ],
     "אני: אני רוצה לראות מה אומרים בחדשות.": [
       "./assets/voices/voice176-0a460412b060b3.mp3"
@@ -260,13 +260,13 @@
       "./assets/voices/voice176-7500e3b26bbd78.mp3"
     ],
     "חדשות: התקבל תיעוד יוצא דופן מאחוזת המחקר.": [
-      "./assets/voices/voice177-b6cb5b7fb30cda.mp3"
+      "./assets/voices/voice178-f96556c01d322c.mp3"
     ],
     "חדשות: הרובוט עיכב את העכביש ואפשר לחוקר להימלט.": [
-      "./assets/voices/voice177-9227d8c153eda8.mp3"
+      "./assets/voices/voice178-21539090826158.mp3"
     ],
     "חדשות: גורלו של הרובוט עדיין לא ידוע…": [
-      "./assets/voices/voice177-c15564869b1ebb.mp3"
+      "./assets/voices/voice178-81b053cedff8b1.mp3"
     ]
   }
 }
