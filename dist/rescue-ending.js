@@ -1,3 +1,4 @@
+import {returnDrivePose} from './return-drive.js';
 import {createNightReturn} from './night-return.js';
 import * as T from './vendor/three.module.js';
 import {createStreetCar,addStreetHouse} from './street-models.js';
@@ -29,6 +30,16 @@ export function createSequel({scene,camera,spider,robotRoom,line,blocked=()=>fal
  box(yard,8,.05,9,new T.MeshStandardMaterial({color:0x70716b}),8,.01,8);
  addStreetHouse(yard,13,16,0x746f69,Math.PI);for(let i=0;i<9;i++){addStreetHouse(yard,-14,-i*17,0x7b827e,Math.PI/2);if(i)addStreetHouse(yard,14,-i*17,0x95826f,-Math.PI/2);}
  const car=createStreetCar(yard,0xc9a52a,'supercar');car.g.position.set(8,0,7);car.g.rotation.y=0;
+
+ const abandoned=new T.Group();abandoned.name='Abandoned cars beside return road';abandoned.visible=false;yard.add(abandoned);
+ for(const [i,x,z,color,angle]of [[0,6.2,-78,0x586560,.16],[1,-6.3,-40,0x76564d,-.3],[2,6.1,-10,0x5b6676,.4]]){
+  const wreck=createStreetCar(abandoned,color,i===1?'hatchback':'sedan');wreck.g.position.set(x,0,z);wreck.g.rotation.y=angle+(i%2?Math.PI:0);wreck.g.name='Abandoned car '+(i+1);wreck.openDoor(i===1?.9:.22);wreck.wheels[0].scale.y=.6;
+  wreck.g.traverse(o=>{if(!o.isMesh)return;const materials=Array.isArray(o.material)?o.material:[o.material];for(const material of materials){material.roughness=.92;if(material.emissiveIntensity)material.emissiveIntensity=0;if(material.map&&material.isMeshBasicMaterial)material.color.set(0x111a1a);}});
+  const silk=[];for(let j=0;j<12;j++){silk.push(-.8,1.11+j*.035,-.91+j*.03,.78,1.16+j*.035,-.89+j*.03);}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(silk,3));wreck.g.add(new T.LineSegments(geometry,new T.LineBasicMaterial({color:0xabb7ad,transparent:true,opacity:.52})));
+  const crack=new T.BufferGeometry().setFromPoints([V(-.6,1.2,-.85),V(.08,1.45,-.64),V(.36,1.17,-.86)]);wreck.g.add(new T.Line(crack,new T.LineBasicMaterial({color:0xb8c7c5,transparent:true,opacity:.7})));
+ }
+ for(const side of [-1,1]){const light=new T.SpotLight(0xe5ead4,22,38,.34,.6,1.4);light.position.set(side*.62,.82,-2.12);light.target.position.set(side*.62,.2,-25);car.g.add(light,light.target);}
+ const parkedWrecks=new T.Group();parkedWrecks.name='Abandoned cars outside spider house';parkedWrecks.visible=false;scene.add(parkedWrecks);for(const [i,x]of [[0,-7],[1,8]]){const clone=abandoned.children[i].clone(true);clone.position.set(x,0,19+i*4);clone.rotation.y=i?.6:-.5;parkedWrecks.add(clone);}
  const carLamp=new T.PointLight(0xffe2aa,10,20);carLamp.position.set(8,3,7);outside.add(carLamp);
  const roadCamera=new T.PerspectiveCamera(65,1,.08,180);outside.add(roadCamera);
  const home=new T.Scene();home.background=new T.Color(0x151a24);home.add(new T.HemisphereLight(0xe0e6ff,0x594938,1.7));const lamp=new T.PointLight(0xffd4a1,45,25);lamp.position.set(-3,3,0);home.add(lamp);
@@ -44,7 +55,7 @@ export function createSequel({scene,camera,spider,robotRoom,line,blocked=()=>fal
  function caption(s){if(s!==lastLine){lastLine=s;line(s);}}
  function look(cam,p,target){cam.position.copy(p);cam.lookAt(target);}
  const night=createNightReturn({scene,camera,home,homeCamera,homeDecor,lamp,robotRoom,spider,line:caption,blocked,prepare});
- function update(t,dt,input={}){tNow=t;if(t>=ENDING_DURATION){armRig.visible=false;film=false;phone.visible=false;grip.hide();eyelids.visible=false;night.update(t-ENDING_DURATION,dt,input);phase='night-'+night.phase;activeScene=night.phase==='phone'?home:scene;activeCamera=night.camera;if(night.phase==='depart'){activeScene=outside;activeCamera=roadCamera;const u=ease((t-ENDING_DURATION-11)/7);car.g.position.set(0,0,-100+100*u);car.g.updateMatrixWorld(true);roadCamera.position.copy(car.g.localToWorld(V(-.42,1.42,.3)));roadCamera.quaternion.copy(car.g.quaternion);car.wheels.forEach(w=>w.rotation.x=-t*6);car.indicators.update(null,t,Math.round(65*Math.sin(u*Math.PI)));}return;}film=false;phone.visible=false;grip.hide();eyelids.visible=t>=33&&t<37;eyelids.material.opacity=t<36?ease((t-33)/1.2):1-ease((t-36)/1);activeScene=scene;activeCamera=camera;phase='rescue';
+ function update(t,dt,input={}){tNow=t;abandoned.visible=t>=ENDING_DURATION&&night.phase==='depart';parkedWrecks.visible=t>=ENDING_DURATION&&['search','found'].includes(night.phase);if(t>=ENDING_DURATION){armRig.visible=false;film=false;phone.visible=false;grip.hide();eyelids.visible=false;night.update(t-ENDING_DURATION,dt,input);phase='night-'+night.phase;activeScene=night.phase==='phone'?home:scene;activeCamera=night.camera;if(night.phase==='depart'){activeScene=outside;activeCamera=roadCamera;abandoned.visible=true;const pose=returnDrivePose(night.departElapsed);car.g.position.set(pose.x,0,pose.z);car.g.rotation.set(0,pose.yaw,0);car.g.updateMatrixWorld(true);roadCamera.position.copy(car.g.localToWorld(V(-.42,1.42,.3)));roadCamera.quaternion.copy(car.g.quaternion);car.wheels.forEach(w=>w.rotation.x=-pose.distance/.38);car.steering.rotation.z=pose.steering;car.indicators.update(pose.turn,night.departElapsed,pose.speed);}return;}film=false;phone.visible=false;grip.hide();eyelids.visible=t>=33&&t<37;eyelids.material.opacity=t<36?ease((t-33)/1.2):1-ease((t-36)/1);activeScene=scene;activeCamera=camera;phase='rescue';
   if(t<10){
    const run=ease(t/2.2),hold=clamp((t-2.2)/.8),throwU=ease((t-4.7)/1.4);
    robot.position.set((-4+4*run)/2.4,t<2.2?Math.abs(Math.sin(t*10))*.045:0,9.55);robot.rotation.set(0,Math.PI,0);robotRoom.fight(t);
@@ -79,7 +90,7 @@ export function createSequel({scene,camera,spider,robotRoom,line,blocked=()=>fal
   }
  }
  function render(renderer,w,h){night.resize(w/h);activeCamera.aspect=w/h;activeCamera.updateProjectionMatrix();const narrow=w/h<1;phone.scale.setScalar(narrow?.62:1);phone.position.x=narrow?.055:.24;if(film){const hp=phone.visible,hh=grip.g.visible;phone.visible=false;grip.g.visible=false;let target=screenTarget;if(tNow>=nextCapture){nextCapture=tNow+.5;target=new T.WebGLRenderTarget(256,144);recorded.push(target);}renderer.setRenderTarget(target);renderer.render(scene,filmCamera);renderer.setRenderTarget(null);phoneScreen.material.map=target.texture;phone.visible=hp;grip.g.visible=hh;}renderer.render(activeScene,activeCamera);}
- function stop(){night.stop();phone.visible=false;grip.hide();armRig.visible=false;robotRoom.arms.forEach(a=>a.visible=true);recorded.forEach(r=>r.dispose());recorded=[];film=false;}
- return{update,render,stop,night,reset(){night.reset();lastLine='';recorded.forEach(r=>r.dispose());recorded=[];nextCapture=0;robotRoom.arms.forEach(a=>a.visible=true);armRig.visible=false;lamp.intensity=45;home.background.set(0x151a24);update(0,0);},debug(){return{phase,t:tNow,film,phone,grip,phoneScreen,armRig,arms,spider,robot,activeScene,night:night.debug(),recorded:recorded.length};}};
+ function stop(){abandoned.visible=false;parkedWrecks.visible=false;night.stop();phone.visible=false;grip.hide();armRig.visible=false;robotRoom.arms.forEach(a=>a.visible=true);recorded.forEach(r=>r.dispose());recorded=[];film=false;}
+ return{update,render,stop,night,reset(){night.reset();lastLine='';recorded.forEach(r=>r.dispose());recorded=[];nextCapture=0;robotRoom.arms.forEach(a=>a.visible=true);armRig.visible=false;lamp.intensity=45;home.background.set(0x151a24);update(0,0);},debug(){return{phase,t:tNow,film,phone,grip,phoneScreen,armRig,arms,spider,robot,activeScene,returnCar:car,abandoned,parkedWrecks,night:night.debug(),recorded:recorded.length};}};
 }
 
