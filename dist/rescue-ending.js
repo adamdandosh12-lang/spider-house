@@ -1,3 +1,4 @@
+import {createNightReturn} from './night-return.js';
 import * as T from './vendor/three.module.js';
 import {createStreetCar,addStreetHouse} from './street-models.js';
 import {decorateMorningHome} from './morning-home.js';
@@ -6,7 +7,7 @@ import {createPlayerPhone} from './player-phone.js';
 
 export const ENDING_DURATION=52;
 const clamp=x=>Math.max(0,Math.min(1,x)), ease=x=>{x=clamp(x);return x*x*(3-2*x);};
-export function createSequel({scene,camera,spider,robotRoom,line}){
+export function createSequel({scene,camera,spider,robotRoom,line,blocked=()=>false,prepare=()=>{}}){
  const V=(x,y,z)=>new T.Vector3(x,y,z), robot=robotRoom.robot;
  const metal=new T.MeshStandardMaterial({color:0x9aa7a3,metalness:.75,roughness:.35});
  const dark=new T.MeshStandardMaterial({color:0x202a2e,roughness:.6});
@@ -42,7 +43,8 @@ export function createSequel({scene,camera,spider,robotRoom,line}){
  function news(t){newsCtx.clearRect(0,0,768,432);newsCtx.fillStyle='#153b58';newsCtx.fillRect(0,0,290,340);newsCtx.fillStyle='#c99b80';newsCtx.beginPath();newsCtx.ellipse(145,131,40,52,0,0,Math.PI*2);newsCtx.fill();newsCtx.fillStyle='#293847';newsCtx.fillRect(85,184,120,140);newsCtx.fillStyle='#e8e4de';newsCtx.beginPath();newsCtx.moveTo(125,184);newsCtx.lineTo(165,184);newsCtx.lineTo(145,252);newsCtx.closePath();newsCtx.fill();newsCtx.fillStyle='#614237';newsCtx.fillRect(133,156,24,3+Math.abs(Math.sin(t*7))*6);newsCtx.fillStyle='#a0252b';newsCtx.fillRect(0,340,768,92);newsCtx.fillStyle='#fff';newsCtx.font='28px Arial';newsCtx.textAlign='right';newsCtx.direction='rtl';newsCtx.fillText('תיעוד דרמטי: הרובוט הציל את החוקר',745,380);newsCtx.font='18px Arial';newsCtx.fillText('חדשות מתוך עולם המשחק • גורלו של הרובוט אינו ידוע',745,415);newsTexture.needsUpdate=true;}
  function caption(s){if(s!==lastLine){lastLine=s;line(s);}}
  function look(cam,p,target){cam.position.copy(p);cam.lookAt(target);}
- function update(t,dt){tNow=t;film=false;phone.visible=false;grip.hide();eyelids.visible=t>=33&&t<37;eyelids.material.opacity=t<36?ease((t-33)/1.2):1-ease((t-36)/1);activeScene=scene;activeCamera=camera;phase='rescue';
+ const night=createNightReturn({scene,camera,home,homeCamera,homeDecor,lamp,robotRoom,spider,line:caption,blocked,prepare});
+ function update(t,dt,input={}){tNow=t;if(t>=ENDING_DURATION){armRig.visible=false;film=false;phone.visible=false;grip.hide();eyelids.visible=false;night.update(t-ENDING_DURATION,dt,input);phase='night-'+night.phase;activeScene=night.phase==='phone'?home:scene;activeCamera=night.camera;if(night.phase==='depart'){activeScene=outside;activeCamera=roadCamera;const u=ease((t-ENDING_DURATION-11)/7);car.g.position.set(0,0,-100+100*u);car.g.updateMatrixWorld(true);roadCamera.position.copy(car.g.localToWorld(V(-.42,1.42,.3)));roadCamera.quaternion.copy(car.g.quaternion);car.wheels.forEach(w=>w.rotation.x=-t*6);car.indicators.update(null,t,Math.round(65*Math.sin(u*Math.PI)));}return;}film=false;phone.visible=false;grip.hide();eyelids.visible=t>=33&&t<37;eyelids.material.opacity=t<36?ease((t-33)/1.2):1-ease((t-36)/1);activeScene=scene;activeCamera=camera;phase='rescue';
   if(t<10){
    const run=ease(t/2.2),hold=clamp((t-2.2)/.8),throwU=ease((t-4.7)/1.4);
    robot.position.set((-4+4*run)/2.4,t<2.2?Math.abs(Math.sin(t*10))*.045:0,9.55);robot.rotation.set(0,Math.PI,0);robotRoom.fight(t);
@@ -76,7 +78,8 @@ export function createSequel({scene,camera,spider,robotRoom,line}){
    else{lamp.intensity=45;home.background.set(0xa2b8c2);look(homeCamera,V(-5,1.18,-3.65),V(-5,1.62,-6.9));homeDecor.update(t,true);if(recorded.length)newsFrame.material.map=recorded[Math.floor((t-37)*2)%recorded.length].texture;news(t);caption(t<41?'חדשות: התקבל תיעוד יוצא דופן מאחוזת המחקר.':t<46?'חדשות: הרובוט עיכב את העכביש ואפשר לחוקר להימלט.':'חדשות: גורלו של הרובוט עדיין לא ידוע…');}
   }
  }
- function render(renderer,w,h){activeCamera.aspect=w/h;activeCamera.updateProjectionMatrix();const narrow=w/h<1;phone.scale.setScalar(narrow?.62:1);phone.position.x=narrow?.055:.24;if(film){const hp=phone.visible,hh=grip.g.visible;phone.visible=false;grip.g.visible=false;let target=screenTarget;if(tNow>=nextCapture){nextCapture=tNow+.5;target=new T.WebGLRenderTarget(256,144);recorded.push(target);}renderer.setRenderTarget(target);renderer.render(scene,filmCamera);renderer.setRenderTarget(null);phoneScreen.material.map=target.texture;phone.visible=hp;grip.g.visible=hh;}renderer.render(activeScene,activeCamera);}
- function stop(){phone.visible=false;grip.hide();armRig.visible=false;robotRoom.arms.forEach(a=>a.visible=true);recorded.forEach(r=>r.dispose());recorded=[];film=false;}
- return{update,render,stop,reset(){lastLine='';recorded.forEach(r=>r.dispose());recorded=[];nextCapture=0;robotRoom.arms.forEach(a=>a.visible=true);armRig.visible=false;lamp.intensity=45;home.background.set(0x151a24);update(0,0);},debug(){return{phase,t:tNow,film,phone,grip,phoneScreen,armRig,arms,spider,robot,activeScene,recorded:recorded.length};}};
+ function render(renderer,w,h){night.resize(w/h);activeCamera.aspect=w/h;activeCamera.updateProjectionMatrix();const narrow=w/h<1;phone.scale.setScalar(narrow?.62:1);phone.position.x=narrow?.055:.24;if(film){const hp=phone.visible,hh=grip.g.visible;phone.visible=false;grip.g.visible=false;let target=screenTarget;if(tNow>=nextCapture){nextCapture=tNow+.5;target=new T.WebGLRenderTarget(256,144);recorded.push(target);}renderer.setRenderTarget(target);renderer.render(scene,filmCamera);renderer.setRenderTarget(null);phoneScreen.material.map=target.texture;phone.visible=hp;grip.g.visible=hh;}renderer.render(activeScene,activeCamera);}
+ function stop(){night.stop();phone.visible=false;grip.hide();armRig.visible=false;robotRoom.arms.forEach(a=>a.visible=true);recorded.forEach(r=>r.dispose());recorded=[];film=false;}
+ return{update,render,stop,night,reset(){night.reset();lastLine='';recorded.forEach(r=>r.dispose());recorded=[];nextCapture=0;robotRoom.arms.forEach(a=>a.visible=true);armRig.visible=false;lamp.intensity=45;home.background.set(0x151a24);update(0,0);},debug(){return{phase,t:tNow,film,phone,grip,phoneScreen,armRig,arms,spider,robot,activeScene,night:night.debug(),recorded:recorded.length};}};
 }
+

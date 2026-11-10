@@ -66,3 +66,5 @@ body.in-prologue #touch-light,body.in-prologue #touch-bag,body.in-prologue #touc
 
 /* Ending subtitles stay clear of the filmed phone and fit portrait screens. */
 .in-ending #wake-line{bottom:max(20px,env(safe-area-inset-bottom));left:4%;right:4%;width:auto;max-width:900px;margin:0 auto;font-size:clamp(16px,2.3vw,24px);line-height:1.5;padding:12px 16px}
+
+#night-task{position:absolute;z-index:15;top:calc(76px + env(safe-area-inset-top));right:14px;max-width:min(340px,calc(100% - 28px));padding:12px 16px;background:#0e1a20e8;color:#e6eee8;border-inline-start:3px solid #98b9ab;font-size:16px;line-height:1.5;pointer-events:none}#night-task[hidden]{display:none}.night-search #wake-line{bottom:calc(185px + env(safe-area-inset-bottom));font-size:clamp(14px,2vw,20px)}@media(max-height:500px){#night-task{top:12px;max-width:45%;font-size:13px}.night-search #wake-line{bottom:112px;max-width:70%}}
