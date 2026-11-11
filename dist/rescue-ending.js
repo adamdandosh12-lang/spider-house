@@ -8,7 +8,7 @@ import {createPlayerPhone} from './player-phone.js';
 
 export const ENDING_DURATION=52;
 const clamp=x=>Math.max(0,Math.min(1,x)), ease=x=>{x=clamp(x);return x*x*(3-2*x);};
-export function createSequel({scene,camera,spider,robotRoom,line,blocked=()=>false,prepare=()=>{}}){
+export function createSequel({scene,camera,spider,robotRoom,line,blocked=()=>false,prepare=()=>{},sound=()=>{}}){
  const V=(x,y,z)=>new T.Vector3(x,y,z), robot=robotRoom.robot;
  const metal=new T.MeshStandardMaterial({color:0x9aa7a3,metalness:.75,roughness:.35});
  const dark=new T.MeshStandardMaterial({color:0x202a2e,roughness:.6});
@@ -54,8 +54,8 @@ export function createSequel({scene,camera,spider,robotRoom,line,blocked=()=>fal
  function news(t){newsCtx.clearRect(0,0,768,432);newsCtx.fillStyle='#153b58';newsCtx.fillRect(0,0,290,340);newsCtx.fillStyle='#c99b80';newsCtx.beginPath();newsCtx.ellipse(145,131,40,52,0,0,Math.PI*2);newsCtx.fill();newsCtx.fillStyle='#293847';newsCtx.fillRect(85,184,120,140);newsCtx.fillStyle='#e8e4de';newsCtx.beginPath();newsCtx.moveTo(125,184);newsCtx.lineTo(165,184);newsCtx.lineTo(145,252);newsCtx.closePath();newsCtx.fill();newsCtx.fillStyle='#614237';newsCtx.fillRect(133,156,24,3+Math.abs(Math.sin(t*7))*6);newsCtx.fillStyle='#a0252b';newsCtx.fillRect(0,340,768,92);newsCtx.fillStyle='#fff';newsCtx.font='28px Arial';newsCtx.textAlign='right';newsCtx.direction='rtl';newsCtx.fillText('תיעוד דרמטי: הרובוט הציל את החוקר',745,380);newsCtx.font='18px Arial';newsCtx.fillText('חדשות מתוך עולם המשחק • גורלו של הרובוט אינו ידוע',745,415);newsTexture.needsUpdate=true;}
  function caption(s){if(s!==lastLine){lastLine=s;line(s);}}
  function look(cam,p,target){cam.position.copy(p);cam.lookAt(target);}
- const night=createNightReturn({scene,camera,home,homeCamera,homeDecor,lamp,robotRoom,spider,line:caption,blocked,prepare});
- function update(t,dt,input={}){tNow=t;abandoned.visible=t>=ENDING_DURATION&&night.phase==='depart';parkedWrecks.visible=t>=ENDING_DURATION&&['search','found'].includes(night.phase);if(t>=ENDING_DURATION){armRig.visible=false;film=false;phone.visible=false;grip.hide();eyelids.visible=false;night.update(t-ENDING_DURATION,dt,input);phase='night-'+night.phase;activeScene=night.phase==='phone'?home:scene;activeCamera=night.camera;if(night.phase==='depart'){activeScene=outside;activeCamera=roadCamera;abandoned.visible=true;const pose=returnDrivePose(night.departElapsed);car.g.position.set(pose.x,0,pose.z);car.g.rotation.set(0,pose.yaw,0);car.g.updateMatrixWorld(true);roadCamera.position.copy(car.g.localToWorld(V(-.42,1.42,.3)));roadCamera.quaternion.copy(car.g.quaternion);car.wheels.forEach(w=>w.rotation.x=-pose.distance/.38);car.steering.rotation.z=pose.steering;car.indicators.update(pose.turn,night.departElapsed,pose.speed);}return;}film=false;phone.visible=false;grip.hide();eyelids.visible=t>=33&&t<37;eyelids.material.opacity=t<36?ease((t-33)/1.2):1-ease((t-36)/1);activeScene=scene;activeCamera=camera;phase='rescue';
+ const night=createNightReturn({scene,camera,home,homeCamera,homeDecor,lamp,robotRoom,spider,line:caption,blocked,prepare,sound});
+ function update(t,dt,input={}){tNow=t;abandoned.visible=t>=ENDING_DURATION&&night.phase==='depart';parkedWrecks.visible=t>=ENDING_DURATION&&['search','found'].includes(night.phase);if(t>=ENDING_DURATION){armRig.visible=false;film=false;phone.visible=false;grip.hide();eyelids.visible=false;night.update(t-ENDING_DURATION,dt,input);phase='night-'+night.phase;activeScene=night.phase==='phone'?home:scene;activeCamera=night.camera;if(night.phase==='depart'){activeScene=outside;activeCamera=roadCamera;abandoned.visible=true;const pose=returnDrivePose(night.departElapsed);car.g.position.set(pose.x,0,pose.z);car.g.rotation.set(0,pose.yaw,0);car.g.updateMatrixWorld(true);roadCamera.position.copy(car.g.localToWorld(V(-.42,1.42,.3)));roadCamera.quaternion.copy(car.g.quaternion);car.wheels.forEach(w=>w.rotation.x=-pose.distance/.38);car.steer(pose.steering);car.indicators.update(pose.turn,night.departElapsed,pose.speed);}return;}film=false;phone.visible=false;grip.hide();eyelids.visible=t>=33&&t<37;eyelids.material.opacity=t<36?ease((t-33)/1.2):1-ease((t-36)/1);activeScene=scene;activeCamera=camera;phase='rescue';
   if(t<10){
    const run=ease(t/2.2),hold=clamp((t-2.2)/.8),throwU=ease((t-4.7)/1.4);
    robot.position.set((-4+4*run)/2.4,t<2.2?Math.abs(Math.sin(t*10))*.045:0,9.55);robot.rotation.set(0,Math.PI,0);robotRoom.fight(t);
@@ -80,7 +80,7 @@ export function createSequel({scene,camera,spider,robotRoom,line,blocked=()=>fal
    car.g.position.set(8*(1-ease((t-17)/2)),0,7-105*move);car.g.rotation.y=0;car.openDoor(t<14?ease((t-12)/1):1-ease((t-14)/1));
    if(t<15){look(roadCamera,V(2+4.6*approach,1.65-.22*seat,17-9.7*approach),V(8,1,6.4));}
    else{car.g.updateMatrixWorld(true);roadCamera.position.copy(car.g.localToWorld(V(-.42,1.42,.3)));roadCamera.quaternion.copy(car.g.quaternion);}
-   const kph=t<17?0:Math.round(15+60*Math.sin(clamp((t-17)/9)*Math.PI));car.indicators.update(t>17&&t<19?'left':null,t,kph);car.wheels.forEach(w=>w.rotation.x=t<17?0:-t*7);car.steering.rotation.z=t>17&&t<19?-.15:0;
+   const kph=t<17?0:Math.round(15+60*Math.sin(clamp((t-17)/9)*Math.PI));car.indicators.update(t>17&&t<19?'left':null,t,kph);car.wheels.forEach(w=>w.rotation.x=t<17?0:-t*7);car.steer(t>17&&t<19?-.35:0);
    caption(t<13?'אני רץ למכונית…':t<16?'נכנס למכונית וסוגר את הדלת':t<18?'מסובב את המפתח. חייב להגיע הביתה.':t<25?'אני: בבקשה… שהרובוט יהיה בסדר.':'הגעתי הביתה.');
   }else{
    activeScene=home;activeCamera=homeCamera;phase=t<33?'home':t<37?'sleep':'news';
