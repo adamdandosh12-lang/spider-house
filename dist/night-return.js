@@ -1,10 +1,12 @@
+import {createSpider} from './spider-model.js';
 import {createCaptureScare} from './capture-scare.js';
 import {createNightRescue} from './night-rescue.js';
 import * as T from './vendor/three.module.js';
 import {createPlayerPhone} from './player-phone.js';
 import {floorAt} from './house-world.js';
 export const NIGHT_LINES={decision:'אני: טוב, אני אלך להציל את הרובוט.',arrival:'אני: חזרתי לבית של העכביש. אני חייב למצוא את הרובוט.',found:'אני: מצאתי אותך. תחזיק מעמד, אני אעזור לך.',robot:'רובוט: אדם… חזרת בשבילי. אני עדיין כאן.'};
-export function createNightReturn({scene,camera,home,homeCamera,homeDecor,lamp,robotRoom,spider,line,blocked,prepare,sound}){
+export function createNightReturn({scene,camera,home,homeCamera,homeDecor,lamp,robotRoom,spider,line,blocked,prepare,sound,scareSound=()=>{}}){
+ const attacker=createSpider(scene);attacker.g.name='Stair dream spider revealed after looking up';attacker.g.visible=false;attacker.g.scale.setScalar(.55);const lookStart=new T.Quaternion(),lookEnd=new T.Quaternion();
  const dream=createCaptureScare();let dreamTime=-1,dreamDone=false;
  const rescue=createNightRescue({scene,camera,robotRoom,line,sound});
  const c=document.createElement('canvas');c.width=384;c.height=720;const x=c.getContext('2d');
@@ -25,16 +27,22 @@ export function createNightReturn({scene,camera,home,homeCamera,homeDecor,lamp,r
   }if(phase==='depart'){if(phaseTime>=7)enter();return;}
   if(phase==='search'){
    rescue.update(dt,pos);
-   if(!dreamDone&&rescue.stage==='return'&&pos.y>1&&pos.z< -13&&pos.x< -15){dreamDone=true;dreamTime=0;}
-   if(dreamTime>=0){dreamTime+=dt;if(dreamTime<1.2){camera.position.copy(pos);camera.rotation.x=-Math.min(1.25,dreamTime);return;}if(dreamTime<3.1){dream.update(dreamTime-1.2,camera.aspect);if(dreamTime-dt<1.2)line('אני: אההה!');return;}if(dreamTime<5){camera.position.copy(pos);camera.position.y=.3+1.35*Math.min(1,(dreamTime-3.1)/1.2);camera.rotation.x=.3;if(dreamTime-dt<3.1)line('אני: בטח זה היה סתם חלום… הסוללה עדיין אצלי.');return;}dreamTime=-1;}
+   if(!dreamDone&&rescue.stage==='return'&&pos.y>1.5&&pos.z>=-14.05&&pos.z< -12.7&&Math.abs(pos.x+19.2)<2.5){dreamDone=true;dreamTime=0;lookStart.copy(camera.quaternion);camera.lookAt(pos.x,3,pos.z+1.8);lookEnd.copy(camera.quaternion);camera.quaternion.copy(lookStart);}
+   if(dreamTime>=0){dreamTime+=dt;camera.position.copy(pos);
+    if(dreamTime<1.2){attacker.g.visible=false;camera.quaternion.slerpQuaternions(lookStart,lookEnd,T.MathUtils.smoothstep(dreamTime,0,1.2));return;}
+    if(dreamTime<2.7){const u=T.MathUtils.smoothstep(dreamTime,2.05,2.7);attacker.g.visible=true;attacker.g.position.set(pos.x,2.35-u*.85,pos.z+1.9-u*1.6);attacker.g.rotation.set(0,0,-u*.15);attacker.animate(dreamTime,dt,false,'chase',null,null,{grab:u,open:.7,bite:0});camera.lookAt(attacker.g.position.x,attacker.g.position.y+.45,attacker.g.position.z);return;}
+    attacker.g.visible=false;
+    if(dreamTime<4.3){dream.update(dreamTime-2.7,camera.aspect);if(dreamTime-dt<2.7){line('אני: אההה!');scareSound();}return;}
+    if(dreamTime<6.2){camera.position.y=.3+1.35*Math.min(1,(dreamTime-4.3)/1.2);camera.rotation.set(.3,Math.PI,0,'YXZ');if(dreamTime-dt<4.3)line('אני: בטח זה היה סתם חלום… הסוללה עדיין אצלי.');return;}dreamTime=-1;y=Math.PI;p=.3;
+   }
    if(Math.hypot(pos.x,pos.z+10)<4)robotRoom.wake();if(rescue.complete)complete=true;if(['rising','escort','safe'].includes(rescue.stage))web.visible=false;if(!rescue.free)return;
    y-=input.lookX||0;p=T.MathUtils.clamp(p-(input.lookY||0),-1.1,1.1);const k=input.keys||{},touch=input.touch||{};let f=(k.KeyW||k.ArrowUp?1:0)-(k.KeyS||k.ArrowDown?1:0)-(touch.y||0),r=(k.KeyD||k.ArrowRight?1:0)-(k.KeyA||k.ArrowLeft?1:0)+(touch.x||0);const len=Math.max(1,Math.hypot(f,r)),speed=(rescue.stage==='escort'?1.5:k.ShiftLeft?3.7:2.55)*Math.min(dt,.05)/len;const dx=(-Math.sin(y)*f+Math.cos(y)*r)*speed,dz=(-Math.cos(y)*f-Math.sin(y)*r)*speed;
    function move(nx,nz){const h=floorAt(nx,nz,pos.y-1.65);if(h!==null&&!rescue.blocked(nx,nz,h)&&!blocked(nx,nz,.3,h))pos.set(nx,h+1.65,nz);}
    move(pos.x+dx,pos.z);move(pos.x,pos.z+dz);camera.position.copy(pos);camera.position.y+=Math.hypot(dx,dz)>.001?Math.sin(t*9)*.012:0;camera.rotation.set(p,y,0,'YXZ');beacon.intensity=.3+Math.sin(t*1.7)*.08;
   }else if(phase==='found'){camera.lookAt(0,.5,-10.8);if(phaseTime>3)say(NIGHT_LINES.robot);if(phaseTime>=8){phase='search';p=camera.rotation.x;y=camera.rotation.y;rescue.activate();}}
  }
- function interact(){if(phase==='phone'&&time>=5){phase='depart';phaseTime=0;phone.phone.visible=false;phone.grip.hide();return;}if(phase!=='search')return;if(rescue.stage!=='idle'){rescue.interact(pos);return;}if(Math.hypot(pos.x,pos.z+10)<2.35&&Math.abs(pos.y-1.65)<.3){phase='found';phaseTime=0;say(NIGHT_LINES.found);return;}const clue=clues.find((c,i)=>!found.has(i)&&Math.hypot(pos.x,pos.z-c.z)<1.8&&Math.abs(pos.y-1.65)<.3);if(clue){found.add(clues.indexOf(clue));say(clue.text);}}
+ function interact(){if(dreamTime>=0)return;if(phase==='phone'&&time>=5){phase='depart';phaseTime=0;phone.phone.visible=false;phone.grip.hide();return;}if(phase!=='search')return;if(rescue.stage!=='idle'){rescue.interact(pos);return;}if(Math.hypot(pos.x,pos.z+10)<2.35&&Math.abs(pos.y-1.65)<.3){phase='found';phaseTime=0;say(NIGHT_LINES.found);return;}const clue=clues.find((c,i)=>!found.has(i)&&Math.hypot(pos.x,pos.z-c.z)<1.8&&Math.abs(pos.y-1.65)<.3);if(clue){found.add(clues.indexOf(clue));say(clue.text);}}
  function hint(){if(rescue.stage!=='idle')return rescue.hint(pos);if(phase==='phone')return time<5?'01:00 · הודעה מהרובוט':'E / פעולה · לצאת להציל את הרובוט';if(phase==='depart')return 'חוזר לבית המקורי · 01:00 בלילה';if(phase==='found')return 'מצאת את יחידה 08';if(phase!=='search')return '';if(Math.hypot(pos.x,pos.z+10)<2.35&&Math.abs(pos.y-1.65)<.3)return 'E / פעולה · לבדוק את הרובוט';const clue=clues.find((c,i)=>!found.has(i)&&Math.hypot(pos.x,pos.z-c.z)<1.8&&Math.abs(pos.y-1.65)<.3);return clue?'E / פעולה · '+clue.title:'חפש את הרובוט · עקוב אחרי הסימנים במסדרון';}
- function stop(){dreamTime=-1;dreamDone=false;rescue.reset();phone.phone.visible=false;phone.grip.hide();web.visible=false;spider.g.visible=original.visible;robotRoom.robot.position.copy(original.position);robotRoom.robot.quaternion.copy(original.rotation);}
- return{update,interact,hint,stop,resize(aspect){phone.phone.scale.setScalar(aspect<1?.78:1);phone.phone.position.x=aspect<1?0:.025;},reset(){stop();started=false;complete=false;phase='idle';phaseTime=0;time=0;spoken='';found.clear();},get exitTime(){return rescue.exitTime;},get dreamScene(){return dreamTime>=1.2&&dreamTime<3.1?dream.scene:null;},get departElapsed(){return phase==='depart'?phaseTime:0;},get phase(){return phase;},get complete(){return complete;},get camera(){return phase==='phone'?homeCamera:dreamTime>=1.2&&dreamTime<3.1?dream.camera:camera;},get searching(){return phase==='search';},debug(){return{dreamTime,dreamDone,rescue:rescue.debug(),phase,time,position:pos,phone:phone.phone,web,clues:found.size,complete};}};
+ function stop(){attacker.g.visible=false;dreamTime=-1;dreamDone=false;rescue.reset();phone.phone.visible=false;phone.grip.hide();web.visible=false;spider.g.visible=original.visible;robotRoom.robot.position.copy(original.position);robotRoom.robot.quaternion.copy(original.rotation);}
+ return{update,interact,hint,stop,resize(aspect){phone.phone.scale.setScalar(aspect<1?.78:1);phone.phone.position.x=aspect<1?0:.025;},reset(){stop();started=false;complete=false;phase='idle';phaseTime=0;time=0;spoken='';found.clear();},get exitTime(){return rescue.exitTime;},get dreamScene(){return dreamTime>=2.7&&dreamTime<4.3?dream.scene:null;},get departElapsed(){return phase==='depart'?phaseTime:0;},get phase(){return phase;},get complete(){return complete;},get camera(){return phase==='phone'?homeCamera:dreamTime>=2.7&&dreamTime<4.3?dream.camera:camera;},get searching(){return phase==='search';},debug(){return{attacker:attacker.g,dreamTime,dreamDone,rescue:rescue.debug(),phase,time,position:pos,phone:phone.phone,web,clues:found.size,complete};}};
 }
