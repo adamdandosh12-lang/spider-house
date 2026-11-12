@@ -157,7 +157,9 @@
     "אני: טוב, בוא נחזור הביתה. נסגור את הדלת.": "player",
     "אני: אני רגע הולך לבדוק את האוטו דרך החלון.": "player",
     "רובוט: אדם! מה קרה לך?": "robot",
-    "אני: ראיתי את העכביש! הוא פה, בחלון!": "player"
+    "אני: ראיתי את העכביש! הוא פה, בחלון!": "player",
+    "אני: שמעת את הרעש הזה?": "player",
+    "רובוט: לא. לא שמעתי.": "robot"
   },
   "postProcessing": {
     "robot": "User-approved gentle sample: lighter natural voice, 3 percent synthetic texture, no echo",
@@ -383,6 +385,12 @@
     ],
     "אני: ראיתי את העכביש! הוא פה, בחלון!": [
       "./assets/voices/voice186-1632765bf0f79f.mp3"
+    ],
+    "אני: שמעת את הרעש הזה?": [
+      "./assets/voices/voice190-dd076ce9d3e97d.mp3"
+    ],
+    "רובוט: לא. לא שמעתי.": [
+      "./assets/voices/voice190-a58e12c47727d3.mp3"
     ]
   }
 }
