@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import * as T from '../dist/vendor/three.module.js';import {createNightRescue} from '../dist/night-rescue.js';
+test('Pressing E before robot arrives opens the door and waits; distant robot reaches exit without deadlock',()=>{
+ const scene=new T.Scene(),parent=new T.Group(),robot=new T.Group(),camera=new T.PerspectiveCamera();parent.scale.x=2.4;parent.add(robot);scene.add(parent,camera);robot.position.set(0,.31,-10);const r=createNightRescue({scene,camera,robotRoom:{robot,legs:[],arms:[]},line(){}}),p=new T.Vector3(0,1.65,-10);
+ r.activate();r.interact(p);p.set(-19.2,-2.55,-38);r.interact(p);r.update(3,p);r.interact(p);p.set(0,1.65,-10);r.interact(p);r.interact(p);for(let i=0;i<150;i++)r.update(.05,p);assert.equal(r.stage,'escort');p.set(0,1.65,12);assert.ok(r.interact(p));assert.equal(r.stage,'escort');assert.ok(r.debug().exitRequested);
+ for(let i=0;i<600&&r.stage==='escort';i++)r.update(.05,p);assert.equal(r.stage,'safe','One E press completes departure when robot arrives');assert.ok(r.debug().exitDoor.rotation.y<-.8);r.reset();assert.equal(r.debug().exitRequested,false);assert.equal(r.debug().exitDoor.rotation.y,0);
+});
