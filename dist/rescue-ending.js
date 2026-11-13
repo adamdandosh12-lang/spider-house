@@ -1,3 +1,4 @@
+import {addStorySky} from './story-sky.js';
 import {createCarBoarding} from './car-boarding.js';
 import {createWakeInvestigation} from './wake-investigation.js';
 import {createHomeReturn} from './home-return.js';
@@ -25,7 +26,7 @@ export function createSequel({scene,camera,spider,robotRoom,line,blocked=()=>fal
  const rec=new T.Mesh(new T.SphereGeometry(.007,8,6),new T.MeshBasicMaterial({color:0xef332b}));rec.position.set(-.065,.12,.025);phone.add(rec);
  const filmCamera=new T.PerspectiveCamera(54,16/9,.1,120);
  let film=false,activeScene=scene,activeCamera=camera,phase='rescue',lastLine='',tNow=0,recorded=[],nextCapture=0;
- const outside=new T.Scene();outside.background=new T.Color(0x172334);outside.fog=new T.Fog(0x172334,35,110);
+ const outside=new T.Scene();addStorySky(outside,true);outside.background=new T.Color(0x172334);outside.fog=new T.Fog(0x172334,35,110);
  outside.add(new T.HemisphereLight(0xa7c9eb,0x403629,2));const moon=new T.DirectionalLight(0xa6c7ff,2);moon.position.set(-8,14,5);outside.add(moon);
  const yard=new T.Group();outside.add(yard);box(yard,110,.12,230,new T.MeshStandardMaterial({color:0x253a31}),0,-.1,-55);
  box(yard,8,.04,220,new T.MeshStandardMaterial({color:0x292e34}),0,0,-55);
