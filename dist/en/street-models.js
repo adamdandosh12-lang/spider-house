@@ -1,0 +1,97 @@
+import {buildDriverDoor} from './car-door.js';
+import {roundedBoxGeometry,smoothCarBody,sculptedDashboard} from './car-surfaces.js';
+import {addTurnDisplay} from './turn-display.js';
+import * as T from '../vendor/three.module.js';
+function mesh(parent,geo,mat,x=0,y=0,z=0){const m=new T.Mesh(geo,mat);m.position.set(x,y,z);parent.add(m);return m;}
+let masonryMap;
+function masonryTexture(){
+ if(masonryMap)return masonryMap;
+ const size=128,data=new Uint8Array(size*size*4);
+ for(let y=0;y<size;y++)for(let x=0;x<size;x++){const row=Math.floor(y/16),joint=y%16<2||(x+(row%2)*16)%32<2,grain=((x*17+y*31)%11)-5,v=joint?139:218+grain;data.set([v,v,v,255],(y*size+x)*4);}
+ masonryMap=new T.DataTexture(data,size,size);masonryMap.wrapS=masonryMap.wrapT=T.RepeatWrapping;masonryMap.repeat.set(3,2);masonryMap.magFilter=masonryMap.minFilter=T.LinearFilter;masonryMap.colorSpace=T.SRGBColorSpace;masonryMap.needsUpdate=true;return masonryMap;
+}
+export function addCarSeats(parent,{sports=false}={}){
+ const upholstery=new T.MeshStandardMaterial({color:0x293a40,roughness:.85}),edge=new T.MeshStandardMaterial({color:0x17272d,roughness:.7}),stitch=new T.MeshStandardMaterial({color:0x7e9296,roughness:1});
+ for(const x of [-.43,.43]){const seat=new T.Group();seat.name='Upholstered front car seat';seat.position.set(x,0,.3);parent.add(seat);mesh(seat,roundedBoxGeometry(.64,.18,.7),upholstery,0,.66,0);mesh(seat,roundedBoxGeometry(.62,.68,.16),upholstery,0,1.03,.33);mesh(seat,roundedBoxGeometry(.36,.22,.13),upholstery,0,1.52,.34);for(const side of [-1,1]){mesh(seat,new T.BoxGeometry(.08,.23,.66),edge,side*.29,.72,0);mesh(seat,new T.BoxGeometry(.07,.55,.17),edge,side*.28,1.05,.29);mesh(seat,new T.BoxGeometry(.008,.54,.014),stitch,side*.19,1.02,.239);}for(let i=0;i<4;i++)mesh(seat,new T.BoxGeometry(.45,.008,.015),stitch,0,.76,-.2+i*.12);}
+ if(!sports){const rear=mesh(parent,new T.BoxGeometry(1.4,.22,.5),upholstery,0,.65,1.35);rear.name='Rear car bench';mesh(parent,new T.BoxGeometry(1.4,.58,.15),upholstery,0,1.03,1.6);}
+}
+export function createSteeringWheel(parent,x=-.43,y=1.25,z=-.35){
+ const wheel=new T.Group();wheel.name='Leather three spoke steering wheel';wheel.position.set(x,y,z);wheel.rotation.x=-.3;wheel.scale.setScalar(.7);parent.add(wheel);const leather=new T.MeshStandardMaterial({color:0x1c282e,roughness:.75}),metal=new T.MeshStandardMaterial({color:0x9bafb5,metalness:.7,roughness:.3});mesh(wheel,new T.TubeGeometry(new T.CatmullRomCurve3([new T.Vector3(-.16,-.15,0),new T.Vector3(.16,-.15,0),new T.Vector3(.205,0,0),new T.Vector3(.14,.16,0),new T.Vector3(0,.205,0),new T.Vector3(-.14,.16,0),new T.Vector3(-.205,0,0)],true,'centripetal'),56,.025,10,true),leather);
+ for(const angle of [0,Math.PI*2/3,Math.PI*4/3]){const spoke=mesh(wheel,new T.BoxGeometry(.065,.19,.024),metal,Math.sin(angle)*.09,Math.cos(angle)*.09,.01);spoke.rotation.z=-angle;}const hub=mesh(wheel,new T.CylinderGeometry(.075,.075,.045,24),leather,0,0,.025);hub.rotation.x=Math.PI/2;mesh(wheel,new T.CircleGeometry(.024,18),metal,0,0,.05);return wheel;
+}
+export function createStreetCar(parent,color=0x2e626a,variant='sedan'){
+ const g=new T.Group();g.name='Detailed street sedan';parent.add(g);
+ const paint=new T.MeshPhysicalMaterial({color,roughness:.28,metalness:.5,clearcoat:.8,clearcoatRoughness:.22}),rubber=new T.MeshStandardMaterial({color:0x171c20,roughness:.9}),chrome=new T.MeshStandardMaterial({color:0xaeb8bf,roughness:.22,metalness:.8}),glass=new T.MeshPhysicalMaterial({color:0x83aebb,transparent:true,opacity:.38,roughness:.1,depthWrite:false,side:T.DoubleSide}),trim=new T.MeshStandardMaterial({color:0x253139,roughness:.6});
+ const box=(p,w,h,d,mat,x,y,z)=>mesh(p,(w>.12&&h>.06&&d>.06)?roundedBoxGeometry(w,h,d):new T.BoxGeometry(w,h,d),mat,x,y,z);
+ // Sculpted body cross sections soften the hood, boot and bumpers.
+ const rings=variant==='supercar'?[[-2.22,.86,.45,.67],[-1.78,1.02,.45,.82],[-.95,1.04,.48,.93],[.95,1.04,.48,.95],[1.8,1,.5,.9],[2.05,.94,.53,.85]]:[[-2.16,.76,.56,.88],[-1.78,.96,.56,1.04],[-.95,1,.57,1.09],[.95,1,.57,1.1],[1.8,.94,.58,1.02],[2.05,.78,.61,.91]],positions=[],indices=[];
+ const bodyGeo=smoothCarBody(rings),shell=mesh(g,bodyGeo,paint);shell.name='Continuous sculpted car body';shell.material.side=T.DoubleSide;
+ function pane(points,mat=glass,p=g){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(points.flat(),3));geo.setIndex([0,1,2,0,2,3]);geo.computeVertexNormals();return mesh(p,geo,mat);}
+ const driverMirrors=[];const cabinTop=variant==='supercar'?1.6:1.72;pane([[-.83,1.08,-.94],[.83,1.08,-.94],[.7,cabinTop,-.48],[-.7,cabinTop,-.48]]);pane([[-.83,1.09,1.23],[-.7,cabinTop,.77],[.7,cabinTop,.77],[.83,1.09,1.23]]);
+ const roof=box(g,1.49,.09,1.3,paint,0,cabinTop+.03,.15);for(const side of [-1,1]){if(side===-1){const quarter=pane([[side*.84,1.1,.35],[side*.71,cabinTop-.02,.35],[side*.71,cabinTop-.02,.8],[side*.84,1.1,1.2]]);quarter.name='Fixed rear quarter window';}else pane([[side*.84,1.1,-.91],[side*.71,cabinTop-.02,-.47],[side*.71,cabinTop-.02,.8],[side*.84,1.1,1.2]]);box(g,.07,cabinTop-1.11,.06,paint,side*.77,(cabinTop+1.1)/2,.35);if(side===-1)box(g,.09,.06,.75,chrome,side*.97,1.12,.725);else box(g,.09,.06,1.7,chrome,side*.97,1.12,.1);const mirror=mesh(g,new T.SphereGeometry(1,20,14),paint,side*1.1,1.27,-.65);mirror.scale.set(.16,.075,.15);const mirrorGlass=box(g,.02,.1,.2,chrome,side*1.25,1.27,-.61);if(side===-1)driverMirrors.push(mirror,mirrorGlass);}
+ const wheels=[];for(const side of [-1,1])for(const z of [-1.35,1.35]){const wheel=new T.Group();wheel.position.set(side*.98,.4,z);g.add(wheel);const tire=mesh(wheel,new T.TorusGeometry(.285,.095,12,36),rubber);tire.rotation.y=Math.PI/2;const hub=mesh(wheel,new T.CylinderGeometry(.25,.25,.23,24),variant==='supercar'?trim:chrome);hub.rotation.z=Math.PI/2;const inset=mesh(wheel,new T.CylinderGeometry(.2,.2,.24,20),trim);inset.rotation.z=Math.PI/2;for(let i=0;i<5;i++)for(const split of [-1,1]){const a=i*Math.PI*2/5+split*.095;const spoke=box(wheel,.025,.21,.024,chrome,side*.132,Math.cos(a)*.13,Math.sin(a)*.13);spoke.rotation.x=a;}const cap=mesh(wheel,new T.CylinderGeometry(.055,.055,.27,20),chrome);cap.rotation.z=Math.PI/2;wheels.push(wheel);}
+ const light=new T.MeshStandardMaterial({color:0xebf4e7,emissive:0xb9d3c6,emissiveIntensity:.3,roughness:.15});for(const x of [-.63,.63]){if(variant!=='supercar')box(g,.45,.14,.06,light,x,.87,-2.08);box(g,.4,.1,.05,new T.MeshStandardMaterial({color:0xc0312d}),x,.9,2.02);}box(g,.72,.2,.06,trim,0,.68,-2.15);for(let i=0;i<5;i++)box(g,.66,.012,.02,chrome,0,.61+i*.035,-2.19);box(g,1.6,.04,.05,chrome,0,.54,-2.09);box(g,.4,.12,.02,chrome,0,.68,2.07);
+ addCarSeats(g,{sports:variant==='supercar'});const dashboard=mesh(g,sculptedDashboard(),trim);dashboard.name='Connected curved dashboard';box(g,1.7,.05,1.8,trim,0,.48,.1);
+ const steering=createSteeringWheel(g);if(variant==='supercar'){
+ steering.name='Lamborghini flat bottom steering wheel';
+ const badgeCanvas=document.createElement('canvas');badgeCanvas.width=256;badgeCanvas.height=256;const c=badgeCanvas.getContext('2d');c.fillStyle='#121915';c.fillRect(0,0,256,256);c.strokeStyle='#d1ad55';c.lineWidth=7;c.beginPath();c.moveTo(50,40);c.lineTo(206,40);c.lineTo(193,157);c.lineTo(128,216);c.lineTo(63,157);c.closePath();c.stroke();c.fillStyle='#ddc17d';c.textAlign='center';c.font='bold 22px Arial';c.fillText('LAMBORGHINI',128,80);c.font='bold 45px Arial';c.fillText('V12',128,144);const badgeTexture=new T.CanvasTexture(badgeCanvas);badgeTexture.colorSpace=T.SRGBColorSpace;const badge=mesh(steering,new T.PlaneGeometry(.1,.1),new T.MeshStandardMaterial({map:badgeTexture,roughness:.45}),0,0,.052);badge.name='Lamborghini steering badge';
+ for(const side of [-1,1]){box(steering,.04,.18,.018,chrome,side*.15,0,-.035);for(let i=0;i<3;i++)box(steering,.023,.014,.013,trim,side*.10,.03-i*.023,.038);}
+ for(let i=0;i<36;i++){const a=i/36*Math.PI*2;if(Math.cos(a)<-.65)continue;const stitch=mesh(steering,new T.SphereGeometry(.003,4,4),chrome,Math.sin(a)*.2,Math.cos(a)*.2,.024);}
+}
+ const door=buildDriverDoor({paint,trim,chrome,top:cabinTop});g.add(door);g.updateMatrixWorld(true);for(const part of driverMirrors)door.attach(part);
+ for(const side of [-1,1]){const a=new T.Vector3(side*.83,1.08,-.94),b=new T.Vector3(side*.7,cabinTop,-.48),pillar=mesh(g,new T.CylinderGeometry(.035,.04,a.distanceTo(b),12),paint);pillar.position.copy(a).add(b).multiplyScalar(.5);pillar.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),b.sub(a).normalize());pillar.name='Windshield frame joined to roof';}g.userData.variant=variant;if(variant==='supercar'){
+  g.name='Lamborghini inspired V12 supercar';glass.opacity=.19;for(const seat of g.getObjectsByProperty('name','Upholstered front car seat'))seat.children[2].position.y=1.43;paint.color.setHex(0xe6b42c);paint.roughness=.18;paint.clearcoat=1;paint.clearcoatRoughness=.12;roof.material=trim;roof.scale.x=.94;
+  box(g,2.03,.07,.28,trim,0,.48,-2.1);box(g,1.92,.07,.27,trim,0,.55,2.07);
+  for(const side of [-1,1]){pane([[side*1.045,.53,-.2],[side*1.045,.9,.15],[side*1.045,.95,.83],[side*1.045,.56,.7]],trim);for(const [dx,dy,angle]of [[0,0,0],[-.07,.025,.65],[.07,.025,-.65]]){const led=box(g,.018,.1,.025,light,side*.7+dx,.77+dy,-2.14);led.rotation.z=angle;}box(g,.36,.11,.03,trim,side*.5,.83,2.08);}
+  // Rear engine louvers, hexagonal exhausts and wheel hardware follow supercar proportions.
+  for(let i=0;i<7;i++){const vent=box(g,1.12,.025,.065,trim,0,1.01,1.04+i*.105);vent.rotation.x=-.14;}
+  for(const side of [-1,1]){
+   const exhaust=mesh(g,new T.CylinderGeometry(.105,.105,.16,6),chrome,side*.22,.68,2.12);exhaust.rotation.x=Math.PI/2;
+   const bore=mesh(g,new T.CylinderGeometry(.077,.077,.165,6),trim,side*.22,.68,2.13);bore.rotation.x=Math.PI/2;
+   for(const z of [-1.35,1.35]){const disc=mesh(g,new T.CylinderGeometry(.205,.205,.028,24),chrome,side*1.105,.4,z);disc.rotation.z=Math.PI/2;box(g,.034,.15,.09,new T.MeshStandardMaterial({color:0xbd3228,roughness:.4}),side*1.127,.43,z-.14);}
+   box(g,.05,.1,1.72,trim,side*1.03,.47,.15);
+  }
+  for(const side of [-1,1])for(const z of [-1.35,1.35]){const arch=mesh(g,new T.TorusGeometry(.40,.025,8,36,Math.PI),paint,side*1.025,.4,z);arch.rotation.y=Math.PI/2;arch.name='Sculpted wheel arch';}for(const x of [-.7,-.35,0,.35,.7])box(g,.025,.12,.3,trim,x,.48,2.03);
+  const console=box(g,.22,.25,.74,trim,0,.72,-.1);console.name='Carbon centre console';for(let i=0;i<4;i++)box(g,.038,.018,.07,chrome,-.075+i*.05,.856,-.26);const startCover=box(g,.07,.035,.08,new T.MeshStandardMaterial({color:0xb53025,metalness:.4,roughness:.3}),0,.87,-.08);startCover.rotation.x=-.2;
+  const spoiler=box(g,1.85,.06,.3,trim,0,1.12,1.88);for(const x of [-.6,.6])box(g,.05,.19,.06,chrome,x,1.0,1.88);
+  // Recessed rear grille, separate LED signatures and front aero blades.
+  const grille=box(g,1.58,.19,.025,trim,0,.81,2.085);grille.name='Recessed rear engine grille';
+  for(let i=0;i<16;i++)box(g,.012,.16,.012,chrome,-.72+i*.096,.81,2.103);
+  const tailMat=new T.MeshStandardMaterial({color:0xb52b24,emissive:0xe52a16,emissiveIntensity:.55,roughness:.25});
+  for(const side of [-1,1]){
+   for(const [dx,dy,a] of [[0,0,0],[-.07,.03,-.7],[.07,.03,.7]]){const led=box(g,.018,.095,.018,tailMat,side*.73+dx,.94+dy,2.065);led.rotation.z=a;}
+   for(let i=0;i<3;i++){const fin=box(g,.25,.018,.19,trim,side*.69,.56+i*.06,-2.19);fin.rotation.y=side*.16;}
+   const crease=new T.Line(new T.BufferGeometry().setFromPoints([new T.Vector3(side*.34,.69,-2.20),new T.Vector3(side*.53,.84,-1.76),new T.Vector3(side*.60,.94,-1.02)]),new T.LineBasicMaterial({color:0x9c7924}));g.add(crease);
+  }
+  // Angular rear buttresses and recessed engine bay inspired by the Revuelto reference.
+  for(const side of [-1,1]){pane([[side*.68,1.57,.76],[side*.90,1.03,1.55],[side*.98,.94,1.2],[side*.76,1.14,.70]],paint);pane([[side*.46,.56,-2.235],[side*.88,.57,-2.235],[side*.93,.73,-2.15],[side*.62,.72,-2.15]],trim);}
+  box(g,.76,.05,.58,trim,0,1.04,1.34);for(const side of [-1,1])for(let i=0;i<6;i++)box(g,.25,.03,.045,chrome,side*.2,1.075,1.1+i*.08);
+  const rearBadge=box(g,.19,.025,.013,chrome,0,.97,2.06);rearBadge.name='Rear polished badge';
+  door.position.y=1;for(const part of door.children)part.position.y-=1;door.userData.scissor=true;
+ }else if(variant==='compact'){g.scale.set(.93,.95,.84);}else if(variant==='coupe'){g.scale.set(1,.87,1.04);}else if(variant==='suv'){g.scale.set(1.08,1.12,1.03);for(const x of [-.58,.58])box(g,.05,.08,1.5,chrome,x,1.86,.15);}else if(variant==='van'){g.scale.set(1.03,1.08,1.08);box(g,1.65,.62,1.3,paint,0,1.42,.72);for(const x of [-.84,.84])box(g,.02,.33,1.02,glass,x,1.48,.75);}
+ const indicators=addTurnDisplay(g);return{g,door,wheels,steering,indicators,steer(angle){steering.rotation.z=angle;for(const wheel of wheels)if(wheel.position.z<0)wheel.rotation.y=-angle*.4;},openDoor(u){if(door.userData.scissor)door.rotation.x=-u*1.15;else door.rotation.y=-u*1.25;}};
+}
+export function addStreetHouse(parent,x,z,color=0xbaa58b,turn=0){
+ const g=new T.Group();g.name='Neighbourhood home';g.position.set(x,0,z);g.rotation.y=turn;parent.add(g);
+ const wall=new T.MeshStandardMaterial({color,map:masonryTexture(),bumpMap:masonryTexture(),bumpScale:.035,roughness:.85}),roofMat=new T.MeshStandardMaterial({color:0x645148,roughness:.9}),glass=new T.MeshPhysicalMaterial({color:0x586973,roughness:.15,metalness:.25,clearcoat:1}),white=new T.MeshStandardMaterial({color:0xe4ddc8});
+ const box=(w,h,d,m,x,y,z)=>mesh(g,new T.BoxGeometry(w,h,d),m,x,y,z);
+ box(6,3.5,5,wall,0,1.75,0);const roof=new T.BufferGeometry();roof.setAttribute('position',new T.Float32BufferAttribute([-3.5,3.5,-3,3.5,3.5,-3,0,5,-3,-3.5,3.5,3,0,5,3,3.5,3.5,3],3));roof.setIndex([0,2,1,3,5,4,0,3,4,0,4,2,1,2,4,1,4,5]);roof.computeVertexNormals();mesh(g,roof,roofMat);
+ box(1,2.4,.1,new T.MeshStandardMaterial({color:0x526561}),0,1.2,2.56);for(const sx of [-1.9,1.9]){box(1.1,1.25,.06,glass,sx,2,2.54);box(1.3,.07,.12,white,sx,1.36,2.6);box(.05,1.25,.1,white,sx,2,2.59);box(1.1,.05,.1,white,sx,2,2.59);}box(1.8,.1,1,white,0,.05,2.9);box(.45,1,.5,roofMat,1.8,4.1,-.5);
+ // Porch, drainage, side windows and planted gardens give the houses depth.
+ box(2.4,.12,1.25,white,0,2.8,2.95);for(const sx of [-1.05,1.05])box(.09,2.7,.09,white,sx,1.35,3.35);for(let i=0;i<3;i++)box(2.2-i*.15,.12,1.2-i*.2,white,0,.06+i*.12,3.2-i*.12);
+ for(const side of [-1,1]){box(.08,.08,5.6,white,side*3.2,3.48,0);box(.05,3,.05,white,side*2.92,1.5,2.65);for(const sz of [-1.3,1.1]){box(.05,1.1,1.1,glass,side*3.03,2,sz);box(.08,.05,1.25,white,side*3.07,1.43,sz);box(.08,1.1,.04,white,side*3.07,2,sz);}}
+ for(const sx of [-1.9,1.9])for(const side of [-1,1])box(.2,1.4,.09,roofMat,sx+side*.7,2,2.64);
+ const garden=new T.MeshStandardMaterial({color:0x4b704e,roughness:1});for(const sx of [-2.3,2.3]){box(1.3,.17,.8,roofMat,sx,.12,3);for(let i=0;i<3;i++)mesh(g,new T.SphereGeometry(.28,10,8),garden,sx-.4+i*.4,.45,3);}
+ for(let x=-3;x<=3;x+=.5)if(Math.abs(x)>1.15)box(.07,.7,.07,white,x,.35,4.4);for(const x of [-2.2,2.2])box(2,.06,.05,white,x,.55,4.4);box(.12,.9,.12,roofMat,2.6,.45,4.6);box(.4,.24,.27,white,2.6,1,4.6);
+ // Tile courses follow both roof slopes, with a visible ridge and foundation.
+ const tileGeo=new T.BoxGeometry(.47,.035,.43),tileMat=new T.MeshStandardMaterial({color:0x73584b,roughness:.92});
+ const tiles=new T.InstancedMesh(tileGeo,tileMat,2*7*14),dummy=new T.Object3D();let tileIndex=0;
+ for(const side of [-1,1])for(let row=0;row<7;row++)for(let col=0;col<14;col++){const x=side*(.25+row*.48);dummy.position.set(x,5-Math.abs(x)*1.5/3.5+.024,-2.8+col*.43);dummy.rotation.z=-side*Math.atan(1.5/3.5);dummy.updateMatrix();tiles.setMatrixAt(tileIndex++,dummy.matrix);}
+ tiles.name='Individual sloped terracotta roof tiles';tiles.castShadow=tiles.receiveShadow=true;g.add(tiles);
+ box(.15,.10,6.1,roofMat,0,5.04,0);box(6.08,.22,5.08,roofMat,0,.11,0);
+ for(const sx of [-1.9,1.9]){for(const side of [-1,1])box(.055,1.35,.14,white,sx+side*.59,2,2.61);box(1.25,.07,.14,white,sx,2.66,2.61);box(.44,.9,.08,new T.MeshStandardMaterial({color:0xc3bba9,roughness:1}),sx-.28,2,2.57);}
+ const doorMat=new T.MeshStandardMaterial({color:0x344a43,roughness:.7});for(const y of [.65,1.6])box(.72,.64,.04,doorMat,0,y,2.63);box(.05,.17,.06,new T.MeshStandardMaterial({color:0xaa9463,metalness:.7,roughness:.3}),.33,1.2,2.67);
+ for(const sx of [-.76,.76]){box(.16,.28,.15,roofMat,sx,2.15,2.64);box(.10,.18,.16,new T.MeshStandardMaterial({color:0xffd6a2,emissive:0xe1a35d,emissiveIntensity:.35}),sx,2.15,2.67);}
+
+ return g;
+}

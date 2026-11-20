@@ -1,0 +1,3 @@
+import {ROBOT_LINES} from './robot-room.js';
+export const VOICE_CAST={player:{actor:'en-US-GuyNeural'},noa:{actor:'en-US-EricNeural'},amir:{actor:'en-GB-RyanNeural'},maya:{actor:'en-US-ChristopherNeural'},yoav:{actor:'en-US-RogerNeural'},news:{actor:'en-US-BrianNeural'},pa:{actor:'en-US-SteffanNeural'},robot:{actor:'en-US-AndrewNeural'}};
+export function speakerFor(text,{robot=false}={}){if(robot||ROBOT_LINES.includes(text))return 'robot';const who=text.split(':')[0];return ({Adam:'player',Noa:'noa',Amir:'amir',Maya:'maya',Yoav:'yoav','News Anchor':'news',News:'news',PA:'pa',Robot:'robot'})[who]||'narrator';}

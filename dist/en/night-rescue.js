@@ -1,0 +1,46 @@
+import * as T from '../vendor/three.module.js';
+import {createPlayerHand} from './player-hand.js';
+export const RESCUE_LINES={key:"Robot: The key is in my pocket. There's an emergency battery in the basement electrical cabinet. Don't leave me here.",battery:"Adam: I found the battery. I'm coming back.",stand:"Robot: My leg is damaged. I can't run.",promise:"Adam: Then we'll go slowly. I'm not leaving you.",safe:"Robot: This time, you saved me. Thank you, Adam."};
+export function createNightRescue({scene,camera,robotRoom,line,sound=()=>{}}){
+ const root=new T.Group();root.name='Night rescue emergency cabinet';root.visible=false;scene.add(root);
+ const mat=(c,metal=0)=>new T.MeshStandardMaterial({color:c,metalness:metal,roughness:.65});const steel=mat(0x52615c,.6),dark=mat(0x172726),gold=mat(0xc7a754,.7),cellMat=mat(0x2b696a,.5);
+ function box(p,w,h,d,m,x=0,y=0,z=0){const o=new T.Mesh(new T.BoxGeometry(w,h,d),m);o.position.set(x,y,z);p.add(o);return o;}
+ // The cabinet is against the back wall; approach and interaction remain in the open aisle.
+ const cabinet=new T.Group();cabinet.position.set(-19.2,-4.2,-39.3);root.add(cabinet);box(cabinet,1.2,1.65,.42,steel,0,.825,0);box(cabinet,1.05,1.4,.02,dark,0,.85,.22);
+ const door=new T.Group();door.position.set(-.6,0,.245);cabinet.add(door);box(door,1.2,1.65,.045,steel,.6,.825,0);box(door,.06,.24,.05,gold,1.02,.9,.04);
+ for(let i=0;i<6;i++)box(door,.5,.015,.012,dark,.58,1.12+i*.055,.03);
+ const battery=new T.Group();battery.name='Night emergency battery';battery.position.set(0,.8,.29);cabinet.add(battery);box(battery,.4,.28,.22,cellMat);for(const x of [-.13,.13])box(battery,.055,.04,.06,gold,x,.16,0);const charge=box(battery,.26,.045,.01,new T.MeshBasicMaterial({color:0x94dcc1}),0,0,.12);
+ const key=new T.Group();key.name='Robot pocket emergency key';key.position.set(.28,.57,-10.4);root.add(key);const ring=new T.Mesh(new T.TorusGeometry(.055,.012,6,18),gold);key.add(ring);box(key,.023,.16,.025,gold,0,-.12,0);box(key,.06,.025,.025,gold,.02,-.18,0);
+ const lamp=new T.PointLight(0x82c9b6,1.5,5);lamp.position.set(-19.2,-2,-38.8);root.add(lamp);
+ const hand=createPlayerHand(T,camera);let stage='idle',boardingHold=true,exitRequested=false,timer=0,reach=0,doorOpen=0,knocks=0,trail=[],last=null;const rob=robotRoom.robot;
+ const escapeFloor=box(root,12,.18,14,new T.MeshStandardMaterial({color:0x625b50,roughness:.95}),0,-.09,19.5);escapeFloor.name='Continuous exit porch floor';for(const x of [-5.8,5.8])box(root,.18,.6,14,steel,x,.3,19.5);
+ const exitPivot=new T.Group();exitPivot.position.set(-1.4,0,13.05);root.add(exitPivot);box(exitPivot,2.8,3.2,.12,steel,1.4,1.6,0);box(exitPivot,.08,.2,.08,gold,2.5,1.35,-.1);
+ const knife=new T.Group();knife.name='Web cutting knife in player hand';hand.g.add(knife);knife.position.set(0,.16,-.16);knife.rotation.x=-.7;knife.visible=false;box(knife,.045,.18,.045,dark,0,0,0);box(knife,.12,.025,.055,steel,0,.1,0);const blade=new T.BufferGeometry();blade.setAttribute('position',new T.Float32BufferAttribute([-.035,.11,0,.035,.11,0,0,.41,0],3));blade.computeVertexNormals();const edge=new T.Mesh(blade,new T.MeshStandardMaterial({color:0xb6c4c6,metalness:.85,roughness:.24,side:T.DoubleSide}));knife.add(edge);
+ const attachedWebs=[];rob.traverse(o=>{if(o.isLineSegments&&o.material?.opacity===.5)attachedWebs.push(o);});
+ function near(pos,x,z,y=0,r=2){return Math.hypot(pos.x-x,pos.z-z)<r&&Math.abs(pos.y-1.65-y)<.3;}
+ function robotWorld(){return rob.getWorldPosition(new T.Vector3());}
+ function activate(){root.visible=true;stage='key';timer=0;line(RESCUE_LINES.key);}
+ function update(dt,pos){if(stage==='idle')return;timer+=dt;if(stage==='safe'&&boardingHold)timer=Math.min(timer,3);if(reach>0){reach=Math.max(0,reach-dt);hand.pose(1-reach/.85);}else hand.reset();exitPivot.rotation.y=T.MathUtils.damp(exitPivot.rotation.y,stage==='safe'||exitRequested?-1.65:0,4,dt);door.rotation.y=T.MathUtils.damp(door.rotation.y,doorOpen?-1.9:0,5,dt);
+  if(stage==='return'&&timer>1&&knocks<3&&timer>1+knocks*.65){sound();knocks++;lamp.intensity=.15;}else lamp.intensity=T.MathUtils.damp(lamp.intensity,1.5,4,dt);
+  knife.visible=stage==='cutting';if(stage==='cutting'){const down=T.MathUtils.smoothstep(timer,0,.8)*(1-T.MathUtils.smoothstep(timer,2.6,3.2));camera.position.copy(pos);camera.position.y-=down*1.0;camera.lookAt(0,.5,-10.5);hand.grip(.85);hand.g.position.set(.24+Math.sin(timer*8)*.055,-.29,-.58);hand.g.rotation.z=-.35+Math.sin(timer*8)*.22;attachedWebs.forEach(o=>o.material.opacity=.5*(1-Math.min(1,timer/2.5)));if(timer>=3.2){knife.visible=false;hand.g.rotation.z=0;hand.reset();attachedWebs.forEach(o=>o.visible=false);stage='rising';timer=0;line("Webs cut. Connecting the battery…");}}
+  if(stage==='safe'&&timer<3){rob.position.z=11+Math.max(0,timer-.8)*2.4;rob.rotation.y=0;}if(stage==='rising'){const u=Math.min(1,timer/4),s=u*u*(3-2*u);rob.rotation.set(-Math.PI/2*(1-s),0,-.28*(1-s));rob.position.y=.31*(1-s);robotRoom.legs.forEach(({leg,knee},i)=>{leg.rotation.x=-Math.sin(u*Math.PI)*.55;knee.rotation.x=Math.sin(u*Math.PI)*.9+(i?.08:0);});if(timer>=4){stage='escort';timer=0;trail=[];last=null;line("Robot: I can walk. Follow me. I'll lead you to the door.");}}
+  if(stage==='escort'){
+   
+   const target=new T.Vector3(0,0,11);if(!last||target.distanceTo(last)>.18){trail.push(target);last=target.clone();}
+   const rp=robotWorld(),head=target;let moving=false;
+   if(head&&rp.distanceTo(target)>.15){const dist=rp.distanceTo(head),step=Math.min(dist,dt*.95);if(dist>.001){rp.lerp(head,step/dist);const local=rob.parent.worldToLocal(rp.clone());rob.position.copy(local);rob.rotation.y=Math.atan2(head.x-rp.x,head.z-rp.z);moving=true;}if(dist<.14)trail.shift();}
+   robotRoom.legs.forEach(({leg,knee},i)=>{leg.rotation.x=moving?Math.sin(timer*4+i*Math.PI)*(i?.12:.22):0;knee.rotation.x=.08+(moving?Math.max(0,Math.sin(timer*4+i*Math.PI))*.2:0);});robotRoom.arms.forEach((a,i)=>a.rotation.x=moving?-Math.sin(timer*4+i*Math.PI)*.1:0);if(exitRequested&&near(pos,0,12,0,2.6)&&robotWorld().distanceTo(target)<3)leaveTogether();
+  }
+ }
+ function interact(pos){if(stage==='key'&&near(pos,0,-10)){stage='cabinet';key.visible=false;reach=.85;line("Adam: I took the key. The electrical cabinet is on the basement's back wall.");return true;}
+  if(stage==='cabinet'&&near(pos,-19.2,-38,-4.2,2.1)){doorOpen=1;stage='battery';timer=0;reach=.85;line("Cabinet unlocked. The emergency battery still has power.");return true;}
+  if(stage==='battery'&&timer>2.5&&near(pos,-19.2,-38,-4.2,2.1)){battery.visible=false;stage='return';timer=0;reach=.85;line(RESCUE_LINES.battery);return true;}
+  if(stage==='return'&&near(pos,0,-10)){stage='cut';reach=.85;timer=0;line("E / Interact · Cut the webs and free Unit 08");return true;}
+  if(stage==='cut'&&near(pos,0,-10)){stage='cutting';timer=0;reach=0;line("Kneeling down and carefully cutting the webs…");return true;}
+  if(stage==='escort'&&near(pos,0,12,0,2.6)){exitRequested=true;reach=.85;if(robotWorld().distanceTo(new T.Vector3(0,0,11))<3)leaveTogether();else line("The door is opening. The robot is coming — wait by the exit.");return true;}return false;
+ }
+ function leaveTogether(){stage='safe';timer=0;line("Adam: The door is open! Run to my car!");}
+ function hint(pos){const action="E / Interact · ";switch(stage){case'key':return near(pos,0,-10)?action+"Take the Key from the Robot's Pocket":"The key is in the robot's pocket";case'cabinet':return near(pos,-19.2,-38,-4.2,2.1)?action+"Unlock the Electrical Cabinet":"Take the library stairs to the basement · Cabinet on the back wall";case'battery':return timer<2.5?"Three taps above you…":action+"Take the Emergency Battery";case'return':return near(pos,0,-10)?action+"Get Ready to Repair the Robot":"Battery acquired · Return to the robot by the stairs";case'cut':return action+"Cut the Webs and Connect the Battery";case'cutting':return"Cutting the webs · Freeing the robot";case'rising':return"Unit 08 is coming back online…";case'escort':return exitRequested?"Door open · Wait for the robot by the exit":near(pos,0,12,0,2.6)?action+"Open the Exit Door":"Follow the robot · It will lead you to the door";case'safe':return"You Escaped Together";default:return'';}}
+ function reset(){knife.visible=false;hand.g.rotation.z=0;attachedWebs.forEach(o=>o.material.opacity=.5);exitPivot.rotation.y=0;stage='idle';boardingHold=true;exitRequested=false;timer=0;reach=0;knocks=0;doorOpen=0;door.rotation.y=0;key.visible=battery.visible=true;root.visible=false;trail=[];last=null;hand.reset();attachedWebs.forEach(o=>o.visible=true);}
+ return{releaseCar(){boardingHold=false;timer=6;},activate,update,interact,hint,reset,blocked(x,z,y){return root.visible&&y< -3&&Math.abs(x+19.2)<.9&&Math.abs(z+39.3)<.55;},get exitTime(){return stage==='safe'?timer:-1;},get stage(){return stage;},get complete(){return stage==='safe'&&timer>24;},get free(){return !['cutting','rising','safe'].includes(stage);},debug(){return{exitRequested,knife,cutProgress:stage==='cutting'?Math.min(1,timer/3.2):0,exitDoor:exitPivot,escapeFloor,stage,cabinet,battery,key,door,root};}};
+}

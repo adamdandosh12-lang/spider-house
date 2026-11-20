@@ -1,10 +1,12 @@
 {
   "name": "spider-house",
-  "version": "1.52.0",
+  "version": "1.95.0",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check dist/game.js && node --check dist/upper-house.js && node --check dist/house-world.js && node --check dist/house-art.js && node --check dist/spider-model.js && node --test tests/*.test.mjs"
+    "check": "node --check dist/game.js && node --check dist/upper-house.js && node --check dist/house-world.js && node --check dist/house-art.js && node --check dist/spider-model.js && node --test tests/*.test.mjs",
+    "build:english": "node scripts/build-english.cjs",
+    "check:english-flow": "node scripts/check-english-flow.cjs"
   }
 }

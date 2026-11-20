@@ -1,0 +1,594 @@
+0|Rescue Team Journal
+1|We arrived after the laboratory went silent. The basement became a temporary command post. We boarded up the windows and moved the researchers down here. That night, we found webs on the inside of the glass. The next report is beside the experimental equipment, across the room.
+2|Experiment Results
+3|Our goal was to make rescue ropes from spider silk. The threads grew stronger with every test, but the spider grew too. After the third sample, it stopped reacting to light. We ordered the experiment to stop. Someone deleted the order. Look for an ID badge near the webs at the far end of the basement.
+4|An ID Badge in the Webs
+5|The name on the badge reads: Research Unit 08. Beside it is a folded note: “It never came through the door. It went over our heads. We tried to block the stairs, but heard it inside the walls. The radio transcript is at the south station.”
+6|The Last Radio Transcript
+7|“Basement team calling. Webs are blocking the evacuation corridor. We heard the elevator descending, but nobody pressed the button. The robot saved the records in the maintenance room upstairs. If you can hear us, do not follow the tapping.” End of recording. The experiment began beneath the house. The robot is the last one who remembers the whole story.
+8|ID
+9|Abandoned Rescue Station
+10|Basement
+11|Basement — Do Not Touch the TV
+12|Upstairs: Library
+13|Old Blankets
+14|Storage Crates
+15|Basement Records — E
+16|Before the Experiment
+17|Growth Begins
+18|Before the Escape
+19|Adam: Hello? Dr. Noa? Why are you calling so early?
+20|Noa: Good morning, Adam. Today we are testing the spider silk in Chamber Eight. We want to develop strong ropes for rescue teams. I need you at the laboratory.
+21|Noa: Put on your work clothes, take your bag and ID badge, and drive over. The team is getting ready. Stay away from the chamber until we check that the glass is locked. See you soon.
+22|Dr. Noa
+23|Laboratory
+24|Incoming Call
+25|Interact
+26|Morning at Home • Incoming call from Dr. Noa
+27| • Answer the phone
+28|Picking up the phone…
+29|You have a new WhatsApp message from Mom.
+30|Mom: Good luck with Experiment 8! I'm watching the news right now.
+31|Laboratory Call • 
+32| • End the call and get out of bed
+33| • Continue the call
+34|Opening WhatsApp…
+35|Your Phone • New message from Mom
+36|WhatsApp • Mom
+37| • Open WhatsApp
+38| • Put away the phone and get ready
+39|Putting the phone away…
+40|Morning at Home • Getting out of bed
+41|E / Interact · Open the Lamborghini door
+42|Go to the Lamborghini's driver door
+43|E / Interact · Get in the car
+44|Go to the open driver door
+45|E / Interact · Close the door and head home
+46|Closing the car door…
+47|<h1>3D Graphics Required</h1><p>Your browser could not start WebGL. Try Chrome or Edge with hardware acceleration enabled.</p>
+48|Bedroom
+49|Dining Room
+50|Library
+51|Kitchen
+52|Living Room
+53|Workshop
+54|EXIT
+55|Clothes
+56|Tablecloths
+57|Coats
+58|Pantry
+59|Blankets
+60|Work Clothes
+61|Basement — Key Required
+62|Sound is off. Use the sound button to turn it on.
+63|No voice is available on this device. You can read the robot's dialogue.
+64|No English voice is available. Read the story in the subtitles.
+65|Maintenance Unit 08 · 
+66|Laboratory Memories
+67|</p><button id="robot-voice" class="outline">Play / Stop Robot Voice</button>
+68|End Conversation
+69|Continue
+70|Axe
+71|Break the boards across the exit
+72|Flashlight
+73|Press F to switch it on or off
+74|Yellow Key
+75|Unlock the basement
+76|Room 1 Key
+77|Unlock the trapped room
+78|Robot Battery
+79|Power up the robot
+80|Secret Journal
+81|The story of Experiment 08
+82|Access Card
+83|Access the elevator's secret floor
+84|<p>Items you pick up with E are stored here automatically. You can carry all your equipment together.</p><div class="bag-grid">
+85|✓ In your bag
+86|Not found yet
+87|</div><h3>Elevator Code Notes</h3><div class="code-notes">
+88|<p><strong>Note 
+89|Not found yet
+90|</div><p>Elevator code: <b dir="ltr">
+91|</b></p><h3>Basement Investigation · 
+92|Your Bag · B
+93|Equipment and Code Notes
+94|<p>B to open or close · F for flashlight</p><button id="bag-flashlight" class="outline"></button>
+95|Close Bag · B
+96|Flashlight Off · F
+97|Flashlight On · F
+98|Old Service Elevator
+99|System Locked
+100|<label for="lift-code">Enter the three digits</label><input id="lift-code" inputmode="numeric" maxlength="3" autocomplete="off" dir="ltr"><p id="lift-feedback" role="status"></p><button id="lift-unlock" class="outline">Confirm Code</button>
+101|Return to the House
+102|Find all three notes first.
+103|Wrong code. Check the order of the lines in your bag.
+104|Elevator Panel · Floor 
+105|Choose a Floor
+106|Your access card is in your bag. Select ? and press E to insert it.
+107|Floor ? requires a secret access card.
+108|Leave Elevator
+109|Look for a secret access card in the upstairs laboratory.
+110|Card Reader
+111|Insert Your Access Card
+112|<p>The card is in your bag. Press E to insert it into the slot.</p>
+113|E · Insert Card
+114|Closing the iron gate…
+115|Descending to the research station…
+116|Elevator moving…
+117|Opening the gate…
+118|Research station. The elevator will wait for your return.
+119|You have arrived. Step out beside the elevator.
+120|Personal best: 
+121|Can you escape?
+122|E: Leave the wardrobe
+123|E: Investigate — 
+124|E: Save code note to your bag
+125|E: Take secret access card
+126|E: Open elevator panel
+127|E: Read expedition report
+128|E: Take battery
+129|E: Press the red button
+130|The robot is resting
+131|E: Connect the battery and talk to the robot
+132|Find a battery to power up the robot
+133|E: Open the room door
+134|Door locked — find the key in this room
+135|E: Open Room 1
+136|E: Take room key
+137|E: Pick up golden key
+138|E: Unlock basement door
+139|Basement locked — golden key required
+140|E: Read basement records
+141|E: Read the paper on the desk
+142|E: Pick up flashlight
+143|E: Sit down and use the computer
+144|E: Climb the ladder and leave
+145|E: Open the secret floor hatch
+146|E: Read the journal again
+147|E: Take and read the secret journal
+148|E: Pick up axe
+149|E: Hide in the wardrobe
+150|E: Break a board (
+151|You need an axe to break the boards
+152|Basement Investigation · 
+153|</p><p>Evidence saved in your bag. Press B to read it again.</p>
+154|Keep Investigating
+155|Note 
+156| saved in your bag. Press B to read it.
+157|Secret access card saved in your bag.
+158|Lower Station Archive
+159|The Final Expedition Report
+160|<p>We drilled beneath the house to study the rock. Inside the cavities, we found ancient silk that had never decayed. We took a sample to the laboratory upstairs, hoping to learn how to make stronger rescue ropes.</p><p>After the escape, our team came down to seal the shaft. Webs had already covered the equipment. We heard movement in the holes. Then the elevator stopped. We waited for the robot.</p><p>If you find this report, do not open the shaft. Take the card, return to Floor 1, and find the exit.</p>
+161|Close Report
+162|Battery found. Return to the robot.
+163|The robot is resting. The red button opens the door.
+164|Find a battery somewhere in the house and return here.
+165|The key is hidden inside this room.
+166|Break Open the Exit
+167|Find the Axe
+168|You escaped the room. Keep looking for a way out.
+169|Door unlocked!
+170|Open the Room Door
+171|Return to the door and press E.
+172|Room key found!
+173|You found the golden basement key.
+174|Look for a golden key in the house.
+175|Basement unlocked. The stairs are behind the door.
+176|Incident File
+177|What Happened in the Basement?
+178|<p>We kept the experiment books here. On the first night, we heard scratching. On the second, every shelf was covered in webs. When the chamber shattered, we switched off the lights and ran. These photographs are all that remain.</p><div id="history-gallery">
+179|Close
+180|A Page from the Spider Laboratory
+181|Tools You Will Need
+182|<p><strong>Flashlight</strong> — to light your way.</p><p><strong>Axe</strong> — to escape the house.</p><p><strong>Yellow key</strong> — to unlock the basement.</p>
+183|Put Down the Paper
+184|Flashlight found! Press F to switch it on or off.
+185|Laboratory Computer · Photo Archive
+186|What Happened in This House?
+187|Close Computer and Stand Up
+188|Opening the hatch…
+189|Climbing the ladder…
+190|Experiment 08
+191|Close Journal
+192|Return to the corridor. The exit has a green sign.
+193|<span>Axe acquired · 4 boards block the exit</span>
+194|You have the axe! Time to make some noise.
+195|You are out. Move quietly.
+196|It saw you! Get away before trying to hide.
+197|Shhh… It can hear you, but it cannot see you.
+198|The door is blocked. Look for an axe in the rooms.
+199|Axe acquired · 
+200| boards left
+201|One less board. Eight legs on the way.
+202|Two more! It heard that.
+203|One more hit and you are out!
+204|Click inside the game to enable mouse look.
+205|Click and drag to look around.
+206|The phone is ringing beside your bed. Who calls this early?
+207|Where am I? Where is everyone?
+208|You have the axe and flashlight. Find a way out.
+209|You have a flashlight. Find an axe and a way out.
+210|You have the axe and flashlight. Return to the front door and break all four boards.
+211|Flashlight ready · F to switch it on or off · B for your bag. Search the rooms for an axe.
+212|<span>No axe</span>
+213|You already have the axe. Find the exit.
+214|Find an axe. Hide in wardrobes. Run only when you need to.
+215|Game Paused
+216|Before You Leave
+217|<p>The scene will resume where you left off.</p>
+218|Take a Moment
+219|<p>Continue when you are ready.</p>
+220|Opening Paused
+221|<p>Continue when you are ready.</p>
+222|Take a Breath
+223|The spider can wait.
+224|<p>The game is paused. Time and the spider have stopped.</p><p>Tip: Running attracts it. Get into a wardrobe before it sees you.</p>
+225|Back to the House
+226|Caught / Try Again
+227|It Found You!
+228|<p>The spider jumped right at you! Try again, find the axe, and escape.</p><div class="result-stat">
+229|</div><p>Tip: Hide in a wardrobe or turn a corner to break its line of sight.</p>
+230|Try Again
+231|Something is moving behind you…
+232|You Saved the Robot
+233|The Spider Found Your Home…
+234|<p>The robot saved you. At 01:00, its message brought you back to the original house. You followed the drag marks, found it by the stairs, brought a battery from the basement, cut the webs, and led it outside. This time, you saved it. You returned home together, but the silk on your car and the security footage revealed that the spider had followed you. The robot heard you fall by the window and came to help. You are together — and the danger is still outside.</p><div class="result-stat">
+235|New personal best!
+236|Easy
+237|Normal
+238|Very Hard
+239|</p><p>Try again: the axe will be hidden somewhere new.</p>
+240|One More Night
+241|Leave Game
+242|Return to the Menu?
+243|<p>You can return to the house and continue where you stopped. Returning to the menu ends this attempt.</p><button id="confirm-menu-exit" class="outline">Exit to Menu</button>
+244|Return to the House and Continue
+245|Go Back
+246|Survival Guide / 30 Seconds
+247|Keep the Noise Down.
+248|<p>Search the rooms, laboratory, and basement for the hidden axe. The basement entrance is in the library. Return to the door with the green sign and break its four boards. Every hit invites company.</p><div class="help-row"><b>W A S D</b><span>Move · Mouse to look around</span></div><div class="help-row"><b>E</b><span>Pick up items, hide in wardrobes, and break boards</span></div><div class="help-row"><b>SHIFT</b><span>Sprint — fast, but noisy</span></div><div class="help-row"><b>F / ESC</b><span>Flashlight / Pause</span></div><p>The spider sees what is in front of it. Walls block its view. When it loses sight of you, it searches your last known position before returning to its patrol. Running and striking the door attract it to the noise.</p><p>On mobile: use the left joystick, drag on the right to look, and tap the action buttons. You can also play without sound: the danger meter warns you when the spider is near.</p>
+249|I'm Ready
+250|Easy: slower spider, weaker hearing. 18 seconds to get ready.
+251|Normal: regular speed and hearing. 12 seconds to get ready.
+252|Very Hard: faster spider, longer hearing range. 7 seconds to get ready.
+253|Sound: Off
+254|Sound: On
+255|Find the flashlight first. Press E when you are close to it.
+256|Joystick: On
+257|Joystick: Off
+258|Lower Research Station
+259|Secret Passage · Crawl
+260|Secret Journal Room
+261|Basement Stairs
+262|Basement · TV Room
+263|Staircase
+264|Secret Robot Room
+265|Hatching Room
+266|Red Corridor
+267|Upper Floor · Corridor
+268|Upper Floor · 
+269|Ground Floor · Corridor
+270|Ground Floor · 
+271|Bedroom
+272|Dining Room
+273|Find the Key
+274|The key is hidden inside Room 1.
+275|It saw you! Break its line of sight.
+276|It lost you. Move quietly now.
+277|Hear that scratching? Look up, too.
+278|Just a teddy bear. Why did it laugh?
+279|Bag · B · 
+280| items
+281|Inside the Wardrobe
+282|You are hidden. Wait for it to pass.
+283|The spider is on the ceiling — look up!
+284|The spider is climbing the wall!
+285|It can see you — RUN!
+286|Chasing your last known position
+287|? It is searching. Stay quiet.
+288|Investigating a sound…
+289|! Something caught its attention
+290|Something is waking up in the house…
+291|Can you hear its legs?
+292|The house is too quiet…
+293|The door locked. The key is hidden inside Room 1.
+294|The door slammed shut and locked! Find the key.
+295|The passage is low. Crawl toward the book room.
+296|Back in the bedroom.
+297|Hatching Wing
+298|It Is No Longer Inside
+299|NO SIGNAL
+300|Adam: I'll fix your leg. Wait here. I'll get the tools.
+301|Adam: Robot? Where are you?
+302|Robot: Out here. I found something on your car.
+303|Adam: Wait… What is that on the car door?
+304|Robot: This silk is fresh. Adam, close the door.
+305|Adam: The whole street went dark. Someone across the road is signaling to us.
+306|Adam: The TV is showing my house. It's a security camera!
+307|Robot: Look at the roof. It was behind us all along.
+308|Robot: It followed us. We must find the neighbor and get out.
+309|Adam: Let's go home. We'll lock the door.
+310|Adam: I'll check the car through the window.
+311|Adam: Aah!
+312|Robot: Adam! What happened?
+313|Adam: I saw the spider! It's here, at the window!
+314|Adam: Did you hear that noise?
+315|Robot: No. I didn't hear anything.
+316|E / Interact · 
+317|Opening / closing the door…
+318|Get the Tools
+319|Collect the tools from the table
+320|Return to the robot with the tools
+321|Where is the robot? Look by the door
+322|Open the Door and Go Outside
+323|Go to the front door and look for the robot outside
+324|Approach the robot beside the car
+325|Open the Lamborghini Door
+326|Go to the driver door and inspect the webs
+327|Close the Lamborghini Door
+328|Go to the driver door and close it
+329|Power cut · Look toward the flashing light
+330|Enter the House with the Flashing Light
+331|Follow the robot to the house across the road
+332|Sit on the Sofa
+333|Go to the sofa beside the TV
+334|E / Interact · Stand up and head home
+335|Security Cameras · Look at the Roof
+336|Leave with the Robot
+337|Go to the neighbor's front door
+338|Enter Your Home
+339|Run home with the robot
+340|Approach the Robot
+341|Did You Hear That?
+342|The robot is listening…
+343|Look Through the Window
+344|Go to the window and investigate the noise
+345|Look left and right · Mouse / Drag / A and D
+346|The robot is coming to help
+347|The Spider Found Your Home
+348|Main Bedroom
+349|Spider Laboratory
+350|Bathroom
+351|Room 1
+352|Playroom
+353|Reaching for the ignition…
+354|Inserting the key…
+355|Turning the key • Engine starting…
+356|Engine running • Off to work
+357|The First Experiment
+358|We tried to develop strong silk ropes to rescue people from collapsed buildings. At first, the spider was small and the results looked promising.
+359|On the Chamber Walls
+360|The silk grew stronger, but the spider grew too. It climbed the walls, and the ceiling sensors stopped responding.
+361|The Chamber Was Breached
+362|The control system kept feeding the experiment after the stop command. When the team returned, the glass was broken and the chamber was empty.
+363|The Police Arrived
+364|Rescue teams and police searched the house. Webs covered every exit. The last officer's flashlight went out. Then the radio fell silent.
+365|Maintenance Unit 08
+366|The robot saved a copy of the archive. Before its battery died, it sealed the maintenance room to keep the spider away from its memory.
+367|Research Beneath the House
+368|The question-mark button leads to an old research station. That is where the growth-accelerating sample came from. The final report warns: do not open the rock shafts.
+369|<div class="archive-desktop"><p>Archive 08 · Fictional experiment photographs · Click to open</p><div class="archive-thumbnails">
+370|</p></figcaption></figure><nav class="archive-nav"><button id="archive-prev" class="outline">Previous</button><span aria-live="polite">
+371|</span><button id="archive-next" class="outline">Next</button></nav></div>
+372|Archive Computer — Press E by the Chair
+373|Archive 08
+374|First line: 7. The next note is in the dining room.
+375|Second line: 3. The final note is upstairs in the playroom.
+376|Third line: 1. Read the lines in order, from top to bottom.
+377|Elevator • 1 / 2 / ?
+378|E • Control Panel
+379|E • Expedition Report 08
+380|Morning News
+381|Today: Experiment 08 at the Research Estate
+382|New rescue ropes could save lives
+383|Testing will take place in a sealed glass chamber
+384|Experiment 08 • Research Estate
+385|A fictional broadcast from the game world
+386|News Anchor: This morning at the research estate, scientists are preparing Experiment 08 to test spider silk.
+387|News Anchor: The team is developing strong, lightweight rescue ropes to save people trapped in dangerous places.
+388|News Anchor: Researchers say all testing will take place inside a sealed glass chamber. More updates later today.
+389|Adam: I want to see what's on the news.
+390|Walking to the sofa and sitting down
+391|Morning News • Experiment 08 at the Research Estate
+392| • Stand up
+393|Getting up • Time to get ready for work
+394|Open the driver door and get in the car
+395|Robot: The key is in my pocket. There's an emergency battery in the basement electrical cabinet. Don't leave me here.
+396|Adam: I found the battery. I'm coming back.
+397|Robot: My leg is damaged. I can't run.
+398|Adam: Then we'll go slowly. I'm not leaving you.
+399|Robot: This time, you saved me. Thank you, Adam.
+400|Webs cut. Connecting the battery…
+401|Robot: I can walk. Follow me. I'll lead you to the door.
+402|Adam: I took the key. The electrical cabinet is on the basement's back wall.
+403|Cabinet unlocked. The emergency battery still has power.
+404|E / Interact · Cut the webs and free Unit 08
+405|Kneeling down and carefully cutting the webs…
+406|The door is opening. The robot is coming — wait by the exit.
+407|Adam: The door is open! Run to my car!
+408|Take the Key from the Robot's Pocket
+409|The key is in the robot's pocket
+410|Unlock the Electrical Cabinet
+411|Take the library stairs to the basement · Cabinet on the back wall
+412|Three taps above you…
+413|Take the Emergency Battery
+414|Get Ready to Repair the Robot
+415|Battery acquired · Return to the robot by the stairs
+416|Cut the Webs and Connect the Battery
+417|Cutting the webs · Freeing the robot
+418|Unit 08 is coming back online…
+419|Door open · Wait for the robot by the exit
+420|Open the Exit Door
+421|Follow the robot · It will lead you to the door
+422|You Escaped Together
+423|Adam: All right. I'm going to save the robot.
+424|Adam: Back at the spider's house. I have to find the robot.
+425|Adam: There you are. Hold on. I'll help you.
+426|Robot: Adam… You came back for me. I'm still here.
+427|Unit 08
+428|Adam… I'm still here.
+429|In the spider's house.
+430|My battery is almost dead.
+431|Drag Marks on the Rug
+432|The marks lead toward the stairs.
+433|Torn Webs and a Piece of Metal
+434|Part of the robot's armor. It came this way.
+435|A Weak Phone Signal
+436|The signal comes from the stairs, just before the basement entrance.
+437|01:00 · Message from Unit 08
+438|Returning to the spider's house…
+439|Adam: It must have been a dream… I still have the battery.
+440|01:00 · Message from the Robot
+441|E / Interact · Go save the robot
+442|Returning to the Original House · 01:00
+443|You Found Unit 08
+444|E / Interact · Check the robot
+445|Find the robot · Follow the clues in the corridor
+446|Experiment Day
+447|A new day begins
+448|Camera
+449|Photos
+450|Calendar
+451|Weather
+452|Settings
+453|Maps
+454|Clock
+455|Phone     Messages     Safari
+456|Mom
+457|WhatsApp • Online
+458|Good luck with Experiment 8!
+459|I'm watching
+460|the news right now.
+461|Message
+462|Turn Off the Alarm
+463|Good morning! This is your home. You work as a research assistant at the spider laboratory. Today, the team will test strong silk for rescue ropes. Go to the wardrobe on your right and get ready for work.
+464|Go to the Sofa and Watch the News
+465|Put On Your Work Clothes
+466|Work clothes on. Now take your bag and employee badge.
+467|Take Your Bag and Employee Badge
+468|Your bag contains a flashlight and employee badge. The laboratory is in an old estate outside town. A message reads: “Meet us at Chamber 08.” When you are ready, go to the door between the windows and press E.
+469|Leave for Work
+470|On the Way to the Research Estate…
+471|Bag and Employee Badge
+472|Home • Morning of the Experiment
+473|Dr. Noa • Experiment Lead
+474|Dr. Amir • Silk Research
+475|Dr. Maya • Safety
+476|Dr. Yoav • Systems Control
+477|EMERGENCY EXIT
+478|Experiment 08 • Research Chamber
+479|Robot
+480|Talk to Dr. Noa
+481|Noa: We're developing spider silk for rescue ropes. Amir will explain how we measure its strength.
+482|Talk to Dr. Amir
+483|Amir: This thread can hold an enormous weight. But the spider has grown since yesterday. Maya wants another check.
+484|Get Dr. Maya's Approval
+485|Maya: One short test. If its size changes, stop immediately. Yoav has prepared the computer on your right.
+486|Check the Computer
+487|Yoav: The sensors are ready. Go to the button beside the chamber and start the silk test.
+488|Start the Silk Test
+489|Maya: Wait… The reading is rising too fast. Stop the feed!
+490|Moving to the middle of the wardrobe…
+491|Opening the wardrobe…
+492|Putting on work clothes…
+493|Closing the wardrobe
+494|Picking up the work bag…
+495|Putting the bag over your shoulder
+496|Opening the car door…
+497|Getting into the driver's seat
+498|Parked • In the driver's seat • Engine off
+499| • Insert the key and start the engine
+500|Pulling out of the parking space…
+501|Turning onto the road
+502|Driving to Work • Research Estate
+503|Automatic drive • E to skip the journey
+504|Arriving at the laboratory • Turning into the parking lot
+505|Parking at the laboratory • Engine off
+506|Pressing the experiment button…
+507|PA: Laboratory emergency. All personnel, evacuate immediately through the emergency exit!
+508|Robot: Good morning! Welcome to the research estate. Dr. Noa is waiting on your left.
+509|Yoav: The door is closing! Wait! He's still inside!
+510|Emergency • Staff evacuating
+511|Door locked • No way out
+512|RUN! The spider is charging at you!
+513|Morning at Home • 
+514|In the Parking Lot • 
+515|At Work • 
+516| m
+517|Interact • 
+518|Joystick to move • Drag on the right to look
+519|WASD to move • Mouse to look
+520|The spider is dragging you to the house…
+521|Your eyes are closing…
+522|Adam: No… Where are you taking me?
+523|Adam: The house… I can't stay awake…
+524|Dramatic Footage: Robot Saves Researcher
+525|News from the game world • Robot's fate unknown
+526|News: Extraordinary footage has arrived from the research estate.
+527|News: A robot held off the spider, allowing a researcher to escape.
+528|News: The robot's fate remains unknown…
+529|Getting into the car together…
+530|Adam: We're going home. Both of us this time.
+531|Robot: We're home. Thank you for coming back for me, Adam.
+532|The robot is running to help!
+533|Adam: I'm recording…
+534|Adam: It grabbed the spider's legs!
+535|Robot: Run to the car! I'll hold it off!
+536|I have to get out of here!
+537|Running to the car…
+538|Getting in and closing the door
+539|Turning the key. I have to get home.
+540|Adam: Please… Let the robot be all right.
+541|Home at last.
+542|Adam: What will happen to the robot? I need some sleep.
+543|I need to rest…
+544|The Next Morning
+545|Adam: I need to watch the news.
+546|Approaching the robot and offering a handshake
+547|Welcome to the Laboratory • Handshake
+548| • Continue
+549|Approach the robot and press E to shake hands
+550|Memory system online. Thank you for connecting the battery. I am Maintenance Unit 08. I built the rails, repaired the doors, and remembered what the researchers preferred to forget.
+551|We wanted to help people. Spider silk is light and strong. The researchers dreamed of thin rescue ropes that could lift heavy loads out of collapsed buildings.
+552|At the start of Experiment 08, the spider was tiny. We measured how much silk it spun and tested every thread. Everything seemed normal for weeks. Then a sample arrived from the research station beneath the house.
+553|The sample changed the silk. The threads grew thicker, but the spider began to grow. I asked them to stop. The old computer rejected the shutdown command, and feeding continued all night.
+554|It learned our movements. While the researchers watched the floor, it climbed to the ceiling. The first crack appeared in the glass. Then we heard three taps from inside.
+555|The glass shattered. I locked the doors to stop it, but it crawled through the maintenance vent above them. That is why I tell you to check the ceiling, too.
+556|The police and rescue teams arrived in the morning. They followed webs down to the basement. The last camera showed an empty corridor, but its microphone kept recording eight legs getting closer.
+557|I guided some researchers to the exit. Others stayed in the lower station. Nobody has answered my calls since. I saved the records on the computer beside the secret journal.
+558|We split the elevator code across three notes: one in the bedroom, one in the dining room, and one in the playroom. Put them in your bag and read the lines in order.
+559|The elevator has buttons for Floors 1 and 2, plus a question mark. That one needs an access card. We left it in the upstairs laboratory. Beneath the house is the source of the experiment. Look carefully before approaching the shaft.
+560|To escape, use the flashlight you already have and find an axe. Break the boards across the front door. The spider does not always know where you are. Turn a corner, move away quietly, and hide before it sees you.
+561|My battery is fading again. I'll sit here and guard the archive. The red button opens the door. If you hear three taps… do not answer.
+562|Door Control
+563|<p>We once experimented on a small spider. We wanted to understand how it spun such strong webs.</p><p>The experiment did not go as planned. Every night, it grew, until it became enormous. The glass shattered. The lights went out. When they came back on, the chamber was empty.</p><p>To whoever is reading this: be careful. The spider is dangerous. It can kill you. Do not stay in this house. Find the axe, break the boards, and get out.</p><p>If you hear scratching overhead, do not assume it is the wind. It learned to walk on the ceiling, too.</p><p>We hid the journal here, hoping the webs would never reach it.</p><p><em>The final line was written with a shaking hand: Do not go back to check whether it is still there.</em></p>
+564|Experiment Journal
+565|Flashlight — to light your way
+566|Axe — to escape the house
+567|Yellow key — to unlock the basement
+568|Experiment 08 — Containment Chamber
+569|Project: Giant Spider
+570|Chamber Link: Lost
+571|Skeletal Sample
+572|Experiment 08 Journal
+573|Growth succeeded. Containment failed.
+574|Lab Coats
+575|Towels
+576|Experiment Equipment
+577|Bedding
+578|Costumes
+579|Upper Floor
+580|Stairs to the Upper Floor
+581|Downstairs: Exit
+582|E / Interact · Get out of bed
+583|Getting out of bed…
+584|E / Interact · Sit down and watch the news
+585|Go to the sofa and watch the news
+586|E / Interact · Stand up and get your phone
+587|The news is showing your recording
+588|E / Interact · Pick up your phone
+589|Get your phone from the bedside table
+590|E / Interact · Put your phone away
+591|01:00 · Read the robot's message
+592|E / Interact · Go save the robot
+593|Go to the door and leave to save the robot

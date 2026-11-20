@@ -169,3 +169,9 @@ WASD / חצים — תנועה; עכבר — מבט; E — פעולה; Shift —
 בדיקות: איסוף כל הפתקים והכרטיס ממקומות נגישים, קוד שגוי וחסר, מעבר בין הקומות, דוח בתחנה וחזרה, איפוס משחק; בדיקות המרדף והבריחה הקיימות. בדיקות הריצה מדמות DOM ורינדור ואינן בדיקה חזותית בדפדפן.
 
 אם הקישור המקומי אינו נפתח אחרי הפעלה מחדש של המחשב, יש להפעיל שוב `node server.mjs` מתיקיית הפרויקט. הקישור פועל כל עוד השרת המקומי רץ.
+
+## Version 1.95 — English and Hebrew
+
+Choose English or עברית in the header before starting. The language choice is stored on the device; switching language starts a new run. The English entry point is `dist/en/index.html`. All 594 game text literals and 54 page strings have explicit reviewed translations, including room signs, journals, code notes, phone screens, subtitles, and accessibility labels. English includes 72 packaged voice clips with distinct male voices and a processed robot voice. Hebrew content and personal axe settings are preserved.
+
+Translation sources live in `localization/`. Run `node scripts/build-english.cjs` after changing Hebrew story modules; missing translations stop the build. The generated English modules share the original artwork, engine recording and vendor code. English voice audio is packaged locally; its manifest must cover every line in `localization/spoken-english.json`. Run `node --test tests/english.test.mjs` for language, imports and audio coverage and `node scripts/check-english-flow.cjs` for the existing complete gameplay flow in English. The full-flow harness stubs DOM, audio and WebGL; it does not verify the final GPU-rendered appearance or physical mobile layout.

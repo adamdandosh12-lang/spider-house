@@ -1,0 +1,48 @@
+import {createSpider} from './spider-model.js';
+import {createCaptureScare} from './capture-scare.js';
+import {createNightRescue} from './night-rescue.js';
+import * as T from '../vendor/three.module.js';
+import {createPlayerPhone} from './player-phone.js';
+import {floorAt} from './house-world.js';
+export const NIGHT_LINES={decision:"Adam: All right. I'm going to save the robot.",arrival:"Adam: Back at the spider's house. I have to find the robot.",found:"Adam: There you are. Hold on. I'll help you.",robot:"Robot: Adam… You came back for me. I'm still here."};
+export function createNightReturn({scene,camera,home,homeCamera,homeDecor,lamp,robotRoom,spider,line,blocked,prepare,sound,scareSound=()=>{}}){
+ const attacker=createSpider(scene);attacker.g.name='Stair dream spider revealed after looking up';attacker.g.visible=false;attacker.g.scale.setScalar(.55);const lookStart=new T.Quaternion(),lookEnd=new T.Quaternion();
+ const dream=createCaptureScare();let dreamTime=-1,dreamDone=false;
+ const rescue=createNightRescue({scene,camera,robotRoom,line,sound});
+ const c=document.createElement('canvas');c.width=384;c.height=720;const x=c.getContext('2d');
+ x.fillStyle='#101d27';x.fillRect(0,0,384,720);x.textAlign='center';x.fillStyle='#f5f4e9';x.font='72px Arial';x.fillText('01:00',192,150);x.font='24px Arial';x.fillStyle='#94c4b8';x.fillText("Unit 08",192,265);x.fillStyle='#244446';x.fillRect(22,300,340,225);x.direction='ltr';x.font='24px Arial';x.fillStyle='#f1f4e7';["Adam… I'm still here.","In the spider's house.","My battery is almost dead."].forEach((s,i)=>x.fillText(s,192,350+i*59));
+ const texture=new T.CanvasTexture(c);texture.colorSpace=T.SRGBColorSpace;const phone=createPlayerPhone({texture});homeCamera.add(phone.phone);phone.phone.position.set(.025,-.07,-.48);phone.phone.visible=false;
+ const web=new T.Group();web.name='Night search trail and fallen robot webs';web.visible=false;scene.add(web);const silk=new T.LineBasicMaterial({color:0xcad8d2,transparent:true,opacity:.65});
+ function thread(points,m=silk){web.add(new T.Line(new T.BufferGeometry().setFromPoints(points.map(p=>new T.Vector3(...p))),m));}
+ for(let i=0;i<28;i++){const z=-10.8+i*.065;thread([[-1,.04,z],[-.32,.54,z-.04],[.42,.57,z+.03],[1.2,.04,z+.2]]);}
+ const scuff=new T.LineBasicMaterial({color:0x8d8a7a,transparent:true,opacity:.48});for(let i=0;i<32;i++)for(const side of [-1,1])thread([[side*.22,.047,8-i*.52],[side*.22+.04,.047,7.7-i*.52]],scuff);
+ const beacon=new T.PointLight(0x72c2bc,.4,3);beacon.position.set(0,.5,-11.7);web.add(beacon);
+ let phase='idle',time=0,phaseTime=0,started=false,complete=false,spoken='',y=0,p=0;const found=new Set(),pos=new T.Vector3(0,1.65,10.5),original={position:robotRoom.robot.position.clone(),rotation:robotRoom.robot.quaternion.clone(),visible:spider.g.visible};
+ const clues=[{z:5,title:"Drag Marks on the Rug",text:"The marks lead toward the stairs."},{z:-2,title:"Torn Webs and a Piece of Metal",text:"Part of the robot's armor. It came this way."},{z:-7,title:"A Weak Phone Signal",text:"The signal comes from the stairs, just before the basement entrance."}];
+ function say(text){if(spoken!==text){spoken=text;line(text);}}
+ function begin(){started=true;phase='phone';phaseTime=0;home.background.set(0x0c1520);lamp.intensity=10;homeDecor.update(1,false);homeCamera.position.set(-5,1.2,4.5);homeCamera.lookAt(-5,1.4,-3);phone.phone.visible=true;phone.grip.hold(1);say("01:00 · Message from Unit 08");}
+ function enter(){prepare();phase='search';phaseTime=0;pos.set(0,1.65,10.5);y=0;p=0;web.visible=true;spider.g.visible=false;robotRoom.robot.position.set(0,.31,-10);robotRoom.robot.rotation.set(-Math.PI/2,0,-.28);robotRoom.arms.forEach((arm,i)=>{arm.visible=true;arm.rotation.set(-.1,0,i?-.1:.1);});robotRoom.legs.forEach(({leg,knee})=>{leg.rotation.set(0,0,0);knee.rotation.set(.06,0,0);});robotRoom.sleepEyes();camera.position.copy(pos);say(NIGHT_LINES.arrival);}
+ function update(t,dt,input={}){time=t;if(!started)begin();phaseTime+=dt;if(phase==='phone'){
+   phone.phone.visible=true;phone.grip.hold(1);phone.phone.rotation.z=Math.sin(t*1.3)*.008;homeCamera.position.y=1.2+Math.sin(t*.9)*.003;if(t>5)say(NIGHT_LINES.decision);if(t>=11){phone.phone.visible=false;phone.grip.hide();phase='depart';phaseTime=0;say("Returning to the spider's house…");}return;
+  }if(phase==='depart'){if(phaseTime>=7)enter();return;}
+  if(phase==='search'){
+   rescue.update(dt,pos);
+   if(!dreamDone&&rescue.stage==='return'&&pos.y>1.5&&pos.z>=-14.05&&pos.z< -12.7&&Math.abs(pos.x+19.2)<2.5){dreamDone=true;dreamTime=0;lookStart.copy(camera.quaternion);camera.lookAt(pos.x,3,pos.z+1.8);lookEnd.copy(camera.quaternion);camera.quaternion.copy(lookStart);}
+   if(dreamTime>=0){dreamTime+=dt;camera.position.copy(pos);
+    if(dreamTime<1.2){attacker.g.visible=false;camera.quaternion.slerpQuaternions(lookStart,lookEnd,T.MathUtils.smoothstep(dreamTime,0,1.2));return;}
+    if(dreamTime<2.7){const u=T.MathUtils.smoothstep(dreamTime,2.05,2.7);attacker.g.visible=true;attacker.g.position.set(pos.x,2.35-u*.85,pos.z+1.9-u*1.6);attacker.g.rotation.set(0,0,-u*.15);attacker.animate(dreamTime,dt,false,'chase',null,null,{grab:u,open:.7,bite:0});camera.lookAt(attacker.g.position.x,attacker.g.position.y+.45,attacker.g.position.z);return;}
+    attacker.g.visible=false;
+    if(dreamTime<4.3){dream.update(dreamTime-2.7,camera.aspect);if(dreamTime-dt<2.7){line("Adam: Aah!");scareSound();}return;}
+    if(dreamTime<6.2){camera.position.y=.3+1.35*Math.min(1,(dreamTime-4.3)/1.2);camera.rotation.set(.3,Math.PI,0,'YXZ');if(dreamTime-dt<4.3)line("Adam: It must have been a dream… I still have the battery.");return;}dreamTime=-1;y=Math.PI;p=.3;
+   }
+   if(Math.hypot(pos.x,pos.z+10)<4)robotRoom.wake();if(rescue.complete)complete=true;if(rescue.stage==='cutting'){web.traverse(o=>{if(o.isLine)o.material.opacity=Math.max(0,.65*(1-rescue.debug().cutProgress));});}if(['rising','escort','safe'].includes(rescue.stage))web.visible=false;if(!rescue.free)return;
+   y-=input.lookX||0;p=T.MathUtils.clamp(p-(input.lookY||0),-1.1,1.1);const k=input.keys||{},touch=input.touch||{};let f=(k.KeyW||k.ArrowUp?1:0)-(k.KeyS||k.ArrowDown?1:0)-(touch.y||0),r=(k.KeyD||k.ArrowRight?1:0)-(k.KeyA||k.ArrowLeft?1:0)+(touch.x||0);const len=Math.max(1,Math.hypot(f,r)),speed=(rescue.stage==='escort'?1.5:k.ShiftLeft?3.7:2.55)*Math.min(dt,.05)/len;const dx=(-Math.sin(y)*f+Math.cos(y)*r)*speed,dz=(-Math.cos(y)*f-Math.sin(y)*r)*speed;
+   function move(nx,nz){const h=floorAt(nx,nz,pos.y-1.65);if(h!==null&&!rescue.blocked(nx,nz,h)&&!blocked(nx,nz,.3,h))pos.set(nx,h+1.65,nz);}
+   move(pos.x+dx,pos.z);move(pos.x,pos.z+dz);camera.position.copy(pos);camera.position.y+=Math.hypot(dx,dz)>.001?Math.sin(t*9)*.012:0;camera.rotation.set(p,y,0,'YXZ');beacon.intensity=.3+Math.sin(t*1.7)*.08;
+  }else if(phase==='found'){camera.lookAt(0,.5,-10.8);if(phaseTime>3)say(NIGHT_LINES.robot);if(phaseTime>=8){phase='search';p=camera.rotation.x;y=camera.rotation.y;rescue.activate();}}
+ }
+ function interact(){if(dreamTime>=0)return;if(phase==='phone'&&time>=5){phase='depart';phaseTime=0;phone.phone.visible=false;phone.grip.hide();return;}if(phase!=='search')return;if(rescue.stage!=='idle'){rescue.interact(pos);return;}if(Math.hypot(pos.x,pos.z+10)<2.35&&Math.abs(pos.y-1.65)<.3){phase='found';phaseTime=0;say(NIGHT_LINES.found);return;}const clue=clues.find((c,i)=>!found.has(i)&&Math.hypot(pos.x,pos.z-c.z)<1.8&&Math.abs(pos.y-1.65)<.3);if(clue){found.add(clues.indexOf(clue));say(clue.text);}}
+ function hint(){if(rescue.stage!=='idle')return rescue.hint(pos);if(phase==='phone')return time<5?"01:00 · Message from the Robot":"E / Interact · Go save the robot";if(phase==='depart')return "Returning to the Original House · 01:00";if(phase==='found')return "You Found Unit 08";if(phase!=='search')return '';if(Math.hypot(pos.x,pos.z+10)<2.35&&Math.abs(pos.y-1.65)<.3)return "E / Interact · Check the robot";const clue=clues.find((c,i)=>!found.has(i)&&Math.hypot(pos.x,pos.z-c.z)<1.8&&Math.abs(pos.y-1.65)<.3);return clue?"E / Interact · "+clue.title:"Find the robot · Follow the clues in the corridor";}
+ function stop(){web.traverse(o=>{if(o.isLine)o.material.opacity=.65;});attacker.g.visible=false;dreamTime=-1;dreamDone=false;rescue.reset();phone.phone.visible=false;phone.grip.hide();web.visible=false;spider.g.visible=original.visible;robotRoom.robot.position.copy(original.position);robotRoom.robot.quaternion.copy(original.rotation);}
+ return{releaseCar(){rescue.releaseCar();},update,interact,hint,stop,depart(){started=true;phase="depart";phaseTime=0;phone.phone.visible=false;phone.grip.hide();say(NIGHT_LINES.decision);},resize(aspect){phone.phone.scale.setScalar(aspect<1?.78:1);phone.phone.position.x=aspect<1?0:.025;},reset(){stop();started=false;complete=false;phase='idle';phaseTime=0;time=0;spoken='';found.clear();},get exitTime(){return rescue.exitTime;},get dreamScene(){return dreamTime>=2.7&&dreamTime<4.3?dream.scene:null;},get departElapsed(){return phase==='depart'?phaseTime:0;},get phase(){return phase;},get complete(){return complete;},get camera(){return phase==='phone'?homeCamera:dreamTime>=2.7&&dreamTime<4.3?dream.camera:camera;},get searching(){return phase==='search';},debug(){return{attacker:attacker.g,dreamTime,dreamDone,rescue:rescue.debug(),phase,time,position:pos,phone:phone.phone,web,clues:found.size,complete};}};
+}

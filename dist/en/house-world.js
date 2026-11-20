@@ -1,0 +1,47 @@
+export const HOUSE_WIDTH_SCALE=2.4;
+export const FLOOR_HEIGHT=4.2;
+export const STAIR={x:0,halfWidth:1.45*HOUSE_WIDTH_SCALE,bottomZ:-14,topZ:-24};
+export const upperRooms=[
+ {name:"Main Bedroom",x:-8,z:-21.5,row:0},
+ {name:"Spider Laboratory",x:8,z:-21.5,row:0},
+ {name:"Bathroom",x:-8,z:-10.5,row:1},
+ {name:"Spider Laboratory",x:8,z:-10.5,row:1},
+ {name:"Room 1",x:-8,z:-.5,row:2},
+ {name:"Playroom",x:8,z:-.5,row:2}
+].map(r=>({...r,x:r.x*HOUSE_WIDTH_SCALE}));
+export function onStairs(x,z){return Math.abs(x)<=STAIR.halfWidth&&z>=-24&&z<=-13.5;}
+export function stairHeight(z){return Math.max(0,Math.min(FLOOR_HEIGHT,(-14-z)/10*FLOOR_HEIGHT));}
+export function onBasementStairs(x,z){return Math.abs(x+8*HOUSE_WIDTH_SCALE)<=1.45*HOUSE_WIDTH_SCALE&&z>=-24&&z<=-13.5;}
+function upperSurface(x,z){if(Math.abs(x)<=2.4*HOUSE_WIDTH_SCALE&&z>=3.5&&z<=8.5)return true;if(x>=8.8*HOUSE_WIDTH_SCALE&&x<=12.5*HOUSE_WIDTH_SCALE&&z>=-44.6&&z<=-38.4)return true;if((Math.abs(x)<=1.6*HOUSE_WIDTH_SCALE&&z>=-34&&z<=-26.5)||(Math.abs(x)<=8.8*HOUSE_WIDTH_SCALE&&z>=-48.8&&z<=-34))return true;return Math.abs(x)<=12.5*HOUSE_WIDTH_SCALE&&z>=-26.5&&z<=3.5&&!(Math.abs(x)<1.6*HOUSE_WIDTH_SCALE&&z> -24&&z< -14);}
+export function surfacesAt(x,z){
+ const out=[];if(Math.abs(x)<=8.3*HOUSE_WIDTH_SCALE&&z>=-68.3&&z<=-51.7)out.push(-8.4);
+ if(onStairs(x,z))out.push(stairHeight(z));
+ else{
+  if(Math.abs(x)<=12.5*HOUSE_WIDTH_SCALE&&z>=-13.5&&z<=13.5)out.push(0);
+  if(upperSurface(x,z))out.push(FLOOR_HEIGHT);
+ }
+ if(onBasementStairs(x,z))out.push(-stairHeight(z));
+ if(Math.abs(x)<=12.5*HOUSE_WIDTH_SCALE&&z>=-40&&z<=-24)out.push(-FLOOR_HEIGHT);
+ if((x>=-7.4*HOUSE_WIDTH_SCALE&&x<=-5.6*HOUSE_WIDTH_SCALE&&z>=0&&z<=10)||(x>=-10.9*HOUSE_WIDTH_SCALE&&x<=-3.1*HOUSE_WIDTH_SCALE&&z>=-7.9&&z<=0))out.push(-FLOOR_HEIGHT);
+ return [...new Set(out)];
+}
+export function floorAt(x,z,current=0,maxStep=.29){let best=null,d=Infinity;for(const h of surfacesAt(x,z)){const gap=Math.abs(h-current);if(gap<=maxStep&&gap<d){best=h;d=gap;}}return best;}
+export function makeWorld(colliders){
+ const blocked=(x,z,r=.3,y=0)=>!surfacesAt(x,z).some(h=>Math.abs(h-y)<.29)||colliders.some(c=>c.top>y+.08&&c.bottom<y+1.9&&Math.abs(x-c.x)<c.w/2+r&&Math.abs(z-c.z)<c.d/2+r);
+ const nodes=[],buckets=new Map(),step=.5,minX=-12.5*HOUSE_WIDTH_SCALE,minZ=-69,NX=Math.round(25*HOUSE_WIDTH_SCALE/step)+1,NZ=166;
+ for(let iz=0;iz<NZ;iz++)for(let ix=0;ix<NX;ix++){
+  const x=minX+ix*step,z=minZ+iz*step,list=[];
+  for(const y of surfacesAt(x,z))if(!blocked(x,z,.38,y)){let n={x,y,z,id:nodes.length,ix,iz,neighbors:[]};nodes.push(n);list.push(n);}
+  if(list.length)buckets.set(iz*NX+ix,list);
+ }
+ for(const n of nodes)for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1]]){
+  const ix=n.ix+dx,iz=n.iz+dz;if(ix<0||ix>=NX||iz<0||iz>=NZ)continue;
+  for(const q of buckets.get(iz*NX+ix)||[])if(Math.abs(q.y-n.y)<.29&&!blocked((n.x+q.x)/2,(n.z+q.z)/2,.38,(n.y+q.y)/2))n.neighbors.push(q.id);
+ }
+ function nearest(p){let found=null,best=Infinity;for(const n of nodes){let d=(n.x-p.x)**2+(n.z-p.z)**2+((n.y-(p.y??0))*4)**2;if(d<best){best=d;found=n;}}return found;}
+ function route(from,to){const start=nearest(from),end=nearest(to);if(!start||!end)return[];const prev=new Int32Array(nodes.length).fill(-1),queue=[start.id];prev[start.id]=start.id;
+  for(let i=0;i<queue.length;i++){let id=queue[i];if(id===end.id)break;for(const q of nodes[id].neighbors)if(prev[q]===-1){prev[q]=id;queue.push(q);}}
+  if(prev[end.id]<0)return[];let out=[];for(let n=end.id;n!==start.id;n=prev[n]){const {x,y,z}=nodes[n];out.push({x,y,z});}return out.reverse();
+ }
+ return{blocked,route,nodes};
+}

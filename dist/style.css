@@ -68,3 +68,13 @@ body.in-prologue #touch-light,body.in-prologue #touch-bag,body.in-prologue #touc
 .in-ending #wake-line{bottom:max(20px,env(safe-area-inset-bottom));left:4%;right:4%;width:auto;max-width:900px;margin:0 auto;font-size:clamp(16px,2.3vw,24px);line-height:1.5;padding:12px 16px}
 
 #night-task{position:absolute;z-index:15;top:calc(76px + env(safe-area-inset-top));right:14px;max-width:min(340px,calc(100% - 28px));padding:12px 16px;background:#0e1a20e8;color:#e6eee8;border-inline-start:3px solid #98b9ab;font-size:16px;line-height:1.5;pointer-events:none}#night-task[hidden]{display:none}.night-search #wake-line{bottom:calc(185px + env(safe-area-inset-bottom));font-size:clamp(14px,2vw,20px)}@media(max-height:500px){#night-task{top:12px;max-width:45%;font-size:13px}.night-search #wake-line{bottom:112px;max-width:70%}}
+.language-switch{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 12px;border:1px solid #ff925a88;border-radius:5px;color:#ffe0b9;background:#14151ae6;text-decoration:none;font-size:14px;white-space:nowrap}
+html[lang="en"] .brand,html[lang="en"] .header-right,html[lang="en"] #danger,html[lang="en"] #prompt,html[lang="en"] #toast,html[lang="en"] #room-name,html[lang="en"] footer>span{direction:ltr}
+html[lang="en"] .modal-card,html[lang="en"] #night-task,html[lang="en"] #intro-task,html[lang="en"] #intro-line,html[lang="en"] #intro-prompt,html[lang="en"] #wake-line{direction:ltr;unicode-bidi:plaintext}
+html[lang="en"] h1{font-size:clamp(48px,6vw,90px);letter-spacing:-3px}
+html[lang="en"] #menu .intro{line-height:1.6}
+html[lang="en"] .actions{flex-wrap:wrap}
+html[lang="en"] .controls{max-width:55%;line-height:1.5}
+html[lang="en"] #prompt{max-width:calc(100% - 28px);white-space:normal;overflow-wrap:anywhere}
+@media(max-width:760px),(pointer:coarse){.language-switch{min-height:36px;padding:6px 9px;font-size:13px}header .brand small{display:none}.header-right{gap:5px}header .brand{letter-spacing:0;gap:5px}html[lang="en"] h1{font-size:clamp(42px,11vw,62px)}html[lang="en"] .header-right button{padding-inline:7px}html[lang="en"] .controls{display:none}}
+@media(max-width:430px){.header-right>span{display:none}header .brand{font-size:12px}header .brand>span{font-size:22px}.header-right button{padding-inline:6px;font-size:10px}.language-switch{font-size:12px;padding-inline:7px}}
