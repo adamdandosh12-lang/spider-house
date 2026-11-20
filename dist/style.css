@@ -104,3 +104,5 @@ body.touch-controls .build-bottom{bottom:180px}body.in-builder #touch-bag{displa
 @media(max-height:500px) and (orientation:landscape){.builder-tools{width:180px;max-height:calc(100dvh - 85px);top:68px}.build-bottom,body.touch-controls .build-bottom{bottom:18px;max-width:42%}.build-bottom p{font-size:11px}.build-bottom button{min-width:0;padding:9px 12px;font-size:12px}.build-bottom small{display:none}}
 
 .actions{flex-wrap:wrap}#build-start{border-color:#d8b374;color:#ffe1ad}#build-count{display:inline-block;direction:ltr}
+
+.builder-tools{scrollbar-width:none;-ms-overflow-style:none}.builder-tools::-webkit-scrollbar{display:none;width:0;height:0}
