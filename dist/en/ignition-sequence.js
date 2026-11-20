@@ -11,7 +11,7 @@ export function createIgnitionSequence({camera,group,starter,click,onMotor,onDon
  const head=new T.Mesh(new T.SphereGeometry(1,20,14),black);head.scale.set(.055,.075,.021);head.position.z=.035;key.add(head);box(.028,.012,.005,steel,0,.015,.057);
  const ring=new T.Mesh(new T.TorusGeometry(.034,.004,8,24),steel);ring.position.set(0,-.092,.035);key.add(ring);
  const hand=createPlayerHand(T,camera);let time=0,active=false,inserted=false,started=false,motor=false,done=false;
- const home=new T.Vector3(.17,-.12,.39),aligned=new T.Vector3(0,0,.36),seated=new T.Vector3(0,0,.145);
+ const home=new T.Vector3(.17,-.12,.39),aligned=new T.Vector3(0,0,.36),seated=new T.Vector3(0,0,.007);
  const smooth=u=>{u=Math.max(0,Math.min(1,u));return u*u*(3-2*u);};
  key.position.copy(home);
  function begin(){if(!active){active=true;time=0;}}
