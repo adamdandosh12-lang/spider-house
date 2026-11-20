@@ -92,17 +92,3 @@ footer a{color:inherit}
 /* Preserve wheel, touch and keyboard scrolling without a bright menu scroll track. */
 #menu{scrollbar-width:none;-ms-overflow-style:none}
 #menu::-webkit-scrollbar{display:none;width:0;height:0}
-
-/* Personal house editor: the viewport remains playable around its tools. */
-#builder-ui{position:fixed;inset:0;z-index:19;pointer-events:none}
-.builder-tools{position:absolute;top:78px;inset-inline-start:16px;width:250px;max-height:calc(100dvh - 110px);overflow:auto;padding:14px;border:1px solid #72868e;background:#101b23f2;border-radius:12px;pointer-events:auto;box-shadow:0 12px 32px #0005}
-.builder-tools summary{cursor:pointer;font-size:18px;font-weight:bold;color:#f3d6a4}.builder-tools p{font-size:13px;line-height:1.5;color:#b6cad2}.build-palette,.build-floors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}.build-palette button,.build-floors button{min-height:42px;border:1px solid #5b737e;border-radius:6px;background:#23353f;font-size:14px}.build-palette button[aria-pressed=true]{border-color:#ffc078;background:#395f63}.build-colors{display:flex;gap:10px;margin:12px 0}.build-colors button{width:40px;height:36px;border:2px solid #ffffff99;border-radius:6px}.build-floors{grid-template-columns:repeat(3,minmax(0,1fr))}.builder-tools small{color:#afc7cb}.builder-tools #build-exit{display:block;width:100%;margin-top:10px}
-.build-crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:25px monospace;color:#fff;text-shadow:0 1px 3px #000}
-.build-bottom{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);max-width:min(500px,90vw);width:max-content;text-align:center}.build-bottom p{padding:9px 13px;margin:0 0 8px;border-radius:7px;background:#101b23e8;color:#e2f1f1;font-size:14px;line-height:1.5}.build-bottom button{pointer-events:auto}.build-bottom small{display:block;margin-top:8px;color:#bed4da;background:#101b23d9;padding:6px;font-size:12px}
-body.touch-controls .build-bottom{bottom:180px}body.in-builder #touch-bag{display:none}body.in-builder #toast{z-index:22}
-@media(max-width:760px),(pointer:coarse){.builder-tools{top:68px;inset-inline-start:10px;width:190px;padding:10px;max-height:34dvh}.builder-tools summary{font-size:15px}.builder-tools p{font-size:12px}.build-palette{gap:5px}.build-palette button,.build-floors button{font-size:12px;min-height:40px}.build-colors{gap:7px}.build-colors button{width:33px;height:33px}.build-bottom,body.touch-controls .build-bottom{bottom:170px}.build-bottom p{font-size:12px}.build-bottom small{display:none}.build-bottom button{font-size:14px;padding:12px 18px}}
-@media(max-height:500px) and (orientation:landscape){.builder-tools{width:180px;max-height:calc(100dvh - 85px);top:68px}.build-bottom,body.touch-controls .build-bottom{bottom:18px;max-width:42%}.build-bottom p{font-size:11px}.build-bottom button{min-width:0;padding:9px 12px;font-size:12px}.build-bottom small{display:none}}
-
-.actions{flex-wrap:wrap}#build-start{border-color:#d8b374;color:#ffe1ad}#build-count{display:inline-block;direction:ltr}
-
-.builder-tools{scrollbar-width:none;-ms-overflow-style:none}.builder-tools::-webkit-scrollbar{display:none;width:0;height:0}

@@ -592,24 +592,3 @@
 591|01:00 · Read the robot's message
 592|E / Interact · Go save the robot
 593|Go to the door and leave to save the robot
-594|Build Mode Paused
-595|Your Build Is Saved
-596|<p>Continue building or return to the menu.</p>
-597|Continue Building
-598|Crate
-599|Chair
-600|Table
-601|Bookshelf
-602|Wall
-603|Lamp
-604|Saved in this browser
-605|Could not save. Changes will last until you close this page.
-606|Aim at an object you built and press E to select it.
-607|Aim at a room's floor and press E or Place.
-608|Object limit reached. Remove an object to add another.
-609|You can add up to four lamps.
-610|This spot is blocked. Find room and keep the passageways clear.
-611|Object selected. Move, rotate, paint, or delete it.
-612|Select an object first.
-613|Aim at the new spot and press Place. Esc cancels the move.
-614|Nothing to undo yet.
