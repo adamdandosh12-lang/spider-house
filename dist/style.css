@@ -78,3 +78,13 @@ html[lang="en"] .controls{max-width:55%;line-height:1.5}
 html[lang="en"] #prompt{max-width:calc(100% - 28px);white-space:normal;overflow-wrap:anywhere}
 @media(max-width:760px),(pointer:coarse){.language-switch{min-height:36px;padding:6px 9px;font-size:13px}header .brand small{display:none}.header-right{gap:5px}header .brand{letter-spacing:0;gap:5px}html[lang="en"] h1{font-size:clamp(42px,11vw,62px)}html[lang="en"] .header-right button{padding-inline:7px}html[lang="en"] .controls{display:none}}
 @media(max-width:430px){.header-right>span{display:none}header .brand{font-size:12px}header .brand>span{font-size:22px}.header-right button{padding-inline:6px;font-size:10px}.language-switch{font-size:12px;padding-inline:7px}}
+
+/* Keep instructions separate from subtitles and leave the footer outside the menu. */
+@media(min-width:761px) and (pointer:fine){#menu{bottom:74px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-bottom:14px}footer{flex-wrap:wrap;gap:8px 16px}}
+footer a{color:inherit}
+#intro-prompt{position:absolute;grid-row:auto;left:50%;right:auto;bottom:62px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);padding:6px 12px;border-radius:5px;background:#101b21d9;z-index:3;pointer-events:none}
+#intro-prompt:empty{display:none}
+#intro-line{bottom:110px}
+@media(min-width:761px) and (pointer:fine){body.touch-controls #intro-prompt{bottom:180px}body.touch-controls #intro-line{bottom:228px}}
+@media(max-width:760px),(pointer:coarse){#intro-prompt,body.touch-controls #intro-prompt{bottom:calc(160px + env(safe-area-inset-bottom));font-size:12px}#intro-line,body.touch-controls #intro-line{bottom:calc(208px + env(safe-area-inset-bottom))}}
+@media(max-height:500px) and (orientation:landscape){#intro-prompt,body.touch-controls #intro-prompt{bottom:100px;max-width:55%;font-size:11px}#intro-line,body.touch-controls #intro-line{bottom:142px;max-width:65%;font-size:12px}}
