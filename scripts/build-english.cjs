@@ -44,7 +44,7 @@ html=html.replace(/((?:content|aria-label|title)=")([^"]*[\u0590-\u05ff][^"]*)("
 html=html.replace('lang="he" dir="rtl"','lang="en" dir="ltr"').replaceAll('he_IL','en_US').replaceAll('href="style.css','href="../style.css').replaceAll('src="language.js','src="../language.js').replaceAll('href="assets/','href="../assets/').replace('href="./"','href="./?lang=en"');
 html=html.replace(/<script type="importmap">([\s\S]*?)<\/script>/,(_,s)=>{const map=JSON.parse(s);delete map.imports['./vendor/three.module.js'];return '<script type="importmap">'+JSON.stringify(map)+'</script>';});
 html=html.replace(/<a id="language-switch"[^>]*>[\s\S]*?<\/a>/,'<a id="language-switch" class="language-switch" href="../?lang=he" lang="he" hreflang="he" dir="rtl" title="Switch language (starts a new game)">עברית</a>');
-html=html.replace('</head>','<script src="../english-canvas.js?v=2.00"></script></head>');
+html=html.replace('</head>','<script src="../english-canvas.js?v=2.01"></script></head>');
 html=html.replace('rel="canonical" href="https://spider-house-adam-night.dandoshtom.chatgpt.site/"','rel="canonical" href="https://spider-house-adam-night.dandoshtom.chatgpt.site/en/"');
 fs.writeFileSync(path.join(dist,'en/index.html'),html);
 console.log('English build: '+translations.size+' game strings, '+htmlHe.length+' page strings, '+voiceLines.length+' spoken lines.');
