@@ -88,3 +88,7 @@ footer a{color:inherit}
 @media(min-width:761px) and (pointer:fine){body.touch-controls #intro-prompt{bottom:180px}body.touch-controls #intro-line{bottom:228px}}
 @media(max-width:760px),(pointer:coarse){#intro-prompt,body.touch-controls #intro-prompt{bottom:calc(160px + env(safe-area-inset-bottom));font-size:12px}#intro-line,body.touch-controls #intro-line{bottom:calc(208px + env(safe-area-inset-bottom))}}
 @media(max-height:500px) and (orientation:landscape){#intro-prompt,body.touch-controls #intro-prompt{bottom:100px;max-width:55%;font-size:11px}#intro-line,body.touch-controls #intro-line{bottom:142px;max-width:65%;font-size:12px}}
+
+/* Preserve wheel, touch and keyboard scrolling without a bright menu scroll track. */
+#menu{scrollbar-width:none;-ms-overflow-style:none}
+#menu::-webkit-scrollbar{display:none;width:0;height:0}
